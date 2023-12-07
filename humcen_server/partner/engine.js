@@ -2125,6 +2125,58 @@ const clearRecentPartnerNotifs = async(req, res) => {
   }
 }
 
+// new modification
+
+const getAvailableOrder = async (req, res) => {
+  const userID = String(req.userID);;
+  try {
+    // Fetch the partner document based on the user ID
+    const partner = await Partner.findOne({ userID: userID });
+    if (!partner) {
+      return res.status(404).json({ error: "Partner not found "});
+    }
+    const knownServices = Object.keys(partner.known_fields).filter(
+      service => partner.known_fields[service] === true
+    );
+    // Fetch unassigned jobs based on country and service condition
+    const jobList = await Unassigned.find({
+      country: partner.country
+      ,service: { $in: knownServices},
+      proposals: { $nin: [userID] }
+    });
+
+    res.json({jobList });
+  } catch (error) {
+    console.error("Error in getAvailableOrder:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const assignNewProposal = async(req, res)=>{
+  const jobNumber = req.body.jobNumber;
+  const userID = req.userID;
+  try{
+    const partner = await Partner.findOne({ userID: userID });
+
+    if (!partner) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+    await Unassigned.updateOne(
+      { "_id.job_no": jobNumber }, //get unassigned job record data using job no.
+      {
+        $push: {
+          "proposals": userID // add userId in proposal field
+        }
+      }
+    )
+    return res.json({ message: "New Proposal proposed successfully" });
+  }
+  catch(error){
+    console.error("Error in getAvailableOrder:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 
 module.exports = {
   getPartnerJobsById,
@@ -2143,5 +2195,7 @@ module.exports = {
   notificationPartnerSeen,
   notifcationsPartnerDelete,
   sortPartnerNotifications,
-  clearRecentPartnerNotifs
+  clearRecentPartnerNotifs,
+  getAvailableOrder,
+  assignNewProposal
 };

@@ -1720,7 +1720,7 @@ const storeBulkOrderData = async(req, res) => {
   }
 }
 
-const newVersionPatentDrafting = async(req, res) => {
+const newVersionPatentDrafting1 = async(req, res) => {
   try {
     const userId = req.userId;
     let partnerName, partnerID, mapID, draftingData, newDraftingNo;
@@ -4056,6 +4056,208 @@ const checkBulkOrderRequest = async(req, res) => {
   }
 }
 
+// new modifications
+
+const newVersionPatentDrafting = async(req, res) => {
+  try {
+    const userId = req.userId;
+    let partnerName, partnerID, mapID, draftingData, newDraftingNo;
+    console.log(req.body.countries);
+    for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
+      console.log("Saving records for " + req.body.countries[totalCountries]);
+      const findCustomer = await Customer.findOne({ userID: userId });
+      const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+      if (!findCustomer) {
+        // Handle the case when no customer is found
+        throw new Error("No customer found for the given user ID");
+      }
+      
+      draftingData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        job_title: req.body.title,
+        domain: req.body.domain,
+        keywords: req.body.keywords,
+        userID: userId,
+        service_specific_files: req.body.service_specific_files, 
+      }
+        partnerName = "";
+        partnerID = "";                                   // If there's no availability of Partner
+        // Handle the case when no partner is found
+        const latestUnassignedDraftingOrder = await Unassigned.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
+  
+      const newUnassignedDraftingNo = latestUnassignedDraftingOrder
+        ? latestUnassignedDraftingOrder._id.job_no + 1
+        : 1000;
+
+        // Changes
+        mapID = newUnassignedDraftingNo;
+      
+  
+        stepsInitial = 2;
+        const newDraftingData = draftingData;
+        newDraftingData.service = "Patent Drafting";
+        newDraftingData.customerName = findCustomer.first_name;
+        newDraftingData.status = "In Progress";
+        newDraftingData.proposals = [];
+        console.log(newDraftingData);
+        const unassignedDraftingOrder = new Unassigned(newDraftingData);  // Creating a new Unassigned Job Order
+        unassignedDraftingOrder._id.job_no =  newUnassignedDraftingNo ;
+        
+        unassignedDraftingOrder.save();
+        
+        console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedDraftingNo +" has been submitted successfully and is in Unassigned Jobs.")
+      const latestDraftingOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
+      .exec();
+
+      newDraftingNo = latestDraftingOrder
+      ? latestDraftingOrder._id.job_no + 1
+      : 1000;
+         // Changes 
+
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+      console.log("Fine till now" ,draftingData);
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newDraftingNo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Patent Drafting",
+        userID: userId,
+        unassignedID: mapID,
+        partnerID: "",
+        partnerName: "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        country: req.body.countries[totalCountries],
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
+        date_partner: [formattedDate, " ", " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+        status: "In Progress",
+        budget: "$ " +  req.body.bills[totalCountries],
+        domain: req.body.domain,
+      });
+  
+      await newJobOrder.save();
+      console.log("Saved");
+          // Fetch user's email from MongoDB and send the email
+          const user = await Customer.findOne({ userID: userId });
+      const attachments = [];
+        if (user && user.email) {
+          const subject = 'Patent Filing Submission Successful';
+          const text = 'Your Patent Filing form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Filing' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.domain},
+            {label:'Country :',value:req.body.countries[totalCountries]},
+            {label:'Job Title :',value:req.body.title},
+            {label:'Application Type :',value:req.body.service_specific_files.application_type},
+            {label:'Budget :',value:req.body.bills[totalCountries]},
+            // Add more rows as needed
+          ];
+
+          const { details,applicants,investors } = req.body.service_specific_files;
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(details) && details.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of details) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          if (Array.isArray(applicants) && applicants.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of applicants) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          if (Array.isArray(investors) && investors.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of investors) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          
+        // Send the email with tableData and attachments
+        sendEmail(user.email, subject, text, tableData,attachments);
+    } 
+  
+    }
+    res.status(200);
+     }
+     catch(error) {
+      console.error("Error in saving up the Patent Drafting Form : " + error);
+  }
+}
+
+const proposedPatners = async(req, res)=>{
+  const jobNumber = req.params.jobID;
+  const userID = req.userID;
+  try{
+    const findCustomer = await Customer.findOne({ userID: userID });
+    if (!findCustomer) {
+      throw new Error("No customer found for the given user ID");
+    }
+    const jobDetails = await Unassigned.find(
+      { "_id.job_no": jobNumber } //get unassigned job record data using job no.
+    )
+    const patneruserID = jobDetails[0].proposals;
+    const patnersData = []; 
+
+    for (var i = 0; i < patneruserID.length; i++) {
+      const partner = await Partner.findOne({ userID: patneruserID[i] });
+      if (!partner) {
+        return res.status(404).json({ error: `Partner not found for userId ${patneruserID[i]}` });
+      }
+      if(partner.is_free==true){
+        patnersData.push(partner);
+      }
+    }
+    res.json({partners: {patnersData}});
+  }
+  catch(error) {
+    console.error("Error in fetching propesed patner data: " + error);
+  }
+}
+
 module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -4092,4 +4294,5 @@ module.exports = {
     newBulkOrderRequest,
     uploadBulkOrderFiles,
     checkBulkOrderRequest,
+    proposedPatners
   };

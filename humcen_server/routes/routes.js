@@ -89,6 +89,8 @@ router.put("/api/user/job_order/approve/:jobID", verifyToken, forms.approveTheDo
 
 router.put("/api/user/job_order/reject/:jobID", verifyToken, forms.rejectTheDoneWork);
 
+router.get("/api/user/ProposedPatners/:jobID",verifyToken, forms.proposedPatners);
+
 // Users Notifications
 
 router.get("/api/user/get-notifs/:userID", verifyToken, forms.getNotification) // Get Notifications for Customer
@@ -264,12 +266,18 @@ router.put("/api/partner/uploaded", verifyPartner, engine.updateTimelineForUploa
 
 router.delete("/api/reject/:service/:country/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);
-router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
 router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);
 router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
 router.get("/api/partner/get-bulk-order-file/:id", verifyPartner, engine.getAssignedBulkOrderFile);
 router.put("/api/idle-job/:partner", verifyPartner, engine.sendIdleJobToUnassigned);
+
+// modified
+router.get("/api/partner/newAvailableJobs", verifyPartner,engine.getAvailableOrder);
+router.put("/api/assignProposal", verifyPartner, engine.assignNewProposal);
+
+// router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners); #need to change
+
 
 // Partner Notifications
 
