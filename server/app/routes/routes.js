@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../verify_token/verifyToken");
-const forms = require("../user/forms");
-const userSettings = require("../user/settings");
-const user_auth = require("../user/signInUp");
+const forms = require("../../user/forms");
+const userSettings = require("../../user/settings");
+const user_auth = require("../../user/signInUp");
 const data = require("../admin/data");
 const adminSettings = require("../admin/settings");
 const verifyAdmin = require("../verify_token/verifyAdmin");
@@ -44,21 +44,21 @@ router.post(
 );
 
 router.post(
-    "/api/patent_search",
-    verifyToken,
-    forms.newVersionPatentSearch
+  "/api/patent_search",
+  verifyToken,
+  forms.newVersionPatentSearch
 );
 
 router.post(
-    "/api/response_to_fer",
-    verifyToken,
-    forms.newVersionFER
+  "/api/response_to_fer",
+  verifyToken,
+  forms.newVersionFER
 );
 
 router.post(
-    "/api/freedom_to_operate",
-    verifyToken,
-    forms.newVersionFTO
+  "/api/freedom_to_operate",
+  verifyToken,
+  forms.newVersionFTO
 );
 
 router.post("/api/patent_illustration", verifyToken, forms.newVersionIllustration);
@@ -83,7 +83,7 @@ router.post(
 
 router.get("/api/user/job_files_details/:jobID", verifyToken, forms.getJobFilesDetailsForUsers);
 
-router.get("/api/user/job_files/:jobID", verifyToken,forms.getJobFilesForUsers);
+router.get("/api/user/job_files/:jobID", verifyToken, forms.getJobFilesForUsers);
 
 router.put("/api/user/job_order/approve/:jobID", verifyToken, forms.approveTheDoneWork); // Approval given by the User
 
@@ -139,7 +139,7 @@ router.get("/api/admin/user", data.getUsers);
 
 router.get("/api/admin/partner", data.getPartners);
 
-router.get("/api/admin/customer",data.getCustomers);
+router.get("/api/admin/customer", data.getCustomers);
 
 router.get("/api/admin/admin", data.getAdmins);
 
@@ -154,7 +154,7 @@ router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // F
 router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting Job Details from Admin Side
 
 // ADMIN UNASSIGNED JOBS
-router.get("/api/admin/Unassigned",data.getUnassignedJobOrders);
+router.get("/api/admin/Unassigned", data.getUnassignedJobOrders);
 
 router.get("/api/Unassigned/:jobID", data.getUnassignedJobById); // For getting Job Details from Admin Side
 
@@ -175,11 +175,11 @@ router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForA
 // ADMIN BULK ORDERS
 router.get("/api/process-base64-csv/:base", data.getCSVData); // Get CSV data through Python script
 
-router.post("/api/admin/create-bulk-orders",  data.createBulkOrders); // Create Bulk Orders
+router.post("/api/admin/create-bulk-orders", data.createBulkOrders); // Create Bulk Orders
 
-router.get("/api/get-bulk-orders",  data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
+router.get("/api/get-bulk-orders", data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
 
-router.get("/api/bulk-order/:id",  data.getBulkOrderById); // Getting details of that particular Bulk Order
+router.get("/api/bulk-order/:id", data.getBulkOrderById); // Getting details of that particular Bulk Order
 
 router.get("/api/bulk-order-file/:id", data.getBulkOrderFileById); // Getting details of that particular Bulk Order
 
