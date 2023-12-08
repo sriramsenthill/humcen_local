@@ -1,4 +1,4 @@
-const Customer = require("../mongoose_schemas/customer"); // Import the Customer model
+const Customer = require("../models/customer"); // Import the Customer model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 
 const getCustomerProfileImage = async (req, res) => {

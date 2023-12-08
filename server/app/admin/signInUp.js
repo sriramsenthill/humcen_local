@@ -1,4 +1,4 @@
-const Admin = require("../mongoose_schemas/admin"); // Import the Admin model
+const Admin = require("../models/admin"); // Import the Admin model
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 

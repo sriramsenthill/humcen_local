@@ -1,5 +1,5 @@
-const JobOrder = require("../mongoose_schemas/job_order"); // Import the JobOrder model
-const Customer = require("../mongoose_schemas/customer"); // Import the Customer model
+const JobOrder = require("../models/job_order"); // Import the JobOrder model
+const Customer = require("../models/customer"); // Import the Customer model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 const jwt = require("jsonwebtoken");
 
@@ -116,7 +116,7 @@ const getCustomerData = async (req, res) => {
     }
 
     // Additional logic if needed
-    const {jobs}=customer
+    const { jobs } = customer
     res.json(jobs);
   } catch (error) {
     console.error("Error fetching customer data:", error);

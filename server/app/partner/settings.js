@@ -1,5 +1,5 @@
 const servList = require("../../Works");
-const Partner = require("../mongoose_schemas/partner"); // Import the Partner model
+const Partner = require("../models/partner"); // Import the Partner model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 
 
