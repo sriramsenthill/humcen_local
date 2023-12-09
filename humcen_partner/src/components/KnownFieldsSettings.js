@@ -12,7 +12,7 @@ const KnownFieldsGrid = ({ onChange, size, edit }) => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/fields", {
+        .get("/api/partner/fields", {
           headers: {
             Authorization: token,
           },
@@ -34,7 +34,7 @@ const KnownFieldsGrid = ({ onChange, size, edit }) => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/fields", {
+        .get("/api/partner/fields", {
           headers: {
             Authorization: token,
           },

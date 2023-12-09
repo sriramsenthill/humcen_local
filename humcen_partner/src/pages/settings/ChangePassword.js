@@ -41,14 +41,14 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/settings", {
+        .get("/api/partner/settings", {
           headers: {
             Authorization: token,
           },
         })
         .then((response) => {
           const UID = response.data.userID;
-          setUserID (UID);
+          setUserID(UID);
         })
         .catch((error) => {
           console.error("Error fetching Partner profile Settings:", error);
@@ -132,7 +132,7 @@ export default function Profile() {
                           id="pwd"
                           label="Password"
                           name="pwd"
-                          onChange = {(e) => setPassword(e.target.value)}
+                          onChange={(e) => setPassword(e.target.value)}
                           type="password"
                         />
                       ) : (
@@ -162,22 +162,26 @@ export default function Profile() {
                 backgroundColor: "#ECFCFF",
               }}
               onClick={() => {
-                if (editMode) { 
+                if (editMode) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('http://localhost:3000/api/partner/password',{data:{
-                  password: Password
-                 }}, {headers:{
-                  "Authorization": token,
-                  "Content-Type": "application/json"
-                 }})
-                 .then((response) => res.json(response.data))
-                 .catch((error) => console.error("Error in Updating Partner's Password", error));
-                   
-                  }
-                else { 
-                  setEditMode(true); 
-                  };
+                  axios.put('/api/partner/password', {
+                    data: {
+                      password: Password
+                    }
+                  }, {
+                    headers: {
+                      "Authorization": token,
+                      "Content-Type": "application/json"
+                    }
+                  })
+                    .then((response) => res.json(response.data))
+                    .catch((error) => console.error("Error in Updating Partner's Password", error));
+
+                }
+                else {
+                  setEditMode(true);
+                };
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />

@@ -18,7 +18,7 @@ const MyPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/fields", {
+        .get("/api/partner/fields", {
           headers: {
             Authorization: token,
           },
@@ -27,8 +27,8 @@ const MyPage = () => {
           const fields = response.data;
           const servicee = [];
           Object.keys(fields).forEach((field) => {
-            if(fields[field] === true){
-            servicee.push(field);
+            if (fields[field] === true) {
+              servicee.push(field);
             }
           })
           const filteredServices = serviceList.filter(service => servicee.includes(service.title));
@@ -42,44 +42,44 @@ const MyPage = () => {
 
   return (
     <>
-    <div className={'card'}>
-      <div className={styles.pageTitle}>
-        <ul>
-          <li>
-            <Link href="/">Dashboard</Link>
-          </li>
-          <li>Patent Services</li>
-        </ul>
-      </div>
-      <h1 className={styles.heading} style={{
-        marginBottom: "30px",
-        marginTop: "10px"
-      }}>My Patent Services</h1>
-      <Grid
-        container
-        rowSpacing={1}
-        columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
-      >
-        {services.map((service, index) => (
-              <Grid item xs={12} md={6} lg={4} xl={4}>
+      <div className={'card'}>
+        <div className={styles.pageTitle}>
+          <ul>
+            <li>
+              <Link href="/">Dashboard</Link>
+            </li>
+            <li>Patent Services</li>
+          </ul>
+        </div>
+        <h1 className={styles.heading} style={{
+          marginBottom: "30px",
+          marginTop: "10px"
+        }}>My Patent Services</h1>
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
+        >
+          {services.map((service, index) => (
+            <Grid item xs={12} md={6} lg={4} xl={4}>
 
-          <ModernCard
-            key={index}
-            title={service.title}
-            description={service.desc} // Use "desc" instead of "description"
-            imageSrc={service.image}
-            link={service.link}
-          />
-          </Grid>
+              <ModernCard
+                key={index}
+                title={service.title}
+                description={service.desc} // Use "desc" instead of "description"
+                imageSrc={service.image}
+                link={service.link}
+              />
+            </Grid>
 
-        ))}
-        <AddCard
+          ))}
+          <AddCard
             key="Add"
             title="Add Services"
             imageSrc="/images/patent_img/add.png"
-        />
+          />
 
-      </Grid>
+        </Grid>
       </div>
     </>
   );

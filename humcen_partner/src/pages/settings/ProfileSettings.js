@@ -48,14 +48,14 @@ export default function Profile() {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
- 
+
   const open = Boolean(anchorEl);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/settings", {
+        .get("/api/partner/settings", {
           headers: {
             Authorization: token,
           },
@@ -89,7 +89,7 @@ export default function Profile() {
           setPostCode(postCode);
           const country = response.data.country;
           setCountry(country);
-  
+
         })
         .catch((error) => {
           console.error("Error fetching profile Settings:", error);
@@ -709,28 +709,32 @@ export default function Profile() {
                 if (editMode === true) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('http://localhost:3000/api/partner/settings',{data:{
-                  userId: UID,
-                  applicant_type: applicantType,
-                  business_name: businessName,
-                  company_id: companyID,
-                  vat_payer: vatPayer,
-                  first_name: firstName,
-                  last_name: lastName,
-                  email: email,
-                  phone: phone,
-                  position: position,
-                  street: street,
-                  town: town,
-                  post_code: postCode,
-                  country: country
-                 }}, {headers:{
-                  "Authorization": token,
-                  "Content-Type": "application/json"
-                 }})
-                 .then((response) => res.json(response.data))
-                 .catch((error) => console.error("Error in Updating Partner's Settings", error));
-                 window.location.reload(true);
+                  axios.put('/api/partner/settings', {
+                    data: {
+                      userId: UID,
+                      applicant_type: applicantType,
+                      business_name: businessName,
+                      company_id: companyID,
+                      vat_payer: vatPayer,
+                      first_name: firstName,
+                      last_name: lastName,
+                      email: email,
+                      phone: phone,
+                      position: position,
+                      street: street,
+                      town: town,
+                      post_code: postCode,
+                      country: country
+                    }
+                  }, {
+                    headers: {
+                      "Authorization": token,
+                      "Content-Type": "application/json"
+                    }
+                  })
+                    .then((response) => res.json(response.data))
+                    .catch((error) => console.error("Error in Updating Partner's Settings", error));
+                  window.location.reload(true);
                 } else {
                   setEditMode(true);
                 }

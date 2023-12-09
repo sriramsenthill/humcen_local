@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   IconButton,
   Typography,
@@ -30,20 +30,20 @@ const Profile = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/name", {
+        .get("/api/partner/name", {
           headers: {
             Authorization: token,
           },
         })
         .then((response) => {
-          const  partnerNameData  = response.data;
+          const partnerNameData = response.data;
           setPartnerName(partnerNameData);
         })
         .catch((error) => {
           console.error("Error fetching partner name:", error);
         });
       // axios
-      //   .get("http://localhost:3000/api/partner/img", {
+      //   .get("/api/partner/img", {
       //     headers: {
       //       Authorization: token,
       //     },
@@ -123,27 +123,27 @@ const Profile = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         className="for-dark-top-navList"
       >
-      <Link href="/settings" style={{textDecoration:"none"}}>
-        <MenuItem>
-        
-          <Avatar src="images/Default_pfp.jpg" className="mr-1" />
-          <Box>
-            <Typography sx={{ fontSize: "11px", color: "#757FEF" }}>
-              Partner
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "13px",
-                color: "#260944",
-                fontWeight: "500",
-              }}
-            >
-              {partnerName}
-            </Typography>
-          </Box>
-      
-        </MenuItem>
-</Link>
+        <Link href="/settings" style={{ textDecoration: "none" }}>
+          <MenuItem>
+
+            <Avatar src="images/Default_pfp.jpg" className="mr-1" />
+            <Box>
+              <Typography sx={{ fontSize: "11px", color: "#757FEF" }}>
+                Partner
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  color: "#260944",
+                  fontWeight: "500",
+                }}
+              >
+                {partnerName}
+              </Typography>
+            </Box>
+
+          </MenuItem>
+        </Link>
         <Divider />
 
         <MenuItem>
@@ -159,7 +159,7 @@ const Profile = () => {
             Profile
           </Link>
         </MenuItem>
-{/* 
+        {/* 
         <MenuItem>
           <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
             <MailOutlineIcon fontSize="small" />

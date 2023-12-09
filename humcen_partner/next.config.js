@@ -1,27 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  trailingSlash: true,
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+  env: {
+    NEXT_PUBLIC_API_HOST: "http://localhost:3000",
   },
-  images: {
-    unoptimized: true
+  experimental: {
+    forceSwcTransforms: true,
   },
-  optimizeFonts: false,
-  i18n: {
-    locales: ['en', 'ar'],
-    defaultLocale: 'en',
+  webpack: (config) => {
+    config.resolve.fallback = {
+      "mongodb-client-encryption": false,
+      "aws4": false
+    };
+
+    return config;
   },
-  // images: {
-	// 	loader: "akamai",
-	// 	path:
-	// 		process.env.NODE_ENV === "production"
-	// 			? "https://admash-admin.envytheme.com/"
-	// 			: "http://localhost:3000",
-	// },
 }
 
 module.exports = nextConfig

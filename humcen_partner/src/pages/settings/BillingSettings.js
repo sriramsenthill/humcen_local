@@ -44,14 +44,14 @@ export default function Profile() {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
- 
+
   const open = Boolean(anchorEl);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/settings", {
+        .get("/api/partner/settings", {
           headers: {
             Authorization: token,
           },
@@ -77,7 +77,7 @@ export default function Profile() {
           setPostCode(postCode);
           const country = response.data.bank.country;
           setCountry(country);
-  
+
         })
         .catch((error) => {
           console.error("Error fetching Partner's Bank Details Settings:", error);
@@ -530,23 +530,27 @@ export default function Profile() {
                 if (editMode === true) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('http://localhost:3000/api/partner/bank-settings',{data:{
-                  userId: UsID,
-                  bankName: bankName,
-                  accountNum: accountNum,
-                  accountName: accountName,
-                  branch: branch,
-                  ifscCode: ifscCode,
-                  address: address,
-                  town: town,
-                  postCode: postCode,
-                  country: country
-                 }}, {headers:{
-                  "Authorization": token,
-                  "Content-Type": "application/json"
-                 }})
-                 .then((response) => res.json(response.data))
-                 .catch((error) => console.error("Error in Updating Partner's Bank Details Settings", error));
+                  axios.put('/api/partner/bank-settings', {
+                    data: {
+                      userId: UsID,
+                      bankName: bankName,
+                      accountNum: accountNum,
+                      accountName: accountName,
+                      branch: branch,
+                      ifscCode: ifscCode,
+                      address: address,
+                      town: town,
+                      postCode: postCode,
+                      country: country
+                    }
+                  }, {
+                    headers: {
+                      "Authorization": token,
+                      "Content-Type": "application/json"
+                    }
+                  })
+                    .then((response) => res.json(response.data))
+                    .catch((error) => console.error("Error in Updating Partner's Bank Details Settings", error));
                 } else {
                   setEditMode(true);
                 }

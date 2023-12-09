@@ -99,7 +99,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/partner/settings", {
+        .get("/api/partner/settings", {
           headers: {
             Authorization: token,
           },
@@ -352,26 +352,30 @@ export default function Profile() {
                 backgroundColor: "#ECFCFF",
               }}
               onClick={() => {
-                if (editMode) { 
+                if (editMode) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('http://localhost:3000/api/partner/pref-settings',{data:{
-                  userID: UID,
-                  mails: essentialEmails,
-                  order_updates: orderUpdates,
-                  marketing_emails: marketingMails,
-                  newsletter: newsletter,
-                 }}, {headers:{
-                  "Authorization": token,
-                  "Content-Type": "application/json"
-                 }})
-                 .then((response) => res.json(response.data))
-                 .catch((error) => console.error("Error in Updating Partner's Preferential Settings", error));
-                 window.location.reload(true); 
-                  }
-                else { 
+                  axios.put('/api/partner/pref-settings', {
+                    data: {
+                      userID: UID,
+                      mails: essentialEmails,
+                      order_updates: orderUpdates,
+                      marketing_emails: marketingMails,
+                      newsletter: newsletter,
+                    }
+                  }, {
+                    headers: {
+                      "Authorization": token,
+                      "Content-Type": "application/json"
+                    }
+                  })
+                    .then((response) => res.json(response.data))
+                    .catch((error) => console.error("Error in Updating Partner's Preferential Settings", error));
+                  window.location.reload(true);
+                }
+                else {
                   setEditMode(true)
-               }
+                }
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />

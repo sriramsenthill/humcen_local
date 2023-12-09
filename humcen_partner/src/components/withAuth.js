@@ -10,7 +10,7 @@ const withAuth = (WrappedComponent) => {
       const checkAuth = async () => {
         try {
           const token = localStorage.getItem('token');
-          
+
           if (!token) {
             // Redirect to login page if token is not found
             router.push('/authentication/sign-in');
@@ -18,7 +18,7 @@ const withAuth = (WrappedComponent) => {
           }
 
           // Verify the token with the backend
-          const response = await axios.get('http://localhost:3000/api/partner/verify-token', {
+          const response = await axios.get('/api/partner/verify-token', {
             headers: { Authorization: token },
           });
 
