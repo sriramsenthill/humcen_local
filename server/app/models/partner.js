@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
 const PartnerSchema = new mongoose.Schema({
-  userID: {
-    type: Number,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'State',
+    index: true,
+    required: true,
   },
   first_name: {
     type: String,
   },
-  last_name:{
+  last_name: {
     type: String,
   },
-  profile_img:{
+  profile_img: {
     type: String,
   },
   position: {
@@ -146,7 +149,7 @@ const PartnerSchema = new mongoose.Schema({
     default: 0,
   },
   rejected_jobs: {
-    type:[Number],
+    type: [Number],
     default: [],
   },
   known_fields: {
@@ -166,6 +169,5 @@ const PartnerSchema = new mongoose.Schema({
 
 });
 
-const Partner = mongoose.model('Partner', PartnerSchema, 'partner');
-
+const Partner = mongoose.model('Partner', PartnerSchema);
 module.exports = Partner;

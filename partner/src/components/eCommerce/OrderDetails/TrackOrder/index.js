@@ -1,26 +1,10 @@
-import {React, useState, useEffect} from "react";
+import { React, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
 import { useTransition, animated } from "react-spring";
-
-// Create an Axios instance
-const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-});
-
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
 
 const ActivityTimelineData = [
   {
@@ -95,13 +79,13 @@ const TrackOrder = () => {
   useEffect(() => {
     const fetchStepData = async () => {
       try {
-        const response = await api.get(`partner/jobs/${id}`);
+        const response = await axios.get(`partner/jobs/${id}`);
         const jobData = response.data;
-       setJob(jobData);
+        setJob(jobData);
         const stepCount = jobData.steps_done_activity; // For choosing the last Step done
         setSteps(stepCount);
         const dates = jobData.date_activity;
-        for(let totalDates=0; totalDates<dates.length; totalDates++) {
+        for (let totalDates = 0; totalDates < dates.length; totalDates++) {
           ActivityTimelineData[totalDates].date = dates[totalDates];
         }
         const updatedTimelineData = ActivityTimelineData.map((timeline) => {
@@ -114,12 +98,12 @@ const TrackOrder = () => {
         setTimelineData(updatedTimelineData);
       } catch (error) {
         console.error("Error fetching job order data:", error);
-        
+
       }
     };
 
     fetchStepData();
-    
+
 
   }, [id, stepsNo]);
 
@@ -145,66 +129,66 @@ const TrackOrder = () => {
         sx={{
           boxShadow: "none",
           p: "15px",
-          pr:"20px",
+          pr: "20px",
           mb: "20px",
-          width:"100%",
+          width: "100%",
         }}
       >
-       <Box sx={{ padding: '5px', backgroundColor: '#FFF' ,borderRadius: "20px",}} className={styles.containerBox}>
-        <Typography
-          as="h1"
-          sx={{
-            fontSize: "36",
-            fontWeight: 500,
-            mb: "20px",
-            mt:"20px",
-            ml:"10px",
-          }}
-        >
-          Service: {job?.service}
-        </Typography>
-      
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Status</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"8px"}}> {job?.status}</p>
-          </li>
-        </ul>
+        <Box sx={{ padding: '5px', backgroundColor: '#FFF', borderRadius: "20px", }} className={styles.containerBox}>
+          <Typography
+            as="h1"
+            sx={{
+              fontSize: "36",
+              fontWeight: 500,
+              mb: "20px",
+              mt: "20px",
+              ml: "10px",
+            }}
+          >
+            Service: {job?.service}
+          </Typography>
 
-        <hr className={styles.line} style={{ width: "100%" }}></hr>
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Country</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"15px"}}>{job?.country}</p>
-          </li>
-        </ul>
-        
-        <hr className={styles.line} style={{ width: "100%" }}></hr>
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Activity Timeline</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"20px"}}>
-            Excepted Completion Date: 
-              {ActivityTimelineData[9].date}
-            </p>
-          </li>
-        </ul>
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Status</h3>
+            </li>
+            <li>
+              <p className={styles.email} style={{ paddingRight: "8px" }}> {job?.status}</p>
+            </li>
+          </ul>
+
+          <hr className={styles.line} style={{ width: "100%" }}></hr>
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Country</h3>
+            </li>
+            <li>
+              <p className={styles.email} style={{ paddingRight: "15px" }}>{job?.country}</p>
+            </li>
+          </ul>
+
+          <hr className={styles.line} style={{ width: "100%" }}></hr>
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Activity Timeline</h3>
+            </li>
+            <li>
+              <p className={styles.email} style={{ paddingRight: "20px" }}>
+                Excepted Completion Date:
+                {ActivityTimelineData[9].date}
+              </p>
+            </li>
+          </ul>
         </Box>
-        <div style={{ marginLeft: "30%",marginTop:"55px" }}>
+        <div style={{ marginLeft: "30%", marginTop: "55px" }}>
           <div className={styles.timelineList}>
-              {timelineTransitions((style, timeline) => (
-                <div className={`${styles.tList} ${timeline.completed ? styles.completed : styles.notCompleted}`}>
-                  <h4>{timeline.title}</h4>
-                  <p className={styles.date}>{timeline.date}</p>
-                  <p className={styles.text}>{timeline.text}</p>
-                </div>
-              ))}
+            {timelineTransitions((style, timeline) => (
+              <div className={`${styles.tList} ${timeline.completed ? styles.completed : styles.notCompleted}`}>
+                <h4>{timeline.title}</h4>
+                <p className={styles.date}>{timeline.date}</p>
+                <p className={styles.text}>{timeline.text}</p>
+              </div>
+            ))}
           </div>
         </div>
       </Card>

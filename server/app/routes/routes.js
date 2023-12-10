@@ -10,7 +10,6 @@ const verifyAdmin = require("../verify_token/verifyAdmin");
 const admin_auth = require("../admin/signInUp");
 const partnerSetttings = require("../partner/settings");
 const verifyPartner = require("../verify_token/verifyPartner");
-const partner_auth = require("../partner/signInUp");
 const engine = require("../partner/engine");
 
 //USERS_FORMS
@@ -231,8 +230,6 @@ router.get("/api/admin/verify-token", verifyAdmin, admin_auth.verifyAdminToken);
 
 
 //Partner_Settings
-router.get("/api/partner/name", verifyPartner, partnerSetttings.fetchPartnerFullName);
-
 router.get("/api/partner/img", verifyPartner, partnerSetttings.fetchPartnerProfileImage);
 
 router.get("/api/partner/settings", verifyPartner, partnerSetttings.fetchPartnerSettings);
@@ -250,10 +247,6 @@ router.put("/api/partner/service-settings", verifyPartner, partnerSetttings.edit
 router.put("/api/partner/password", verifyPartner, partnerSetttings.updatePartnerPassword);
 
 router.get("/api/partner/verify-token", verifyPartner, partnerSetttings.verifyPartnerToken);
-
-//Partner_SignInUp
-router.post("/api/partner", partner_auth.signUpPartner);
-router.post("/api/auth/partner/signin", partner_auth.signInPartner);
 
 //Partner_engine
 router.get("/api/partner/jobs/:id", verifyPartner, engine.getPartnerJobsById);

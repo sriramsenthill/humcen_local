@@ -14,21 +14,6 @@ import {
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
-const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-});
-
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
-
 const Notification = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notifications, setNotifications] = useState([]);
@@ -43,7 +28,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`partner/settings`);
+        const response = await axios.get(`partner/settings`);
         setUserID(response.data.userID);
       } catch (error) {
         console.error("Error fetching job order data:", error);
@@ -55,27 +40,27 @@ const Notification = () => {
   }, []);
 
   useEffect(() => {
-    if(userID) {
-    const fetchNotifData = async () => {
-      try {
-        const notifResponse = await api.get(`partner/get-notifs/${userID}`);
-        const unSeenNotifs = notifResponse.data.filter((notif) => {
-          return notif.seen == false;
-        })
-        setNotifications(unSeenNotifs);
-        console.log("Notifications Unseen " + unSeenNotifs[0].notifDate);
-      } catch(error) {
-        console.error("Error Fetching Notification : " + error);
+    if (userID) {
+      const fetchNotifData = async () => {
+        try {
+          const notifResponse = await axios.get(`partner/get-notifs/${userID}`);
+          const unSeenNotifs = notifResponse.data.filter((notif) => {
+            return notif.seen == false;
+          })
+          setNotifications(unSeenNotifs);
+          console.log("Notifications Unseen " + unSeenNotifs[0].notifDate);
+        } catch (error) {
+          console.error("Error Fetching Notification : " + error);
+        }
       }
+
+      fetchNotifData();
     }
+  }, [userID])
 
-    fetchNotifData();
-  }
-  },[userID])
+  const eraseRecent = async (userID) => {
 
-  const eraseRecent = async(userID) => {
-
-    const response = await api.get(`partner/clear-notif/${userID}`).then(() => {
+    const response = await axios.get(`partner/clear-notif/${userID}`).then(() => {
       console.log("Recent Notifications cleared Successfully");
     }).catch((err) => {
       console.error("Error in Clearing Unseen Notifications : " + err)
@@ -95,7 +80,7 @@ const Notification = () => {
         <IconButton
           onClick={handleClick}
           size="small"
-          sx={{ 
+          sx={{
             backgroundColor: '#f5f5f5',
             width: '40px',
             height: '40px',
@@ -106,14 +91,14 @@ const Notification = () => {
           aria-expanded={open ? "true" : undefined}
           className="ml-2 for-dark-notification"
         >
-      { notifications.length > 0 ? (
-          <Badge color="danger" variant="dot">
-            <NotificationsActiveIcon color="action" />
-          </Badge>
-        ) :
-          (
-            <NotificationsActiveIcon color="action" />
-          )}
+          {notifications.length > 0 ? (
+            <Badge color="danger" variant="dot">
+              <NotificationsActiveIcon color="action" />
+            </Badge>
+          ) :
+            (
+              <NotificationsActiveIcon color="action" />
+            )}
         </IconButton>
       </Tooltip>
 
@@ -157,41 +142,41 @@ const Notification = () => {
       >
         <div className={styles.header}>
           <Typography variant="h4">Notifications</Typography>
-          <Button variant="text" disabled={notifications.length === 0} onClick={() => {eraseRecent(userID); window.location.reload(true)}}>clear all</Button>
+          <Button variant="text" disabled={notifications.length === 0} onClick={() => { eraseRecent(userID); window.location.reload(true) }}>clear all</Button>
         </div>
-        { notifications.length === 0 && 
+        {notifications.length === 0 &&
           <Typography
-              variant="h5"
-              sx={{
-                fontSize: "14px",
-                color: "#260944",
-                fontWeight: "400",
-                mb: 1,
-              }}
-            >
-              No new Notifications to show up.
-            </Typography>
+            variant="h5"
+            sx={{
+              fontSize: "14px",
+              color: "#260944",
+              fontWeight: "400",
+              mb: 1,
+            }}
+          >
+            No new Notifications to show up.
+          </Typography>
         }
         <div className={styles.notification}>
           {notifications.map((notif) => (
             <div className={styles.notificationList}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: "14px",
-                color: "#260944",
-                fontWeight: "500",
-                mb: 1,
-              }}
-            >
-              {notif.notifText}
-            </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: "14px",
+                  color: "#260944",
+                  fontWeight: "500",
+                  mb: 1,
+                }}
+              >
+                {notif.notifText}
+              </Typography>
 
-            <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-            {new Intl.DateTimeFormat("en-US", options).format(new Date(notif.notifDate))}
-              
-            </Typography>
-          </div>
+              <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
+                {new Intl.DateTimeFormat("en-US", options).format(new Date(notif.notifDate))}
+
+              </Typography>
+            </div>
 
           ))}
           <Typography component="div" textAlign="center">

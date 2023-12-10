@@ -20,7 +20,6 @@ const patentLicense = require("../models/patent_licensing"); // Import Patent Li
 const Customer = require("../models/customer");
 const sendEmail = require("../email");
 const AllNotifications = require("../notifications"); // Functions to send Notifications
-const Notification = require("../models/notification"); // Import Notification Model for Users
 const NotificationAdmin = require("../models/notification_admin"); // Import Notification Model for Admin
 const BulkOrder = require("../models/bulk_order"); // Importing Bulk Order Model
 const BulkOrderFiles = require("../models/bulk_order_files");

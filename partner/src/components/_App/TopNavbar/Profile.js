@@ -19,6 +19,7 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Logout from "@mui/icons-material/Logout";
+import { AuthUtils } from "frontend-module";
 
 const Profile = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -29,32 +30,10 @@ const Profile = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios
-        .get("/api/partner/name", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const partnerNameData = response.data;
-          setPartnerName(partnerNameData);
-        })
-        .catch((error) => {
-          console.error("Error fetching partner name:", error);
-        });
-      // axios
-      //   .get("/api/partner/img", {
-      //     headers: {
-      //       Authorization: token,
-      //     },
-      //   })
-      //   .then((response) => {
-      //     const  partnerAvatarData  = response.data;
-      //     setPartnerAvatar(partnerAvatarData);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error fetching partner name:", error);
-      //   });
+      const user = AuthUtils.decodeJwt(token);
+      if (user) {
+        setPartnerName(`${user.firstName} ${user.lastName}`);
+      }
     }
   }, []);
 

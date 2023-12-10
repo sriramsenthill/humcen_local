@@ -11,20 +11,15 @@ const Partner = require("../models/partner"); // Import the Partner model
 const patentIllustration = require("../models/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../models/consultation");
 const Customer = require("../models/customer");
-const { spawn } = require('child_process'); // Import the spawn function
-const { PythonShell } = require('python-shell');
-const { nextJobOrder, renderJobNumbers } = require("../../order_number_generator");
+const { renderJobNumbers } = require("../../order_number_generator");
 const JobFiles = require("../models/job_files");
 const Drafting = require("../models/patent_drafting");
 const Filing = require("../models/patent_filing");
 const Unassigned = require("../models/unassigned");
 const sendEmail = require("../email.js");
 const Notification = require("../models/notification"); // Import Notification Model
-const NotificationPartner = require("../models/notification_partner"); // Import Notification for Partner model
-const NotificationAdmin = require("../models/notification_admin"); // Import Notification Model for Admin
 const Admin = require("../models/admin");
 const BulkOrderFiles = require("../models/bulk_order_files"); // For storing Bulk Order Files uploaded by User
-const BulkOrder = require("../models/bulk_order"); // Import Bulk Order Module
 const AllNotifications = require("../notifications"); // File which contains functions for Sending Notifications
 
 // Define your API route for fetching job order data

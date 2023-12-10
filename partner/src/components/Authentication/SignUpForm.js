@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import { Typography, Card } from "@mui/material";
@@ -13,12 +14,13 @@ import KnownFields from "../KnownFields";
 
 const SignUpForm = () => {
   const router = useRouter();
+  const [signupError, setSignupError] = useState("");
   const [knownFieldsValues, setKnownFieldsValues] = useState([]);
 
   const [formData, setFormData] = useState({
     email: "",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     password: "",
     known_fields: [],
   });
@@ -33,34 +35,26 @@ const SignUpForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setSignupError("");
 
     try {
-      const response = await fetch("/api/partner", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ ...formData, known_fields: knownFieldsValues })
+      await axios.post('/api/partner/signup', {
+        ...formData,
+        known_fields: knownFieldsValues
       });
-
-      if (response.ok) {
-        console.log("User data saved successfully");
-        router.push("/authentication/sign-in/");
-        // Reset the form data
-        setFormData({
-          email: "",
-          first_name: "",
-          last_name: "",
-          password: "",
-          known_fields: [],
-        });
-        setKnownFieldsValues([]);
-      } else {
-        console.error("Failed to save user data");
-      }
+      router.push("/authentication/sign-in/");
+      // Reset the form data
+      setFormData({
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        known_fields: [],
+      });
+      setKnownFieldsValues([]);
     } catch (error) {
+      setSignupError(error.response.data?.error || error.response.statusText);
       console.error("Error saving user data:", error);
-      set
     }
   };
 
@@ -164,7 +158,7 @@ const SignUpForm = () => {
 
                       <TextField
                         autoComplete="given-name"
-                        name="first_name"
+                        name="firstName"
                         required
                         fullWidth
                         id="firstName"
@@ -173,7 +167,7 @@ const SignUpForm = () => {
                         InputProps={{
                           style: { borderRadius: 8 },
                         }}
-                        value={formData.first_name}
+                        value={formData.firstName}
                         onChange={handleChange}
                       />
                     </Grid>
@@ -196,12 +190,12 @@ const SignUpForm = () => {
                         fullWidth
                         id="lastName"
                         label="Last Name"
-                        name="last_name"
+                        name="lastName"
                         autoComplete="family-name"
                         InputProps={{
                           style: { borderRadius: 8 },
                         }}
-                        value={formData.last_name}
+                        value={formData.lastName}
                         onChange={handleChange}
                       />
                     </Grid>
@@ -291,6 +285,16 @@ const SignUpForm = () => {
                   />
                 </Grid>
 
+                {signupError && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    align="center"
+                    sx={{ mb: 2 }}
+                  >
+                    {signupError}
+                  </Typography>
+                )}
 
                 <Button
                   type="submit"

@@ -1,19 +1,33 @@
 const mongoose = require('mongoose');
 const auditFieldsPlugin = require('./auditFieldsPlugin');
 
-const UserSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   type: {
+    index: true,
     type: String,
     required: true,
     enum: ['CUSTOMER', 'PARTNER', 'ADMIN'],
   },
   email: { type: String, required: true },
-  phno: { type: String, required: true },
+  phno: { type: String },
   password: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
+  partnerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Partner',
+  },
+  adminId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+  },
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Customer',
+  },
 });
-UserSchema.plugin(auditFieldsPlugin);
 
-module.exports = mongoose.model('User', UserSchema);
+schema.plugin(auditFieldsPlugin);
+const User = mongoose.model('User', schema);
+module.exports = User;

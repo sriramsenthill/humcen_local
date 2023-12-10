@@ -9,22 +9,9 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/
 import { Card } from "@mui/material";
 import { useRouter } from "next/router";
 
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-});
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
 async function fetchJobOrders() {
   try {
-    const response = await api.get('/partner/job_order');
+    const response = await axios.get('/partner/job_order');
     const jobOrders = response.data;
     console.log(jobOrders);
     if (Array.isArray(jobOrders)) {
@@ -53,7 +40,7 @@ function Inbox() {
 
     fetchData();
   }, []);
-console.log(getJobs);
+  console.log(getJobs);
   const handleOk = () => {
     router.push("/");
   };
@@ -112,10 +99,10 @@ console.log(getJobs);
           <Dialog open>
             <DialogTitle style={{ backgroundColor: "#00002B", color: "#fff" }}>No Jobs!</DialogTitle>
             <DialogContent>
-              <p  style={{fontSize:"14px"}}>No job orders found for this account.</p>
+              <p style={{ fontSize: "14px" }}>No job orders found for this account.</p>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleOk} style={{ color: "#00ACF6", fontSize:"14px" }}>OK</Button>
+              <Button onClick={handleOk} style={{ color: "#00ACF6", fontSize: "14px" }}>OK</Button>
             </DialogActions>
           </Dialog>
         </div>

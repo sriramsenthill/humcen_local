@@ -14,24 +14,11 @@ import withAuth from "@/components/withAuth";
 import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
 import axios from "axios";
 import { Typography } from "@mui/material";
-
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-});
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
+import { AuthUtils } from 'frontend-module';
 
 async function fetchJobOrders() {
   try {
-    const response = await api.get('/partner/job_order');
+    const response = await axios.get('/partner/job_order');
     const jobOrders = response.data; // Extract the jobOrders array from the response data
     console.log(jobOrders)
     if (Array.isArray(jobOrders)) {

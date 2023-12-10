@@ -31,7 +31,7 @@ function formatDate(date) {
 
 function getStatusColor(status) {
   if (status === "In Progress") {
-    return ( {
+    return ({
       background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
       borderRadius: "4px",
       fontWeight: "bold",
@@ -39,7 +39,7 @@ function getStatusColor(status) {
       padding: "5px 13px",
       display: "inline-block",
     });
-     // Set the color to yellow for "in progress" status
+    // Set the color to yellow for "in progress" status
   } else if (status === "Completed") {
     return ({
       background: "rgba(0, 182, 155, 0.1)",
@@ -48,7 +48,7 @@ function getStatusColor(status) {
       fontWeight: "bold",
       padding: "5px 13px",
       display: "inline-block",
-  })  // Set the color to green for "completed" status
+    })  // Set the color to green for "completed" status
   } else if (status === "Pending") {
     return ({
       background: "rgba(238,54,140,.1)",
@@ -56,9 +56,9 @@ function getStatusColor(status) {
       color: "#ee368c",
       padding: "5px 13px",
       display: "inline-block",
-  })
+    })
 
-  } 
+  }
 
   return ""; // Default color if the status value is not matched
 }
@@ -132,27 +132,11 @@ RecentOrder.propTypes = {
   onPageChange: PropTypes.func.isRequired,
 };
 
-
-// Create an Axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-});
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
-
 async function fetchJobOrders() {
   try {
-    const response = await api.get('/partner/job_order');
+    const response = await axios.get('/partner/job_order');
     console.log(response.data);
-    const jobOrders  = response.data; // Extract the jobOrders array from the response data
+    const jobOrders = response.data; // Extract the jobOrders array from the response data
 
     if (Array.isArray(jobOrders)) {
       const filteredJobOrders = jobOrders.filter(order => order.Accepted === true);
@@ -198,97 +182,97 @@ function RecentOrders() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
-    
+
   return (
     <>
-    <Box>
-      <TableContainer component={Paper} sx={{
-            boxShadow: "none",
-          }}>
-        <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
-          <TableHead sx={{ background: "#F7FAFF" }}>
-            <TableRow>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Job No
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    width: "150px",
-                    padding: "15px 10px",
-                    textAlign: "left",
-                  }}>
-              Service
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Country
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Submitted Date
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Delivery Date
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Budget
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Verification
-              </TableCell>
-              <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-              Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow key={row.og_id}>
-                  <TableCell sx={{
+      <Box>
+        <TableContainer component={Paper} sx={{
+          boxShadow: "none",
+        }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
+              <TableRow>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Job No
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  width: "150px",
+                  padding: "15px 10px",
+                  textAlign: "left",
+                }}>
+                  Service
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Country
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Submitted Date
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Delivery Date
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Budget
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Verification
+                </TableCell>
+                <TableCell sx={{
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow key={row.og_id}>
+                    <TableCell sx={{
                       width: 100,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
@@ -296,9 +280,9 @@ function RecentOrders() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                  {row._id.job_no}
-                  </TableCell>
-                  <TableCell sx={{
+                      {row._id.job_no}
+                    </TableCell>
+                    <TableCell sx={{
                       width: 150,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
@@ -306,57 +290,57 @@ function RecentOrders() {
                       fontSize: "13px",
                       textAlign: "left",
                     }}>
-                    {row.service}
+                      {row.service}
                     </TableCell>
-                  <TableCell sx={{
+                    <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                  {row.country}
-                  </TableCell>
-                  <TableCell sx={{
+                      {row.country}
+                    </TableCell>
+                    <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                  {formatDate(row.start_date)}
-                  </TableCell>
-                  <TableCell sx={{
+                      {formatDate(row.start_date)}
+                    </TableCell>
+                    <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                  {formatDate(row.end_date)}
-                  </TableCell>
-                  <TableCell sx={{
+                      {formatDate(row.end_date)}
+                    </TableCell>
+                    <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                  {row.budget}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: 500,
-                      borderBottom: "1px solid #F7FAFF",
-                      fontSize: "11px",
-                      width: 120,
-                      padding: "8px 10px",
-                      textAlign: "center",
-                    }}
-                  >
-                    <span style={getStatusColor(row.status)}>{row.status}</span>
-                  </TableCell>
-                  <TableCell sx={{
+                      {row.budget}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: 500,
+                        borderBottom: "1px solid #F7FAFF",
+                        fontSize: "11px",
+                        width: 120,
+                        padding: "8px 10px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <span style={getStatusColor(row.status)}>{row.status}</span>
+                    </TableCell>
+                    <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
@@ -364,44 +348,44 @@ function RecentOrders() {
                       textAlign: "center",
                     }}>
                       <Link href={`onGoingPatents/${row.og_id}`} passHref>
-                      <Button
-                    sx={{
-                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-                      color: "white",
-                      borderRadius: "100px",
-                      width: "100%",
-                      height: "90%",
-                      textTransform: "none",
-                    }}
-                  >
-                        Details
-                      </Button>
+                        <Button
+                          sx={{
+                            background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+                            color: "white",
+                            borderRadius: "100px",
+                            width: "100%",
+                            height: "90%",
+                            textTransform: "none",
+                          }}
+                        >
+                          Details
+                        </Button>
                       </Link>
                     </TableCell>
+                  </TableRow>
+                ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={9} />
                 </TableRow>
-              ))}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={9} />
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  colSpan={9}
+                  count={count}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
               </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                colSpan={9}
-                count={count}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
-    </Box>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   );
 }

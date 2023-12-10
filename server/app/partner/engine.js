@@ -10,13 +10,11 @@ const patentWatch = require("../models/patent_watch"); // Import Patent Watch Mo
 const responseToFer = require("../models/response_to_fer");
 const freedomToOperate = require("../models/freedom_to_operate"); // Import the Freedom To Operate Search Model
 const patentIllustration = require("../models/patent_illustration"); // Import Patent Illustration Model
-const Consultation = require("../models/consultation");
 const { renderJobNumbers } = require("../../order_number_generator");
 const Unassigned = require("../models/unassigned"); // Import Unassigned Job Model
 const Drafting = require("../models/patent_drafting");
 const Filing = require("../models/patent_filing");
 const AllNotifications = require("../notifications"); // Functions for sending Notification
-const Notification = require("../models/notification"); // Import Notification Model
 const NotificationPartner = require("../models/notification_partner"); // Import Notification Model declared for Partners
 const Admin = require("../models/admin");
 const sendEmail = require("../email");
@@ -976,7 +974,7 @@ const rejectJobOrder = async (req, res) => {
       }
 
       await AllNotifications.sendToAdmin("Partner has rejected the Job ID " + jobId + " assigned by User of ID " + userID + ". Go to Unassigned Jobs section and assign the task to other Partners.")
-      await AllNotifications.sendToUser("A New Partner will be assigned for the Job " + jobID + " . Sorry for the Inconvenience.");
+      await AllNotifications.sendToUser("A New Partner will be assigned for the Job " + jobId + " . Sorry for the Inconvenience.");
 
       return res.status(200).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
     }

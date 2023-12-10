@@ -31,21 +31,6 @@ import { options } from "@fullcalendar/core/preact";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-});
-
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
-
 function Notification(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -236,7 +221,7 @@ export default function NotificationTable() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`partner/settings`);
+        const response = await axios.get(`partner/settings`);
         setUserID(response.data.userID);
       } catch (error) {
         console.error("Error fetching Partner's Profile data:", error);
@@ -248,20 +233,20 @@ export default function NotificationTable() {
   }, []);
 
   useEffect(() => {
-    if(userID) {
-    const fetchNotifData = async () => {
-      try {
-        const notifResponse = await api.get(`partner/get-notifs/${userID}`);
-        setNotifications(notifResponse.data);
-        console.log("Notifications " + notifResponse.data);
-      } catch(error) {
-        console.error("Error Fetching Notification : " + error);
+    if (userID) {
+      const fetchNotifData = async () => {
+        try {
+          const notifResponse = await axios.get(`partner/get-notifs/${userID}`);
+          setNotifications(notifResponse.data);
+          console.log("Notifications " + notifResponse.data);
+        } catch (error) {
+          console.error("Error Fetching Notification : " + error);
+        }
       }
-    }
 
-    fetchNotifData();
-  }
-  },[userID])
+      fetchNotifData();
+    }
+  }, [userID])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -286,31 +271,31 @@ export default function NotificationTable() {
     setAnchorEl(null);
   };
 
-  const clickedByUser = async(notifId, userID) => {
-    const clickConfirm = await api.put(`partner/seen-notif/${userID}/${notifId}`, { seen: true})
+  const clickedByUser = async (notifId, userID) => {
+    const clickConfirm = await axios.put(`partner/seen-notif/${userID}/${notifId}`, { seen: true })
     clickConfirm.then(() => {
       console.log("Successfully Updated" + clickConfirm.data);
-    }).catch( (error) => {
+    }).catch((error) => {
       console.error("Error in updating Notifications : " + error);
     });
 
   }
 
-  const sendNotifNums = async(evt) => {
+  const sendNotifNums = async (evt) => {
     let chosenOnes = [...tickNotifs];
-    if(chosenOnes.includes(evt.target.value)){
+    if (chosenOnes.includes(evt.target.value)) {
       chosenOnes = chosenOnes.filter((value) => value != evt.target.value);
       setTickNotifs(chosenOnes);
     } else {
       chosenOnes.push(evt.target.value);
       setTickNotifs(chosenOnes);
-    } 
+    }
   }
 
-  const deleteSelectedNotifs = async(userID, deleteTheseNotifs) => {
-    const selectedNotifs = deleteTheseNotifs.map((elt) => elt=Number(elt));
+  const deleteSelectedNotifs = async (userID, deleteTheseNotifs) => {
+    const selectedNotifs = deleteTheseNotifs.map((elt) => elt = Number(elt));
     console.log(userID, selectedNotifs)
-    const response = await api.put(`partner/delete-notif/${userID}`, {deletedNotifs: selectedNotifs}).then(() => {
+    const response = await axios.put(`partner/delete-notif/${userID}`, { deletedNotifs: selectedNotifs }).then(() => {
       console.log("Successfully Deleted those Notifications.");
     }).catch((err) => {
       console.error("Error in deleting Notifications : " + err);
@@ -320,7 +305,7 @@ export default function NotificationTable() {
   const handleDaysSort = async (e, userID) => {
     const timeInterval = e.target.getAttribute("value");
     console.log(timeInterval, userID);
-    const sortedNotif = await api.get(`partner/sort-notif/${userID}/${timeInterval}`);
+    const sortedNotif = await axios.get(`partner/sort-notif/${userID}/${timeInterval}`);
     setNotifications(sortedNotif.data);
   }
 
@@ -372,7 +357,7 @@ export default function NotificationTable() {
                 sx={{ background: "#F2F6F8" }}
                 className='ml-5px'
                 disabled={notifications.length === 0}
-                onClick={() => {deleteSelectedNotifs(userID, tickNotifs), window.location.href = window.location.href;}}
+                onClick={() => { deleteSelectedNotifs(userID, tickNotifs), window.location.href = window.location.href; }}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
@@ -440,7 +425,7 @@ export default function NotificationTable() {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <MenuItem sx={{ fontSize: "14px" }} value={15} onClick={(e) => {  handleDaysSort(e, userID);  }}>Last 15 Days</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={15} onClick={(e) => { handleDaysSort(e, userID); }}>Last 15 Days</MenuItem>
             <MenuItem sx={{ fontSize: "14px" }} value={30} onClick={(e) => handleDaysSort(e, userID)}>Last Month</MenuItem>
             <MenuItem sx={{ fontSize: "14px" }} value={365} onClick={(e) => handleDaysSort(e, userID)}>Last Year</MenuItem>
           </Menu>
@@ -452,17 +437,17 @@ export default function NotificationTable() {
             boxShadow: "none",
           }}
         >
-          <Table 
-            sx={{ minWidth: 500 }} 
+          <Table
+            sx={{ minWidth: 500 }}
             aria-label="custom pagination table"
             className="dark-table"
           >
             <TableBody>
               {(rowsPerPage > 0
                 ? notifications.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
                 : notifications
               ).map((notification) => (
                 <TableRow key={notification.notifNum}>
@@ -474,7 +459,7 @@ export default function NotificationTable() {
                   >
                     <Checkbox value={notification.notifNum} {...label} onClick={(e) => sendNotifNums(e)} size="small" />
                   </TableCell>
-  
+
                   <TableCell
                     style={{
                       borderBottom: "1px solid #F7FAFF",
@@ -482,7 +467,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID); window.location.href=window.location.href; }}>{notification.notifText}</Link>
+                    <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID); window.location.href = window.location.href; }}>{notification.notifText}</Link>
                   </TableCell>
 
                   <TableCell

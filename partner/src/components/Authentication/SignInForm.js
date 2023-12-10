@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import styles from "@/components/Authentication/Authentication.module.css";
-
+import { AuthUtils } from 'frontend-module';
 
 const SignInForm = () => {
   const router = useRouter();
@@ -42,32 +42,27 @@ const SignInForm = () => {
     const userpassword = data.get("password");
 
     try {
-      const response = await axios.post("/api/auth/partner/signin", {
+      const response = await axios.post("/api/partner/signin", {
         email: useremail,
         password: userpassword,
       });
 
       const { token } = response.data;
-
       if (token) {
-        // Save the token to localStorage or any other secure storage mechanism
-        localStorage.setItem("token", token);
-
-        // Redirect to the desired page
-        router.push("/");
+        const decoded = AuthUtils.decodeJwt(token);
+        if (decoded) {
+          localStorage.setItem("token", token);
+          router.push("/");
+        } else {
+          console.error('Invalid Token');
+          setError("Invalid email or password");
+        }
       } else {
         setError("Invalid email or password");
       }
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          setError("Invalid email or password");
-        } else if (error.response.status === 404) {
-          setError("No user found, sign up first");
-        }
-      } else {
-        console.error("Error:", error);
-      }
+      setError(error.response?.data?.error || error.response?.statusText || "Server Error");
+      console.error("LogIn Error:", error);
     }
   };
 

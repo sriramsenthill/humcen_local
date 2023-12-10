@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import { Typography } from "@mui/material";
-import axios from "axios";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -9,23 +8,6 @@ import Box from "@mui/material/Box";
 import TrackOrder from "@/components/eCommerce/OrderDetails/TrackOrder";
 import StatusDialogueBox from "./statusDialog";
 import JobDetails from "./jobDetails";
-
-// Create an Axios instance
-const api = axios.create({
-    baseURL: "http://localhost:3000/api",
-  });
-  
-  
-  // Add an interceptor to include the token in the request headers
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = token;
-    }
-    return config;
-  });
-  
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -92,16 +74,16 @@ export default function JobsTabs({ service, number }) {
                 aria-label="basic tabs example"
               >
                 <Tab label="Job Details" {...a11yProps(0)} />
-              
+
                 <Tab label="Status" {...a11yProps(1)} />
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <JobDetails services={service} jobNo={number}/>
+              <JobDetails services={service} jobNo={number} />
             </TabPanel>
-           
+
             <TabPanel value={value} index={1}>
-            <StatusDialogueBox />
+              <StatusDialogueBox />
             </TabPanel>
           </Box>
         </Card>

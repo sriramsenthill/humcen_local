@@ -3,7 +3,7 @@ const winston = require('winston');
 const triple = require('triple-beam');
 const DailyRotateFile = require('winston-daily-rotate-file');
 
-const logDirectory = `${__dirname}/log`;
+const logDirectory = `${__dirname}/../log`;
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory);
 }
@@ -23,7 +23,7 @@ function formatObject(param) {
 const logFormat = winston.format.printf((info) => {
   const { timestamp, level, message } = info;
   const rest = info[triple.SPLAT] || [];
-  let result = `${timestamp} - ${process.pid} - ${level}: ${info.stack ? formatObject(info.stack) : formatObject(message)}`;
+  let result = `${timestamp} - ${level}: ${info.stack ? formatObject(info.stack) : formatObject(message)}`;
 
   if (rest.length) {
     result += ` ${rest.map(formatObject).join(' ')}`;

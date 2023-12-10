@@ -98,26 +98,9 @@ MyIncomes.propTypes = {
   onPageChange: PropTypes.func.isRequired,
 };
 
-
-// Create an Axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-});
-
-// Add an interceptor to include the token in the request headers
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = token;
-  }
-  return config;
-});
-
-
-
 async function fetchJobOrders() {
   try {
-    const response = await api.get('/partner/job_order');
+    const response = await axios.get('/partner/job_order');
     const { jobOrders } = response.data; // Extract the jobOrders array from the response data
 
     if (Array.isArray(jobOrders)) {
@@ -140,10 +123,10 @@ function getPayStatusColor(payStatus) {
       color: "#ee368c",
       padding: "5px 13px",
       display: "inline-block",
-  })
+    })
 
   }
- else {
+  else {
     return ({
       background: "rgba(0, 182, 155, 0.1)",
       borderRadius: "4px",
@@ -151,9 +134,9 @@ function getPayStatusColor(payStatus) {
       fontWeight: "bold",
       padding: "5px 13px",
       display: "inline-block",
-  })  // Set the color to green for "completed" status
-  }  
- // Default color if the status value is not matched
+    })  // Set the color to green for "completed" status
+  }
+  // Default color if the status value is not matched
 }
 
 
@@ -162,7 +145,7 @@ function MyIncome() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchJobOrders();
@@ -195,64 +178,64 @@ function MyIncome() {
           marginLeft: "12px"
         }}>My Income History</h1>
         <TableContainer component={Paper} sx={{
-            boxShadow: "none",
-          }}>
+          boxShadow: "none",
+        }}>
           <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
             <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-                Job No
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Job No
                 </TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>
-                Patent Service
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>
+                  Patent Service
                 </TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>Country</TableCell>
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>Country</TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>Amount</TableCell>
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>Amount</TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>Delivery Date</TableCell>
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>Delivery Date</TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>Status</TableCell>
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>Status</TableCell>
                 <TableCell sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "13.5px",
-                    fontWeight: 'bold',
-                    padding: "15px 10px",
-                    textAlign: "center",
-                  }}>Download Files</TableCell>
+                  borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13.5px",
+                  fontWeight: 'bold',
+                  padding: "15px 10px",
+                  textAlign: "center",
+                }}>Download Files</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -268,7 +251,7 @@ function MyIncome() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                    {row._id.job_no}
+                      {row._id.job_no}
                     </TableCell>
                     <TableCell sx={{
                       width: 100,
@@ -278,7 +261,7 @@ function MyIncome() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                    {row.service}
+                      {row.service}
                     </TableCell>
                     <TableCell sx={{
                       width: 100,
@@ -287,7 +270,7 @@ function MyIncome() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                    {row.country}
+                      {row.country}
                     </TableCell>
                     <TableCell sx={{
                       width: 100,
@@ -296,7 +279,7 @@ function MyIncome() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                    {row.amount}
+                      {row.amount}
                     </TableCell>
                     <TableCell sx={{
                       width: 100,
@@ -306,16 +289,16 @@ function MyIncome() {
                       textAlign: "center",
                     }}>{formatDate(row.end_date)}</TableCell>
                     <TableCell
-                    sx={{
-                      fontWeight: 500,
-                      borderBottom: "1px solid #F7FAFF",
-                      fontSize: "11px",
-                      width: 100,
-                      padding: "8px 10px",
-                      textAlign: "center",
-                    }}
+                      sx={{
+                        fontWeight: 500,
+                        borderBottom: "1px solid #F7FAFF",
+                        fontSize: "11px",
+                        width: 100,
+                        padding: "8px 10px",
+                        textAlign: "center",
+                      }}
                     >
-                    { row.pay_status && <span style={getPayStatusColor(row.pay_status)}>{row.pay_status}</span>}
+                      {row.pay_status && <span style={getPayStatusColor(row.pay_status)}>{row.pay_status}</span>}
                     </TableCell>
                     <TableCell sx={{
                       width: 100,
@@ -324,17 +307,17 @@ function MyIncome() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}> <Button
-                    sx={{
-                      background: "#00ACF6",
-                      color: "white",
-                      borderRadius: "100px",
-                      width: "150px",
-                      height: "80%",
-                      textTransform: "none",
-                    }}
-                  >
-                  Download Invoice
-                  </Button></TableCell>
+                      sx={{
+                        background: "#00ACF6",
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "150px",
+                        height: "80%",
+                        textTransform: "none",
+                      }}
+                    >
+                        Download Invoice
+                      </Button></TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (

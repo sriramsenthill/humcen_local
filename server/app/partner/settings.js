@@ -2,23 +2,6 @@ const servList = require("../../Works");
 const Partner = require("../models/partner"); // Import the Partner model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 
-
-
-const fetchPartnerFullName = async (req, res) => {
-  const userID = req.userID;
-
-  try {
-    // Find the partner with the given userID
-    const partner = await Partner.findOne({ userID });
-
-    res.json(partner.first_name + " " + partner.last_name);
-  } catch (error) {
-    // Handle any errors that occurred during the process
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 const fetchPartnerProfileImage = async (req, res) => {
   const userID = req.userID;
 
@@ -195,7 +178,6 @@ const verifyPartnerToken = async (req, res) => {
 };
 
 module.exports = {
-  fetchPartnerFullName,
   fetchPartnerProfileImage,
   fetchPartnerSettings,
   fetchPartnerKnownFields,
