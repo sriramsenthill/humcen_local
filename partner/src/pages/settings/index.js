@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import BasicTabs from "./Tabs";
-import withAuth from "@/components/withAuth";
 import styles from "@/styles/PageTitle.module.css"
 import Link from "next/link";
 
@@ -22,8 +21,8 @@ function Settings() {
 
   return (
     <>
-    <div className={'card'}>
-      <div className={styles.pageTitle}>
+      <div className={'card'}>
+        <div className={styles.pageTitle}>
           <ul>
             <li>
               <Link href="/">Dashboard</Link>
@@ -31,27 +30,27 @@ function Settings() {
             <li>Settings</li>
           </ul>
         </div>
-      <Card
-        sx={{
-          boxShadow: "none",
-          borderRadius: "10px",
-          mb: "15px",
-          display: "flex",
-          p: "12px 12px",
-          flexDirection: "column",
-          background: "white",
-        }}
-      >
-      <h1 className={styles.heading} style={{
-        marginTop: "14px" ,
-        marginLeft: "16px"
-      }}>Settings</h1>
+        <Card
+          sx={{
+            boxShadow: "none",
+            borderRadius: "10px",
+            mb: "15px",
+            display: "flex",
+            p: "12px 12px",
+            flexDirection: "column",
+            background: "white",
+          }}
+        >
+          <h1 className={styles.heading} style={{
+            marginTop: "14px",
+            marginLeft: "16px"
+          }}>Settings</h1>
 
-        <BasicTabs />
-      </Card>
+          <BasicTabs />
+        </Card>
       </div>
     </>
   );
 }
 
-export default withAuth(Settings);
+export default Settings;

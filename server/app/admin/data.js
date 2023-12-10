@@ -158,7 +158,7 @@ const getJobFiles = async (req, res) => {
       console.log("No Job Files Present under Job No " + jobID);
     } else {
       if (!jobFile || !jobFile.job_files) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
       let fileDataList = [];
       let fileNameList = [];
@@ -168,7 +168,7 @@ const getJobFiles = async (req, res) => {
         const details = jobFile.job_files[totalFiles];
         // Check if base64 data is present
         if (!details.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = details;
@@ -266,7 +266,7 @@ const updateJobFilesDetails = async (req, res) => {
           await AllNotifications.sendToAdmin("Partner ID " + workedPartner.userID + "'s Work for Job ID " + jobID + " has been rejected and Feedback has been sent successfully.");
           await AllNotifications.sendToPartner(Number(workedPartner.userID), "Your Work for Job ID " + jobID + " has been rejected by the Admin due to some inaccuracies. Make sure to read up the Remarks to find the Issue.");
         } else {
-          res.status(404).json({ error: "Partner Not Found" });
+          res.status(500).json({ error: "Partner Not Found" });
         }
       }
 
@@ -375,7 +375,7 @@ const getJobOrderById = async (req, res) => {
       console.log(copyJobs);
       res.json(copyJobs);
     } else {
-      res.status(404).json({
+      res.status(500).json({
         error: "No job found with the provided id or unauthorized access",
       });
     }
@@ -411,7 +411,7 @@ const getUnassignedJobById = async (req, res) => {
       console.log(copyJobs);
       res.json({ copyJobs });
     } else {
-      res.status(404).json({
+      res.status(500).json({
         error: "No job found with the provided id or unauthorized access",
       });
     }
@@ -448,7 +448,7 @@ const getUnassignedJobDetailsById = async (req, res) => {
       console.log(copyJobs);
       res.json(copyJobs);
     } else {
-      res.status(404).json({
+      res.status(500).json({
         error: "No job found with the provided id or unauthorized access",
       })
     }
@@ -1898,7 +1898,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
 
       // Check if job details exist and have invention details
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1909,7 +1909,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1926,7 +1926,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Patent Filing") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1937,7 +1937,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1950,7 +1950,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.applicants[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1963,7 +1963,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.investors[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1980,7 +1980,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Patent Search") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.technical_diagram) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1991,7 +1991,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.technical_diagram[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2009,7 +2009,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
 
 
       if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -2020,7 +2020,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.fer[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2033,7 +2033,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.complete_specifications[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2051,7 +2051,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Freedom To Operate") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.invention_description || !jobDetails.patent_application_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
 
@@ -2063,7 +2063,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.invention_description[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2076,7 +2076,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.patent_application_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2094,7 +2094,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Patent Portfolio Analysis") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.service_specific_files.invention_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -2105,7 +2105,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2122,7 +2122,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Patent Translation Services") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.document_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -2133,7 +2133,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.document_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2150,7 +2150,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     else if (service === "Patent Illustration") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.preferred_style) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -2161,7 +2161,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         const inventionDetails = jobDetails.preferred_style[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -2599,7 +2599,7 @@ const getAdminNotification = async (req, res) => {
     console.log(thatAdminNotifs);
     if (!thatAdminNotifs) {
       console.error("Notifications for Admin do not exist.");
-      res.status(404).json({ error: "Notifications not found" });
+      res.status(500).json({ error: "Notifications not found" });
     } else {
       res.json(thatAdminNotifs.notifications);
     }

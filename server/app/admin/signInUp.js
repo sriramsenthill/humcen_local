@@ -9,7 +9,7 @@ const adminSignIn = async (req, res) => {
 
     if (!user) {
       // User not found, return an error response
-      return res.status(404).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -38,7 +38,7 @@ const verifyAdminToken = async (req, res) => {
 
     if (!user) {
       // User not found, return an error response
-      return res.status(404).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     // Fetch other user-specific data from respective collections if needed

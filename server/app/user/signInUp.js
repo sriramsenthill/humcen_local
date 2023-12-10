@@ -70,7 +70,7 @@ const signInUser = async (req, res) => {
     const user = await Customer.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -95,7 +95,7 @@ const verifyTokenMiddleware = async (req, res) => {
     const user = await Customer.findOne({ userID: userId });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     const jobOrders = await JobOrder.find({ userID: userId });
@@ -112,7 +112,7 @@ const getCustomerData = async (req, res) => {
     const userId = req.userId;
     const customer = await Customer.findOne({ userID: userId });
     if (!customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(500).json({ message: "Customer not found" });
     }
 
     // Additional logic if needed

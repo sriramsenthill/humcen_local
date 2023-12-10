@@ -158,25 +158,6 @@ const updatePartnerPassword = async (req, res) => {
   });
 };
 
-const verifyPartnerToken = async (req, res) => {
-  try {
-    const userID = req.userID;
-    const user = await Partner.findOne({ userID });
-    console.log(user);
-    if (!user) {
-      // User not found, return an error response
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Fetch other user-specific data from respective collections if needed
-
-    res.json({ user });
-  } catch (error) {
-    console.error("Error fetching user specific data:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 module.exports = {
   fetchPartnerProfileImage,
   fetchPartnerSettings,
@@ -186,5 +167,4 @@ module.exports = {
   updatePartnerPrefSettings,
   updatePartnerPassword,
   editPartnerServices,
-  verifyPartnerToken
 };

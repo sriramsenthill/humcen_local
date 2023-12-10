@@ -55,7 +55,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/partner/settings", {
+        .get("/settings", {
           headers: {
             Authorization: token,
           },
@@ -709,7 +709,7 @@ export default function Profile() {
                 if (editMode === true) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('/api/partner/settings', {
+                  axios.put('/settings', {
                     data: {
                       userId: UID,
                       applicant_type: applicantType,

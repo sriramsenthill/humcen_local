@@ -221,7 +221,7 @@ export default function NotificationTable() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`partner/settings`);
+        const response = await axios.get(`/settings`);
         setUserID(response.data.userID);
       } catch (error) {
         console.error("Error fetching Partner's Profile data:", error);

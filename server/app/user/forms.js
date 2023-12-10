@@ -51,7 +51,7 @@ const getJobOrderOnID = async (req, res) => {
       console.log(copyJobs);
       res.json({ copyJobs });
     } else {
-      res.status(404).json({
+      res.status(500).json({
         error: "No job found with the provided id or unauthorized access",
       });
     }
@@ -1433,7 +1433,7 @@ const getJobFilesForUsers = async (req, res) => {
       console.log("No Job Files Present under Job No " + jobID);
     } else {
       if (!jobFile || !jobFile.job_files) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
       let fileDataList = [];
       let fileNameList = [];
@@ -1443,7 +1443,7 @@ const getJobFilesForUsers = async (req, res) => {
         const inventionDetails = jobFile.job_files[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;

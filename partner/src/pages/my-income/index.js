@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import styles from "@/styles/PageTitle.module.css";
 import MyIncome from "@/components/MyIncome";
-import withAuth from "@/components/withAuth";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -10,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/partner/job_order');
+    const response = await axios.get('/job_order');
     const { jobOrders } = response.data; // Extract the jobOrders array from the response data
     console.log(jobOrders)
     if (Array.isArray(jobOrders)) {
@@ -98,4 +97,4 @@ function ContactList() {
   );
 }
 
-export default withAuth(ContactList);
+export default ContactList;

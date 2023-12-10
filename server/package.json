@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.0.3",
     "nodemailer": "^6.9.7",
+    "on-finished": "^2.4.1",
     "python-shell": "^5.0.0",
     "uuid": "^9.0.0",
     "winston": "^3.11.0",

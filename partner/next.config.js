@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_HOST: "http://localhost:3000",
+    HUMCEN_SERVER_HOST: "http://localhost:3000",
   },
   experimental: {
     forceSwcTransforms: true,

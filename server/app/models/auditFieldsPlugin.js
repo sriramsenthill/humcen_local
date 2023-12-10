@@ -24,7 +24,7 @@ module.exports = function auditFieldsPlugin(schema) {
 
   schema.methods.prefillAuditInfo = function (req) {
     this.orgId = req.orgId;
-    this.modifiedBy = req.userId;
+    this.modifiedBy = req.userID;
     this.modifiedAt = Date.now();
     this.statusFlag = 'A';
   }

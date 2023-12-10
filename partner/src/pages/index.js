@@ -10,15 +10,14 @@ import cardStyle from "@/styles/nc.module.css";
 // import Performance from "@/components/Dashboard/eCommerce/Performance";
 import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
 import NewOrder from "@/components/index_comp/new_orders";
-import withAuth from "@/components/withAuth";
 import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
 import axios from "axios";
 import { Typography } from "@mui/material";
-import { AuthUtils } from 'frontend-module';
+import { commonUtils } from 'frontend-module';
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/partner/job_order');
+    const response = await axios.get('/job_order');
     const jobOrders = response.data; // Extract the jobOrders array from the response data
     console.log(jobOrders)
     if (Array.isArray(jobOrders)) {
@@ -35,9 +34,6 @@ async function fetchJobOrders() {
   }
 }
 
-
-
-
 function eCommerce() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [partnerName, setPartnerName] = useState("");
@@ -45,22 +41,7 @@ function eCommerce() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/api/partner/name", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const partnerNameData = response.data;
-          setPartnerName(partnerNameData);
-        })
-        .catch((error) => {
-          console.error("Error fetching partner name:", error);
-        });
-    }
+    setPartnerName(commonUtils.getUserName());
   }, []);
 
   useEffect(() => {
@@ -197,4 +178,4 @@ function eCommerce() {
   );
 }
 
-export default withAuth(eCommerce);
+export default eCommerce;

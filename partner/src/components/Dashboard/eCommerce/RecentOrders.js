@@ -134,7 +134,7 @@ RecentOrder.propTypes = {
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/partner/job_order');
+    const response = await axios.get('/job_order');
     console.log(response.data);
     const jobOrders = response.data; // Extract the jobOrders array from the response data
 

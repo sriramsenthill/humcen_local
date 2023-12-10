@@ -28,7 +28,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`partner/settings`);
+        const response = await axios.get(`/settings`);
         setUserID(response.data.userID);
       } catch (error) {
         console.error("Error fetching job order data:", error);

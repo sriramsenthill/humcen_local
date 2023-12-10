@@ -1,5 +1,4 @@
 import * as React from "react";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import {
   IconButton,
@@ -15,11 +14,9 @@ import {
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import Settings from "@mui/icons-material/Settings";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Logout from "@mui/icons-material/Logout";
-import { AuthUtils } from "frontend-module";
+import { commonUtils } from "frontend-module";
 
 const Profile = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -28,13 +25,7 @@ const Profile = () => {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const user = AuthUtils.decodeJwt(token);
-      if (user) {
-        setPartnerName(`${user.firstName} ${user.lastName}`);
-      }
-    }
+    setPartnerName(commonUtils.getUserName());
   }, []);
 
   const handleClick = (event) => {

@@ -10,10 +10,11 @@ const signUpPartner = async (req, res) => {
     const partner = new Partner();
     const user = await users.create(req, type, partner._id);
     partner.userId = user._id;
+    partner.prefillAuditInfo(req);
     await partner.save();
     res.status(200).json({});
   } catch (error) {
-    logger.error("Error creating partner:", error);
+    logger.error(req, "Error creating partner:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -28,7 +29,7 @@ const signInPartner = async (req, res) => {
 
     res.status(200).json({ token });
   } catch (error) {
-    logger.error("Failed to sign in:", error);
+    logger.error(req, "Failed to sign in:", error);
     res.status(500).json({ error: error.message });
   }
 };

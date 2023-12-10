@@ -41,7 +41,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/partner/settings", {
+        .get("/settings", {
           headers: {
             Authorization: token,
           },

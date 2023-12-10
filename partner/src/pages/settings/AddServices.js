@@ -22,7 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import { FormControlLabel } from "@mui/material";
 import Switch from "@mui/material/Switch";
-import serviceList from "pages/my-patent-services/ServiceListArray";
+import serviceList from "@/pages/my-patent-services/ServiceListArray";
 
 const servList = serviceList.map(elem => elem.title);
 
@@ -100,7 +100,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/partner/settings", {
+        .get("/settings", {
           headers: {
             Authorization: token,
           },
@@ -122,7 +122,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/partner/fields", {
+        .get("/fields", {
           headers: {
             Authorization: token,
           },

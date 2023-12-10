@@ -12,7 +12,7 @@ router.use(function (req, res, next) {
 });
 
 //Partner_SignInUp
-router.post("/api/partner/signup", partnerAuth.signUpPartner);
-router.post("/api/partner/signin", partnerAuth.signInPartner);
+router.post("/partner/signup", partnerAuth.signUpPartner);
+router.post("/partner/signin", partnerAuth.signInPartner);
 
 module.exports = router;

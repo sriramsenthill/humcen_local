@@ -5,7 +5,6 @@ import styles from "@/styles/Patents.module.css";
 import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
 import axios from "axios";
@@ -118,7 +117,7 @@ const DynamicPage = () => {
 
   const onClickDownload = async (jobId) => {
     try {
-      const response = await axios.get(`/partner/job_order/${Service}/${jobId}`);
+      const response = await axios.get(`/jobOrder/${Service}/${jobId}`);
       console.log(response.data);
 
       const fileData = response.data.fileData;
@@ -400,4 +399,4 @@ const DynamicPage = () => {
   );
 };
 
-export default withAuth(DynamicPage);
+export default DynamicPage;

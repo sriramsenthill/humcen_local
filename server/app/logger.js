@@ -1,4 +1,5 @@
 const fs = require('fs');
+const http = require('http');
 const winston = require('winston');
 const triple = require('triple-beam');
 const DailyRotateFile = require('winston-daily-rotate-file');
@@ -21,9 +22,17 @@ function formatObject(param) {
 }
 
 const logFormat = winston.format.printf((info) => {
+  let reqInfo = '';
   const { timestamp, level, message } = info;
   const rest = info[triple.SPLAT] || [];
-  let result = `${timestamp} - ${level}: ${info.stack ? formatObject(info.stack) : formatObject(message)}`;
+  const req = message instanceof http.IncomingMessage ? message : null;
+
+  if (req) {
+    reqInfo = ` - ${req.method} ${req.url}`;
+    info.message = '';
+  }
+
+  let result = `${timestamp} - ${level}${reqInfo}: ${info.stack ? formatObject(info.stack) : formatObject(info.message)}`;
 
   if (rest.length) {
     result += ` ${rest.map(formatObject).join(' ')}`;

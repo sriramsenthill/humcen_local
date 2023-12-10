@@ -1,2 +1,2 @@
-export { default as AuthUtils } from "./utils/auth";
-
+export { default as AuthUtils } from "./utils/authUtils";
+export { default as commonUtils } from "./utils/commonUtils";

@@ -1,8 +1,15 @@
 import axios from "axios";
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_HOST;
+const basePath = '/api/partner';
+axios.defaults.baseURL = process.env.HUMCEN_SERVER_HOST + basePath;
+
 axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  if (config.url.indexOf('/api/noauth/') > -1) {
+    config.baseURL = config.baseURL?.replace(basePath, '');
+  }
+
+  console.log('config', config.url);
+  const token = globalThis?.localStorage?.getItem('token');
   if (token) config.headers['Authorization'] = token;
   return config;
 });

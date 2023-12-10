@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid";
 import styles from "@/styles/PageTitle.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import withAuth from '@/components/withAuth';
 import serviceList from './ServiceListArray';
 
 
@@ -18,7 +17,7 @@ const MyPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/partner/fields", {
+        .get("/fields", {
           headers: {
             Authorization: token,
           },
@@ -85,4 +84,4 @@ const MyPage = () => {
   );
 };
 
-export default withAuth(MyPage);
+export default MyPage;

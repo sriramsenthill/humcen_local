@@ -34,7 +34,7 @@ const getPartnerJobsById = async (req, res) => {
     console.log("partner:", partner); // Check the fetched partner document
 
     if (!partner) {
-      return res.status(404).json({ error: "Partner not found" });
+      return res.status(500).json({ error: "Partner not found" });
     }
 
     // Check if the partner has access to the provided job number
@@ -89,7 +89,7 @@ const getPartnerJobOrders = async (req, res) => {
     // console.log("partner:", partner); // Check the fetched partner document
 
     if (!partner) {
-      return res.status(404).json({ error: "Partner not found" });
+      return res.status(500).json({ error: "Partner not found" });
     }
 
     // Get the job order IDs associated with the partner
@@ -138,7 +138,7 @@ const acceptJobOrder = async (req, res) => {
     const partner = await Partner.findOne({ userID });
 
     if (!partner) {
-      return res.status(404).json({ error: "Partner not found" });
+      return res.status(500).json({ error: "Partner not found" });
     }
 
     // Update the Accepted field of the specified job ID to true
@@ -148,7 +148,7 @@ const acceptJobOrder = async (req, res) => {
 
 
     if (!updatedJobOrder) {
-      return res.status(404).json({ error: "Job order not found" });
+      return res.status(500).json({ error: "Job order not found" });
     }
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date().toLocaleDateString(undefined, options);
@@ -198,7 +198,7 @@ const rejectJobOrder = async (req, res) => {
     const partner = await Partner.findOne({ userID });
 
     if (!partner) {
-      return res.status(404).json({ error: "Partner not found" });
+      return res.status(500).json({ error: "Partner not found" });
     }
 
     partner.rejected_jobs.push(jobId);
@@ -1009,7 +1009,7 @@ const getFilesForPartners = async (req, res) => {
 
       // Check if job details exist and have invention details
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
       let fileDataList = [];
       let fileNameList = [];
@@ -1019,7 +1019,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1037,7 +1037,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Patent Filing") {
       const jobDetails = await Filing.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1048,7 +1048,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1061,7 +1061,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.applicants[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1074,7 +1074,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.investors[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1091,7 +1091,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Patent Search") {
       const jobDetails = await Search.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.technical_diagram) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1102,7 +1102,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.technical_diagram[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1118,7 +1118,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Response To FER Office Action") {
       const jobDetails = await responseToFer.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1129,7 +1129,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.fer[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1142,7 +1142,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.complete_specifications[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1159,7 +1159,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Freedom To Operate") {
       const jobDetails = await freedomToOperate.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.invention_description || !jobDetails.patent_application_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1170,7 +1170,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.invention_description[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1183,7 +1183,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.patent_application_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1199,7 +1199,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Patent Portfolio Analysis") {
       const jobDetails = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.service_specific_files.invention_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1210,7 +1210,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1227,7 +1227,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Patent Translation Services") {
       const jobDetails = await patentTranslation.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.document_details) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1238,7 +1238,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.document_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1255,7 +1255,7 @@ const getFilesForPartners = async (req, res) => {
     else if (service === "Patent Illustration") {
       const jobDetails = await patentIllustration.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.preferred_style) {
-        return res.status(404).json({ error: "File not found" });
+        return res.status(500).json({ error: "File not found" });
       }
 
       let fileDataList = [];
@@ -1266,7 +1266,7 @@ const getFilesForPartners = async (req, res) => {
         const inventionDetails = jobDetails.preferred_style[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
-          return res.status(404).json({ error: "File not found" });
+          return res.status(500).json({ error: "File not found" });
         }
 
         const { base64, name, type } = inventionDetails;
@@ -1537,7 +1537,7 @@ const updateTimelineForUpload = async (req, res) => {
     console.log("partner:", partner); // Check the fetched partner document
 
     if (!partner) {
-      return res.status(404).json({ error: "Partner not found" });
+      return res.status(500).json({ error: "Partner not found" });
     }
 
     // Check if the partner has access to the provided job number

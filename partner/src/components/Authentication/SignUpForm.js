@@ -25,20 +25,12 @@ const SignUpForm = () => {
     known_fields: [],
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // Redirect to the dashboard if the user is already logged in
-      router.push("/");
-    }
-  }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSignupError("");
 
     try {
-      await axios.post('/api/partner/signup', {
+      await axios.post('/api/partner/noauth/signup', {
         ...formData,
         known_fields: knownFieldsValues
       });

@@ -15,7 +15,7 @@ function formatDate(date) {
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/partner/job_order');
+    const response = await axios.get('/job_order');
     const jobOrders = response.data;
     console.log("This is it " + jobOrders);
 
@@ -77,7 +77,7 @@ const NewOrder = () => {
 
   const handleIdleJobs = async (jobs, ID) => {
     try {
-      const response = await axios.put(`/idle-job/${ID}`, { idleJobs: jobs, customers: users }).then(() => {
+      const response = await axios.put(`/api/partner/idleJob/${ID}`, { idleJobs: jobs, customers: users }).then(() => {
         console.log("Idle Jobs notified to API successfully");
       }).catch((error) => {
         console.error("Error in handling the Idle Job : " + error);
@@ -93,7 +93,7 @@ const NewOrder = () => {
 
   const handleAcceptJob = async (jobId) => {
     try {
-      await axios.put(`/accept/${jobId}`);
+      await axios.put(`/api/partner/accept/${jobId}`);
       window.location.reload();
     } catch (error) {
       console.error('Error accepting job order:', error);
@@ -102,7 +102,7 @@ const NewOrder = () => {
 
   const handleRejectJob = async (jobId, service, country) => {
     try {
-      await axios.delete(`/reject/${service}/${country}/${jobId}`);
+      await axios.delete(`/api/partner/reject/${service}/${country}/${jobId}`);
       window.location.reload(true);
     } catch (error) {
       console.error('Error rejecting job order:', error);

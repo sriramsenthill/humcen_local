@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import styles from "@/styles/PageTitle.module.css";
 import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
-import withAuth from "@/components/withAuth";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
@@ -11,7 +10,7 @@ import { useRouter } from "next/router";
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/partner/job_order');
+    const response = await axios.get('/job_order');
     const jobOrders = response.data;
     console.log(jobOrders);
     if (Array.isArray(jobOrders)) {
@@ -135,4 +134,4 @@ function Inbox() {
   );
 }
 
-export default withAuth(Inbox);
+export default Inbox;

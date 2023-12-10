@@ -8,9 +8,6 @@ const data = require("../admin/data");
 const adminSettings = require("../admin/settings");
 const verifyAdmin = require("../verify_token/verifyAdmin");
 const admin_auth = require("../admin/signInUp");
-const partnerSetttings = require("../partner/settings");
-const verifyPartner = require("../verify_token/verifyPartner");
-const engine = require("../partner/engine");
 
 //USERS_FORMS
 router.get("/api/job_order/:id", verifyToken, forms.getJobOrderOnID);
@@ -209,7 +206,7 @@ router.put("/api/admin/applicant-settings", verifyAdmin, adminSettings.updateAdm
 
 router.put("/api/admin/pref-settings", verifyAdmin, adminSettings.updateAdminEmailNotifDetails) // For Updating Admin's Email Notification Settings
 
-router.put("/api/admin/password", verifyPartner, adminSettings.updateAdminPassword); // For Updating Admin's Password
+router.put("/api/admin/password", verifyAdmin, adminSettings.updateAdminPassword); // For Updating Admin's Password
 
 //ADMIN_NOTIFICATIONS
 router.get("/api/admin/get-notifs", data.getAdminNotification) // Get Notifications for Admin
@@ -221,61 +218,10 @@ router.put("/api/admin/delete-notif", verifyAdmin, data.notifcationsAdminDelete)
 router.get("/api/admin/sort-notif/:days", verifyAdmin, data.sortAdminNotifications); // Sorting Notifications on the basis of Time Interval
 
 router.get("/api/admin/clear-notif", verifyAdmin, data.clearAdminRecentNotifs); // Clearing out the Recent Notifications
-
+router.post("/api/find-partner", verifyAdmin, data.getPartnersData);
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
 
 router.get("/api/admin/verify-token", verifyAdmin, admin_auth.verifyAdminToken);
-
-
-//Partner_Settings
-router.get("/api/partner/img", verifyPartner, partnerSetttings.fetchPartnerProfileImage);
-
-router.get("/api/partner/settings", verifyPartner, partnerSetttings.fetchPartnerSettings);
-
-router.get("/api/partner/fields", verifyPartner, partnerSetttings.fetchPartnerKnownFields);
-
-router.put("/api/partner/settings", verifyPartner, partnerSetttings.updatePartnerSettings);
-
-router.put("/api/partner/bank-settings", verifyPartner, partnerSetttings.updatePartnerBankDetails);
-
-router.put("/api/partner/pref-settings", verifyPartner, partnerSetttings.updatePartnerPrefSettings);
-
-router.put("/api/partner/service-settings", verifyPartner, partnerSetttings.editPartnerServices);
-
-router.put("/api/partner/password", verifyPartner, partnerSetttings.updatePartnerPassword);
-
-router.get("/api/partner/verify-token", verifyPartner, partnerSetttings.verifyPartnerToken);
-
-//Partner_engine
-router.get("/api/partner/jobs/:id", verifyPartner, engine.getPartnerJobsById);
-router.get("/api/partner/job_order", verifyPartner, engine.getPartnerJobOrders);
-router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
-router.put("/api/partner/uploaded", verifyPartner, engine.updateTimelineForUpload);
-
-
-router.delete("/api/reject/:service/:country/:jobId", verifyPartner, engine.rejectJobOrder);
-router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);
-router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
-router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);
-router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
-router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
-router.get("/api/partner/get-bulk-order-file/:id", verifyPartner, engine.getAssignedBulkOrderFile);
-router.put("/api/idle-job/:partner", verifyPartner, engine.sendIdleJobToUnassigned);
-
-// Partner Notifications
-
-router.get("/api/partner/get-notifs/:userID", verifyPartner, engine.getPartnerNotification) // Get Notifications for Customer
-
-router.put("/api/partner/seen-notif/:notifId/:userID", verifyPartner, engine.notificationPartnerSeen); // Make the notification, a visited one
-
-router.put("/api/partner/delete-notif/:userID", verifyPartner, engine.notifcationsPartnerDelete); // For deleting the Selected Notifications
-
-router.get("/api/partner/sort-notif/:userID/:days", verifyPartner, engine.sortPartnerNotifications); // Sorting Notifications on the basis of Time Interval
-
-router.get("/api/partner/clear-notif/:userID", verifyPartner, engine.clearRecentPartnerNotifs); // Clearing out the Recent Notifications
-
-
-router.post("/api/find-partner", data.getPartnersData);
 module.exports = router;

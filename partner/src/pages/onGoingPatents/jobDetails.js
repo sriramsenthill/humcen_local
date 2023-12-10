@@ -201,7 +201,7 @@ const JobDetails = ({ services, jobNo }) => {
         );
 
       api
-        .get(`partner-details/${services}/${id}`, {
+        .get(`partnerDetails/${services}/${id}`, {
           headers: {
             Authorization: token,
           },
