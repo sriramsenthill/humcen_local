@@ -30,7 +30,7 @@ const SignUpForm = () => {
     setSignupError("");
 
     try {
-      await axios.post('/api/partner/noauth/signup', {
+      await axios.post('/api/noauth/partner/signup', {
         ...formData,
         known_fields: knownFieldsValues
       });
@@ -45,7 +45,7 @@ const SignUpForm = () => {
       });
       setKnownFieldsValues([]);
     } catch (error) {
-      setSignupError(error.response.data?.error || error.response.statusText);
+      setSignupError(error.response?.data?.error || error.response?.statusText);
       console.error("Error saving user data:", error);
     }
   };

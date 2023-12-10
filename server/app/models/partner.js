@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const auditFieldsPlugin = require('./auditFieldsPlugin');
 
 const PartnerSchema = new mongoose.Schema({
   userId: {
@@ -169,5 +170,6 @@ const PartnerSchema = new mongoose.Schema({
 
 });
 
+PartnerSchema.plugin(auditFieldsPlugin);
 const Partner = mongoose.model('Partner', PartnerSchema);
 module.exports = Partner;

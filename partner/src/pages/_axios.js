@@ -8,7 +8,6 @@ axios.interceptors.request.use((config) => {
     config.baseURL = config.baseURL?.replace(basePath, '');
   }
 
-  console.log('config', config.url);
   const token = globalThis?.localStorage?.getItem('token');
   if (token) config.headers['Authorization'] = token;
   return config;

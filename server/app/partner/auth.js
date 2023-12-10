@@ -11,6 +11,7 @@ const signUpPartner = async (req, res) => {
     const user = await users.create(req, type, partner._id);
     partner.userId = user._id;
     partner.prefillAuditInfo(req);
+    partner.modifiedBy = user._id;
     await partner.save();
     res.status(200).json({});
   } catch (error) {
