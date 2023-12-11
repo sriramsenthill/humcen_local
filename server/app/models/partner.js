@@ -1,35 +1,16 @@
 const mongoose = require('mongoose');
+const addressSchema = require('./address');
 const auditFieldsPlugin = require('./auditFieldsPlugin');
+const CountrySchema = require('./country');
+const emailPref = require('./emailPrefrences');
 
 const PartnerSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'State',
-    index: true,
-    required: true,
-  },
-  first_name: {
-    type: String,
-  },
-  last_name: {
-    type: String,
-  },
-  profile_img: {
-    type: String,
+  emailPreference: emailPref,
+  address: addressSchema,
+  age: {
+    type: Number,
   },
   position: {
-    type: String,
-  },
-  phno: {
-    type: String,
-  },
-  street: {
-    type: String,
-  },
-  town: {
-    type: String,
-  },
-  country: {
     type: String,
   },
   applicant_type: {
@@ -41,43 +22,13 @@ const PartnerSchema = new mongoose.Schema({
   company_id: {
     type: String,
   },
-  vat_payer: {
-    type: String,
+  vatPayer: {
+    type: Boolean,
   },
-  post_code: {
-    type: String,
-  },
-  email: {
-    type: String,
-  },
-  password: {
-    type: String,
-  },
-  full_name: {
-    type: String,
-  },
-  age: {
-    type: Number,
-  },
-  domain: {
-    type: String,
-  },
-  "Patent Agent": {
-    type: String,
-  },
-  cert_no: {
+  certificateNumber: {
     type: String,
   },
   jurisdiction: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
-  state: {
-    type: String,
-  },
-  zip_code: {
     type: String,
   },
   tax_ID_no: {
@@ -127,46 +78,6 @@ const PartnerSchema = new mongoose.Schema({
       type: String,
     }
   },
-  pref: {
-    mails: {
-      type: Boolean,
-    },
-    order_updates: {
-      type: Boolean,
-    },
-    marketing_emails: {
-      type: Boolean,
-    },
-    newsletter: {
-      type: Boolean,
-    },
-  },
-  is_free: {
-    type: Boolean,
-    default: true,
-  },
-  in_progress_jobs: {
-    type: Number,
-    default: 0,
-  },
-  rejected_jobs: {
-    type: [Number],
-    default: [],
-  },
-  known_fields: {
-    "Patent Consultation": { type: Boolean, default: false },
-    "Patent Drafting": { type: Boolean, default: false },
-    "Patent Filing": { type: Boolean, default: false },
-    "Patent Search": { type: Boolean, default: false },
-    "Response to FER Office Action": { type: Boolean, default: false },
-    "Freedom To Operate": { type: Boolean, default: false },
-    "Freedom to Patent Landscape": { type: Boolean, default: false },
-    "Patent Portfolio Analysis": { type: Boolean, default: false },
-    "Patent Translation Services": { type: Boolean, default: false },
-    "Patent Illustration": { type: Boolean, default: false },
-    "Patent Watch": { type: Boolean, default: false },
-    "Patent Licensing and Commercialization Services": { type: Boolean, default: false }
-  }
 
 });
 
