@@ -67,30 +67,6 @@ export default function SignIn() {
     } else {
       setError("Invalid email or password");
     }
-
-    // try {
-    //   const response = await axios.post("/api/noauth/partner/signin", {
-    //     email: useremail,
-    //     password: userpassword,
-    //   });
-
-    //   const { token } = response.data;
-    //   if (token) {
-    //     const decoded = AuthUtils.decodeJwt(token);
-    //     if (decoded) {
-    //       localStorage.setItem("token", token);
-    //       router.push("/");
-    //     } else {
-    //       console.error('Invalid Token');
-    //       setError("Invalid email or password");
-    //     }
-    //   } else {
-    //     setError("Invalid email or password");
-    //   }
-    // } catch (error) {
-    //   setError(error.response?.data?.error || error.response?.statusText || "Server Error");
-    //   console.error("LogIn Error:", error);
-    // }
   };
 
   return (
