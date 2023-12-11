@@ -6,6 +6,6 @@ const CountrySchema = new mongoose.Schema({
   name: { type: String, required: true, index: true },
 });
 
-schema.plugin(auditFieldsPlugin);
-const Country = mongoose.model('Country', schema);
-module.exports = CountrySchema;
+CountrySchema.plugin(auditFieldsPlugin);
+const Country = mongoose.model('Country', CountrySchema);
+module.exports = Country;

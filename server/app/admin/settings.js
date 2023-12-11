@@ -1,4 +1,4 @@
-const Admin = require("../models/admin"); // Import the Admin model
+// const Admin = require("../models/admin"); // Import the Admin model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 
 const getAdminProfileSettings = async (req, res) => {

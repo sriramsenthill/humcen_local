@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const addressSchema = require('./address');
-const auditFieldsPlugin = require('./auditFieldsPlugin');
-const CountrySchema = require('./country');
 const emailPref = require('./emailPrefrences');
+const auditFieldsPlugin = require('./auditFieldsPlugin');
 
 const PartnerSchema = new mongoose.Schema({
   userId: {
