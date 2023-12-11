@@ -11,3 +11,4 @@ export const ExampleComponent = ({ text }: Props) => {
 
 export { default as AuthUtils } from "./utils/authUtils";
 export { default as commonUtils } from "./utils/commonUtils";
+export * from './assets/images';
