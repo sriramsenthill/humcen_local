@@ -97,7 +97,8 @@ export default function SignIn() {
     <>
       <div className="authenticationBox">
         <div className={styles.container}>
-          <div className={styles.leftContainer}>
+          {/* edited by achappan login page responsive code edit authentication component  */}
+          {/* <div className={styles.leftContainer}>
             <div className={styles.topContainer}>
               <div className={styles.cardContainer}>
                 <img
@@ -129,6 +130,9 @@ export default function SignIn() {
                 </Typography>
               </Typography>
             </div>
+          </div> */}
+          <div className={styles.leftContainer}>
+            {/* <img src={loginPageImage} alt="loginScreenLeftSideImage" /> */}
           </div>
           <div className={styles.rightContainer}>
             <h1>Login Your account</h1>
