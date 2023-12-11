@@ -5,6 +5,12 @@ const CountrySchema = require('./country');
 const emailPref = require('./emailPrefrences');
 
 const PartnerSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'State',
+    index: true,
+    required: true,
+  },
   emailPreference: emailPref,
   address: addressSchema,
   age: {
@@ -13,13 +19,13 @@ const PartnerSchema = new mongoose.Schema({
   position: {
     type: String,
   },
-  applicant_type: {
+  applicantType: {
     type: String,
   },
-  business_name: {
+  businessName: {
     type: String,
   },
-  company_id: {
+  companyId: {
     type: String,
   },
   vatPayer: {
@@ -31,38 +37,38 @@ const PartnerSchema = new mongoose.Schema({
   jurisdiction: {
     type: String,
   },
-  tax_ID_no: {
+  taxIdNo: {
     type: String,
   },
-  linkedin_profile: {
+  linkedinProfile: {
     type: String,
   },
-  years_of_exp: {
+  yearsOfExp: {
     type: Number,
   },
-  expertise_in: {
+  expertiseIn: {
     type: [String],
   },
-  can_handle: {
+  canHandle: {
     type: String,
   },
   jobs: {
     type: [Number],
   },
   bank: {
-    bank_name: {
+    bankName: {
       type: String,
     },
-    account_num: {
+    accountNum: {
       type: String,
     },
-    account_name: {
+    accountName: {
       type: String,
     },
     branch: {
       type: String,
     },
-    ifsc_code: {
+    ifscCode: {
       type: String,
     },
     address: {
@@ -71,7 +77,7 @@ const PartnerSchema = new mongoose.Schema({
     town: {
       type: String,
     },
-    post_code: {
+    postCode: {
       type: String,
     },
     country: {
