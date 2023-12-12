@@ -7,7 +7,7 @@ const fetchPartnerProfileImage = async (req, res) => {
 
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userID });
+    const partner = await Partner.findOne({ userId: userID  });
 
     res.json(partner.profile_img);
   } catch (error) {
@@ -21,9 +21,8 @@ const fetchPartnerSettings = async (req, res) => {
   const userID = req.userID;
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userID });
+    const partner = await Partner.findOne({ userId: userID  });
     res.json(partner);
-    console.log(partner);
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
@@ -35,7 +34,7 @@ const fetchPartnerKnownFields = async (req, res) => {
   const userID = req.userID;
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userID });
+    const partner = await Partner.findOne({ userId: userID  });
     res.json(partner.known_fields);
 
   } catch (error) {
@@ -47,7 +46,7 @@ const fetchPartnerKnownFields = async (req, res) => {
 
 const updatePartnerSettings = async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID });
+  const partner = await Partner.findOne({ userId: userID  });
   partner.applicant_type = req.body.data.applicant_type;
   partner.business_name = req.body.data.business_name;
   partner.company_id = req.body.data.company_id;
@@ -71,15 +70,15 @@ const updatePartnerSettings = async (req, res) => {
 
 const updatePartnerBankDetails = async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID });
-  partner.bank.bank_name = req.body.data.bankName;
-  partner.bank.account_num = req.body.data.accountNum;
-  partner.bank.account_name = req.body.data.accountName;
+  const partner = await Partner.findOne({ userId: userID  });
+  partner.bank.bankName = req.body.data.bankName;
+  partner.bank.accountNum = req.body.data.accountNum;
+  partner.bank.accountName = req.body.data.accountName;
   partner.bank.branch = req.body.data.branch;
-  partner.bank.ifsc_code = req.body.data.ifscCode;
+  partner.bank.ifscCode = req.body.data.ifscCode;
   partner.bank.address = req.body.data.address;
   partner.bank.town = req.body.data.town;
-  partner.bank.post_code = req.body.data.postCode;
+  partner.bank.postCode = req.body.data.postCode;
   partner.bank.country = req.body.data.country;
   partner
     .save()
@@ -91,7 +90,7 @@ const updatePartnerBankDetails = async (req, res) => {
 
 const updatePartnerPrefSettings = async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID });
+  const partner = await Partner.findOne({ userId: userID  });
   partner.pref.mails = req.body.data.mails;
   partner.pref.order_updates = req.body.data.order_updates;
   partner.pref.marketing_emails = req.body.data.marketing_emails;
@@ -110,7 +109,7 @@ const updatePartnerPrefSettings = async (req, res) => {
 const editPartnerServices = async (req, res) => {
   const serviceList = servList.map(elem => elem.title);
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID });
+  const partner = await Partner.findOne({ userId: userID  });
   req.body.data.known_fields.forEach((field) => {
     partner.known_fields[field] = true;
   });
@@ -131,7 +130,7 @@ const editPartnerServices = async (req, res) => {
 
 const updatePartnerPassword = async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID });
+  const partner = await Partner.findOne({ userId: userID  }); 
   const saltRounds = 10;
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {

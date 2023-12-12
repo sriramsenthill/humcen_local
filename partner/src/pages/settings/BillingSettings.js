@@ -59,21 +59,21 @@ export default function Profile() {
         .then((response) => {
           const UsID = response.data.userID;
           setUserID(UsID);
-          const bankName = response.data.bank.bank_name;
+          const bankName = response.data.bank.bankName;
           setBankName(bankName);
-          const accountNum = response.data.bank.account_num;
+          const accountNum = response.data.bank.accountNum;
           setAccountNum(accountNum);
-          const accountName = response.data.bank.account_name;
+          const accountName = response.data.bank.accountName;
           setAccountName(accountName);
           const branch = response.data.bank.branch;
           setBranch(branch);
-          const ifscCode = response.data.bank.ifsc_code;
+          const ifscCode = response.data.bank.ifscCode;
           setIfscCode(ifscCode);
           const address = response.data.bank.address;
           setAddress(address);
           const town = response.data.bank.town;
           setTown(town);
-          const postCode = response.data.bank.post_code;
+          const postCode = response.data.bank.postCode;
           setPostCode(postCode);
           const country = response.data.bank.country;
           setCountry(country);
@@ -158,10 +158,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="applicant_type"
-                          label="Applicant Type"
-                          name="applicant_type"
-                          placeholder="Applicant Type"
+                          id="bankName"
+                          label="Bank Name"
+                          name="bankName"
+                          placeholder="Bank Name"
                           value={bankName}
                           onChange={(e) => setBankName(e.target.value)}
                         />
@@ -201,10 +201,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="business_name"
-                          label="Business Name"
-                          name="business_name"
-                          placeholder="Business Name"
+                          id="accountNum"
+                          label="Account Number"
+                          name="accountNum"
+                          placeholder="Account Number"
                           value={accountNum}
                           onChange={(e) => setAccountNum(e.target.value)}
                         />
@@ -242,10 +242,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="companyID"
-                          label="Company ID"
-                          name="companyID"
-                          placeholder="Company ID"
+                          id="accountName"
+                          label="Account Name"
+                          name="accountName"
+                          placeholder="Account Name"
                           value={accountName}
                           onChange={(e) => setAccountName(e.target.value)}
                         />
@@ -283,10 +283,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="vat"
-                          label="VAT Payer"
-                          name="name"
-                          placeholder="VAT Payer"
+                          id="branch"
+                          label="Branch"
+                          name="branch"
+                          placeholder="Branch"
                           value={branch}
                           onChange={(e) => setBranch(e.target.value)}
                         />
@@ -324,10 +324,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="name"
-                          label="Name"
-                          name="name"
-                          placeholder="Name"
+                          id="ifscCode"
+                          label="IFSC Code"
+                          name="ifscCode"
+                          placeholder="IFSC Code"
                           value={ifscCode}
                           onChange={(e) => setIfscCode(e.target.value)}
                         />
@@ -365,10 +365,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="surname"
-                          label="Surname"
-                          name="surname"
-                          placeholder="Last Name"
+                          id="address"
+                          label="Address"
+                          name="address"
+                          placeholder="Address"
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
                         />
@@ -406,10 +406,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="email"
-                          label="Email"
-                          name="email"
-                          placeholder="Email ID"
+                          id="town"
+                          label="Town"
+                          name="town"
+                          placeholder="Town"
                           value={town}
                           onChange={(e) => setTown(e.target.value)}
                         />
@@ -452,10 +452,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="phno"
-                          label="Phone"
-                          name="phno"
-                          placeholder="Phone Number"
+                          id="postCode"
+                          label="Post Code"
+                          name="postCode"
+                          placeholder="Post Code"
                           value={postCode}
                           onChange={(e) => setPostCode(e.target.value)}
                         />
@@ -493,10 +493,10 @@ export default function Profile() {
                         <TextField
                           required
                           fullWidth
-                          id="position"
-                          label="Position"
-                          name="position"
-                          placeholder="Position"
+                          id="country"
+                          label="Country"
+                          name="country"
+                          placeholder="Country"
                           value={country}
                           onChange={(e) => setCountry(e.target.value)}
                         />
@@ -530,7 +530,7 @@ export default function Profile() {
                 if (editMode === true) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('/api/partner/bank-settings', {
+                  axios.put('/bank-settings', {
                     data: {
                       userId: UsID,
                       bankName: bankName,
