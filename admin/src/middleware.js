@@ -1,6 +1,8 @@
-export { default } from "next-auth/middleware";
+export { default } from 'next-auth/middleware'
 
 export const config = {
   // matcher: ["/"],
-  matcher: ["/((?!authentication\\/sign-in|authentication\\/sign-up|images|authentication\\/logout).*)"],
-};
+  matcher: [
+    '/((?!authentication\\/sign-in|authentication\\/sign-up|images|authentication\\/logout|authentication\\/session-expired).*)'
+  ]
+}

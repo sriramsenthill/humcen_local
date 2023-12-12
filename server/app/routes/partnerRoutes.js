@@ -1,7 +1,5 @@
 const express = require("express");
-const jwt = require('jsonwebtoken');
-
-const logger = require("../logger");
+const jwt = require("jsonwebtoken");
 const config = require("../../config");
 
 const partnerRouter = express.Router();
@@ -19,8 +17,7 @@ partnerRouter.use(function (req, res, next) {
     req.userID = decodedUser._id;
     next();
   } catch (error) {
-    logger.error('Failed to partner verify token:', error);
-    return res.status(401).json({});
+    res.status(401).json({ error: "Session Expired" });
   }
 });
 
@@ -45,15 +42,24 @@ partnerRouter.put("/uploaded", engine.updateTimelineForUpload);
 partnerRouter.delete("/reject/:service/:country/:jobId", engine.rejectJobOrder);
 partnerRouter.get("/jobOrder/:services/:id", engine.getFilesForPartners);
 // partnerRouter.get("api/:services/:jobID", engine.getJobDetailsForPartners);
-partnerRouter.get("/partnerDetails/:services/:id", engine.findPartnersWithJobNo);
+partnerRouter.get(
+  "/partnerDetails/:services/:id",
+  engine.findPartnersWithJobNo
+);
 partnerRouter.put("/job-files", engine.addJobFiles);
-partnerRouter.get("/job_files_details/:jobID", engine.getJobFilesDetailsForPartners);
+partnerRouter.get(
+  "/job_files_details/:jobID",
+  engine.getJobFilesDetailsForPartners
+);
 partnerRouter.get("/get-bulk-order-file/:id", engine.getAssignedBulkOrderFile);
 partnerRouter.put("/idleJob/:partner", engine.sendIdleJobToUnassigned);
 
 // Partner Notifications
-partnerRouter.get("/get-notifs/:userID", engine.getPartnerNotification) // Get Notifications for Customer
-partnerRouter.put("/seen-notif/:notifId/:userID", engine.notificationPartnerSeen); // Make the notification, a visited one
+partnerRouter.get("/get-notifs/:userID", engine.getPartnerNotification); // Get Notifications for Customer
+partnerRouter.put(
+  "/seen-notif/:notifId/:userID",
+  engine.notificationPartnerSeen
+); // Make the notification, a visited one
 partnerRouter.put("/delete-notif/:userID", engine.notifcationsPartnerDelete); // For deleting the Selected Notifications
 partnerRouter.get("/sort-notif/:userID/:days", engine.sortPartnerNotifications); // Sorting Notifications on the basis of Time Interval
 partnerRouter.get("/clear-notif/:userID", engine.clearRecentPartnerNotifs); // Clearing out the Recent Notifications

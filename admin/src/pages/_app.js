@@ -1,9 +1,8 @@
-import React from 'react';
-import '../_axios';
+import React from 'react'
+import '../_axios'
 import '../styles/remixicon.css'
-import 'react-tabs/style/react-tabs.css';
+import 'react-tabs/style/react-tabs.css'
 import { Inter } from 'next/font/google'
-
 
 // Chat Styles
 import '../styles/chat.css'
@@ -18,12 +17,12 @@ import '../styles/leftSidebarDark.css'
 // Theme Styles
 import theme from '../styles/theme'
 
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import Layout from "@/components/_App/Layout";
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import Layout from '@/components/_App/Layout'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['400', '700']
 })
 
 function MyApp({ Component, pageProps }) {
@@ -36,7 +35,7 @@ function MyApp({ Component, pageProps }) {
         </Layout>
       </ThemeProvider>
     </main>
-  );
+  )
 }
 
 export default MyApp

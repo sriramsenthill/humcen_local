@@ -63,6 +63,6 @@ exports.generateJwt = function (user, type) {
     firstName: user.firstName,
     lastName: user.lastName,
   }, secretKey, {
-    expiresIn: "1h",
+    expiresIn: "1min",
   });
 }
