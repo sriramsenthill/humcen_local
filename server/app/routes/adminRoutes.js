@@ -26,6 +26,11 @@ adminRouter.use(function (req, res, next) {
   }
 });
 
+const country = require('../master/country');
+adminRouter.post("/country/create", country.create);
+adminRouter.post("/country/update", country.update);
+adminRouter.post("/country/search", country.search);
+
 //ADMIN DATA
 adminRouter.get("/user", data.getUsers);
 

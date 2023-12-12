@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const auditFieldsPlugin = require('./auditFieldsPlugin');
+const auditFieldsPlugin = require('../auditFieldsPlugin');
 
 const schema = new mongoose.Schema({
   code: { type: String, required: true, index: true },

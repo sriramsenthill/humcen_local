@@ -7,12 +7,20 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 
 export const SidebarData = [
   {
     title: "Dashboard",
     path: "/",
     icon: <GridViewIcon />,
+    iconClosed: <KeyboardArrowRightIcon />,
+    iconOpened: <KeyboardArrowDownIcon />,
+  },
+  {
+    title: "Master Data",
+    path: "/master-data",
+    icon: <SettingsApplicationsIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
@@ -40,7 +48,7 @@ export const SidebarData = [
   {
     title: "Un-Assigned Jobs",
     path: "/UnAssignedJobs/",
-    icon: <LayersIcon/>,
+    icon: <LayersIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
@@ -54,14 +62,14 @@ export const SidebarData = [
   {
     title: "Bulk Order Assign",
     path: "/BulkOrders/",
-    icon: <LayersIcon/>,
+    icon: <LayersIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "Bulk Order Requests",
     path: "/BulkOrderFiles/",
-    icon: <LayersIcon/>,
+    icon: <LayersIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },

@@ -23,9 +23,9 @@ module.exports = function auditFieldsPlugin(schema) {
   });
 
   schema.methods.prefillAuditInfo = function (req) {
-    this.orgId = req.orgId;
+    this.orgId = this.orgId || req.orgId;
     this.modifiedBy = req.userID;
     this.modifiedAt = Date.now();
-    this.statusFlag = 'A';
+    this.statusFlag = this.statusFlag || 'A';
   }
 };

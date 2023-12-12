@@ -9,7 +9,7 @@ exports.create = async function (req, session, type, refId) {
     email: req.body.email,
     orgId: req.orgId,
     statusFlag: 'A',
-  });
+  }).select('_id').lean().exec();
 
   if (existingUser) throw new Error('User already exists. Try creating with another email.');
   const user = new User(req.body);
