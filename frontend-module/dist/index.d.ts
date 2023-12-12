@@ -1,4 +1,5 @@
 import * as React from 'react';
+export * from './assets/images';
 interface Props {
     text: string;
 }

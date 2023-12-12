@@ -1,2 +1,3 @@
-export { default as loginPageFooter } from "./loginPageFooter.png";
-export { default as loginPageImage } from "./loginPageImage.png";
+import * as React from 'react';
+export declare const LoginPageFooter: () => React.JSX.Element;
+export declare const LoginPageImage: () => React.JSX.Element;

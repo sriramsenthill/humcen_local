@@ -823,9 +823,10 @@ img {
   padding-left: 30px;
   padding-right: 30px;
 }
-.main-wrapper-content .main-content {
-  padding-right: 30px;
-}
+/* edit by achappan issuse is login page right side padding show that's why commented this lines  */
+  /* .main-wrapper-content .main-content {
+    padding-right: 30px;
+  } */
 
 @media only screen and (max-width: 767px) {
   .main-wrapper-content .main-content {

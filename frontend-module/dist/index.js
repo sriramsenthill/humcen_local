@@ -3,7 +3,24 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var jwt = _interopDefault(require('jsonwebtoken'));
 
-var styles = {"test":"_styles-module__test__3ybTi"};
+var styles = {"test":"_3ybTi"};
+
+var loginPageFooter = "loginPageFooter~bjwskFxn.png";
+
+var loginPageImage = "loginPageImage~VyEIhjMZ.png";
+
+var LoginPageFooter = function LoginPageFooter() {
+  return React.createElement("img", {
+    src: loginPageFooter,
+    alt: "Login Page Footer"
+  });
+};
+var LoginPageImage = function LoginPageImage() {
+  return React.createElement("img", {
+    src: loginPageImage,
+    alt: "Login Page Image"
+  });
+};
 
 var AuthUtils = /*#__PURE__*/function () {
   function AuthUtils() {}
@@ -39,5 +56,7 @@ var ExampleComponent = function ExampleComponent(_ref) {
 
 exports.AuthUtils = AuthUtils;
 exports.ExampleComponent = ExampleComponent;
+exports.LoginPageFooter = LoginPageFooter;
+exports.LoginPageImage = LoginPageImage;
 exports.commonUtils = commonUtils;
 //# sourceMappingURL=index.js.map

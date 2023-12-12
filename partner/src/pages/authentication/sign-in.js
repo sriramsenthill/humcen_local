@@ -14,6 +14,7 @@ import { getSession, signIn } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next"
 
+
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
 
@@ -132,141 +133,117 @@ export default function SignIn() {
             </div>
           </div> */}
           <div className={styles.leftContainer}>
-            {/* <img src={loginPageImage} alt="loginScreenLeftSideImage" /> */}
+            <img src="/images/loginPageImage.png" alt="loginScreenLeftSideImage" />
           </div>
           <div className={styles.rightContainer}>
-            <h1>Login Your account</h1>
-            <Box>
-              <Box component="form" noValidate onSubmit={handleSubmit}>
-                <Box
-                  sx={{
-                    background: "#fff",
-                    padding: "  30px 20px",
-                    borderRadius: "10px",
-                    mb: "20px",
-                  }}
-                  className="bg-black"
-                >
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={12}>
-                      <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
-                      >
-                        Email
-                      </Typography>
-
-                      <TextField
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                      />
+            <div className="loginCardStyle">
+              <Box >
+                <h1>Login Your account</h1>
+                <Box component="form" noValidate onSubmit={handleSubmit}>
+                  <Box
+                    sx={{
+                      mb: "20px",
+                      width: { //resize box  
+                        xs: 340,
+                        md: 370,
+                        lg: 400,
+                        xl: 500,
+                      },
+                    }}>
+                    <Grid container alignItems="center" spacing={2}>
+                      <Grid item xs={12}>
+                        <TextField
+                          required
+                          fullWidth
+                          id="email"
+                          label="Email Address"
+                          name="email"
+                          autoComplete="email"
+                          InputProps={{
+                            style: { borderRadius: 8 },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          required
+                          fullWidth
+                          name="password"
+                          label="Password"
+                          type="password"
+                          id="password"
+                          autoComplete="new-password"
+                          InputProps={{
+                            style: { borderRadius: 8 },
+                          }}
+                        />
+                      </Grid>
                     </Grid>
 
-                    <Grid item xs={12}>
+                    {error && (
                       <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
+                        variant="body2"
+                        color="error"
+                        align="center"
+                        sx={{ mb: 3 }}
                       >
-                        Password
+                        {error}
                       </Typography>
+                    )}
+                    <br /><br />
+                    <Grid container alignItems="center" spacing={2} >
+                      <Grid item xs={5} sm={5} ml="20px">
+                        <FormControlLabel
+                          control={
+                            <Checkbox value="allowExtraEmails" color="primary" />
+                          }
+                          label="Remember me."
+                        />
+                      </Grid>
 
-                      <TextField
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                      />
+                      <Grid item xs={5} sm={5} textAlign="end" ml="20px">
+                        <Link
+                          href="/authentication/forgot-password"
+                          className="primaryColor text-decoration-none"
+                        >
+                          Forgot your password?
+                        </Link>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Box>
-
-                {error && (
-                  <Typography
-                    variant="body2"
-                    color="error"
-                    align="center"
-                    sx={{ mb: 2 }}
-                  >
-                    {error}
-                  </Typography>
-                )}
-
-                <Grid container alignItems="center" spacing={2} >
-                  <Grid item xs={5} sm={5} ml="20px">
-                    <FormControlLabel
-                      control={
-                        <Checkbox value="allowExtraEmails" color="primary" />
-                      }
-                      label="Remember me."
-                    />
-                  </Grid>
-
-                  <Grid item xs={5} sm={5} textAlign="end" ml="20px">
-                    <Link
-                      href="/authentication/forgot-password"
-                      className="primaryColor text-decoration-none"
+                    <br />
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        mt: "20px",
+                        textTransform: "capitalize",
+                        borderRadius: "100px", /* Changed to 100px for circular button */
+                        fontWeight: "500",
+                        fontSize: "16px",
+                        padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
+                        color: "#fff !important",
+                        background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+                      }}
                     >
-                      Forgot your password?
-                    </Link>
-                  </Grid>
-                </Grid>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: "20px",
-                    textTransform: "capitalize",
-                    borderRadius: "100px", /* Changed to 100px for circular button */
-                    fontWeight: "500",
-                    fontSize: "16px",
-                    marginLeft: "20px", padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
-                    color: "#fff !important",
-                    width: "450px", /* Set the width to 483px */
-                    height: "48px", /* Set the height to 48px */
-                    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-                  }}
-                >
-                  Log In
-                </Button>
-                <Typography fontSize="15px" mb="30px" mt="15px" ml="30px">
-                  Don't have an account?{" "}
-                  <Link
-                    href="/authentication/sign-up"
-                    className="primaryColor text-decoration-none"
-                  >
-                    Sign up
-                  </Link>
-                </Typography>
-                <Typography fontSize="12px" mt="20%" textAlign="center" color="#676B5F">
-                  2023 Copyrights. All Rights Reserved
-                </Typography>
+                      Log In
+                    </Button>
+                    <Typography fontSize="15px" mb="30px" mt="15px" ml="30px">
+                      Don't have an account?{" "}
+                      <Link
+                        href="/authentication/sign-up"
+                        className="primaryColor text-decoration-none"
+                      >
+                        Sign up
+                      </Link>
+                    </Typography>
+                  </Box>
+                  <Typography fontSize="12px" mt="20%" textAlign="center" color="#676B5F">
+                    2023 Copyrights. All Rights Reserved
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
+            </div>
           </div>
         </div>
       </div>
