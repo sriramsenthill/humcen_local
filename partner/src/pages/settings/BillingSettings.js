@@ -44,45 +44,36 @@ export default function Profile() {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
-
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const UsID = response.data.userID;
-          setUserID(UsID);
-          const bankName = response.data.bank.bank_name;
-          setBankName(bankName);
-          const accountNum = response.data.bank.account_num;
-          setAccountNum(accountNum);
-          const accountName = response.data.bank.account_name;
-          setAccountName(accountName);
-          const branch = response.data.bank.branch;
-          setBranch(branch);
-          const ifscCode = response.data.bank.ifsc_code;
-          setIfscCode(ifscCode);
-          const address = response.data.bank.address;
-          setAddress(address);
-          const town = response.data.bank.town;
-          setTown(town);
-          const postCode = response.data.bank.post_code;
-          setPostCode(postCode);
-          const country = response.data.bank.country;
-          setCountry(country);
-
-        })
-        .catch((error) => {
-          console.error("Error fetching Partner's Bank Details Settings:", error);
-        });
-    }
+    axios
+      .get("/settings")
+      .then((response) => {
+        const UsID = response.data.userID;
+        setUserID(UsID);
+        const bankName = response.data.bank.bank_name;
+        setBankName(bankName);
+        const accountNum = response.data.bank.account_num;
+        setAccountNum(accountNum);
+        const accountName = response.data.bank.account_name;
+        setAccountName(accountName);
+        const branch = response.data.bank.branch;
+        setBranch(branch);
+        const ifscCode = response.data.bank.ifsc_code;
+        setIfscCode(ifscCode);
+        const address = response.data.bank.address;
+        setAddress(address);
+        const town = response.data.bank.town;
+        setTown(town);
+        const postCode = response.data.bank.post_code;
+        setPostCode(postCode);
+        const country = response.data.bank.country;
+        setCountry(country);
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner's Bank Details Settings:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -166,9 +157,7 @@ export default function Profile() {
                           onChange={(e) => setBankName(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {bankName}
-                        </Typography>
+                        <Typography>{bankName}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -414,9 +403,7 @@ export default function Profile() {
                           onChange={(e) => setTown(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {town}
-                        </Typography>
+                        <Typography>{town}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -529,28 +516,28 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/partner/bank-settings', {
-                    data: {
-                      userId: UsID,
-                      bankName: bankName,
-                      accountNum: accountNum,
-                      accountName: accountName,
-                      branch: branch,
-                      ifscCode: ifscCode,
-                      address: address,
-                      town: town,
-                      postCode: postCode,
-                      country: country
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/partner/bank-settings", {
+                      data: {
+                        userId: UsID,
+                        bankName: bankName,
+                        accountNum: accountNum,
+                        accountName: accountName,
+                        branch: branch,
+                        ifscCode: ifscCode,
+                        address: address,
+                        town: town,
+                        postCode: postCode,
+                        country: country,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Bank Details Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Bank Details Settings",
+                        error
+                      )
+                    );
                 } else {
                   setEditMode(true);
                 }

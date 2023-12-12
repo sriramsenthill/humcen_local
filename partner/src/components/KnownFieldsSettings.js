@@ -9,53 +9,39 @@ const knownFields = ServiceList.map((element) => element.title);
 
 const KnownFieldsGrid = ({ onChange, size, edit }) => {
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/fields", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const fields = response.data.known_fields;
-          console.log(fields);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
-        });
-    }
+    axios
+      .get("/fields")
+      .then((response) => {
+        const fields = response.data.known_fields;
+        console.log(fields);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   const checkboxesPerRow = 2;
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/fields", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const fields = response.data;
-          const servicee = [];
-          Object.keys(fields).forEach((field) => {
-            if (fields[field] === true) {
-              servicee.push(field);
-            }
-          });
-          const filteredServices = knownFields.filter((service) =>
-            servicee.includes(service)
-          );
-          setSelectedCheckboxes(filteredServices);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
+    axios
+      .get("/fields")
+      .then((response) => {
+        const fields = response.data;
+        const servicee = [];
+        Object.keys(fields).forEach((field) => {
+          if (fields[field] === true) {
+            servicee.push(field);
+          }
         });
-    }
+        const filteredServices = knownFields.filter((service) =>
+          servicee.includes(service)
+        );
+        setSelectedCheckboxes(filteredServices);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   const handleCheckboxChange = (event) => {

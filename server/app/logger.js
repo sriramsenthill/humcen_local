@@ -1,8 +1,8 @@
-const fs = require('fs');
-const http = require('http');
-const winston = require('winston');
-const triple = require('triple-beam');
-const DailyRotateFile = require('winston-daily-rotate-file');
+const fs = require("fs");
+const http = require("http");
+const winston = require("winston");
+const triple = require("triple-beam");
+const DailyRotateFile = require("winston-daily-rotate-file");
 
 const logDirectory = `${__dirname}/../log`;
 if (!fs.existsSync(logDirectory)) {
@@ -10,7 +10,7 @@ if (!fs.existsSync(logDirectory)) {
 }
 
 function formatObject(param) {
-  if (typeof param === 'string') {
+  if (typeof param === "string") {
     return param;
   }
 
@@ -18,50 +18,54 @@ function formatObject(param) {
     return param.stack ? param.stack : JSON.stringify(param, null, 2);
   }
 
-  return process.env.NODE_ENV !== 'production' ? JSON.stringify(param, null, 2) : JSON.stringify(param);
+  return process.env.NODE_ENV !== "production"
+    ? JSON.stringify(param, null, 2)
+    : JSON.stringify(param);
 }
 
 const logFormat = winston.format.printf((info) => {
-  let reqInfo = '';
+  let reqInfo = "";
   const { timestamp, level, message } = info;
   const rest = info[triple.SPLAT] || [];
   const req = message instanceof http.IncomingMessage ? message : null;
 
   if (req) {
     reqInfo = ` - ${req.method} ${req.url}`;
-    info.message = '';
+    info.message = "";
   }
 
-  let result = `${timestamp} - ${level}${reqInfo}: ${info.stack ? formatObject(info.stack) : formatObject(info.message)}`;
+  let result = `${timestamp} - ${level}${reqInfo}: ${
+    info.stack ? formatObject(info.stack) : formatObject(info.message)
+  }`;
 
   if (rest.length) {
-    result += ` ${rest.map(formatObject).join(' ')}`;
+    result += ` ${rest.map(formatObject).join(" ")}`;
   }
 
   return result;
 });
 
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+  level: process.env.NODE_ENV === "production" ? "info" : "silly",
   format: winston.format.combine(
     winston.format.timestamp({
-      format: 'YYYY/MM/DD HH:mm:ss:SSSS',
+      format: "YYYY/MM/DD HH:mm:ss:SSSS",
     }),
-    logFormat,
+    logFormat
   ),
   transports: [
     new DailyRotateFile({
       filename: `${logDirectory}/server_%DATE%`,
-      datePattern: 'YYYY',
-      extension: '.log',
-      maxSize: '5m', // If using the units,add 'k', 'm', or 'g' as the suffix.
+      datePattern: "YYYY",
+      extension: ".log",
+      maxSize: "5m", // If using the units,add 'k', 'm', or 'g' as the suffix.
       maxFiles: 5,
       auditFile: `${logDirectory}/winston_audit.json`,
     }),
   ],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   logger.add(new winston.transports.Console());
 }
 

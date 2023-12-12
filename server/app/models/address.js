@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const addressSchema = new mongoose.Schema({
   addressLine1: { type: String, required: true },
@@ -7,17 +7,18 @@ const addressSchema = new mongoose.Schema({
   city: { type: String },
   stateId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'State',
+    ref: "State",
     required: true,
   },
   countryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Country',
+    ref: "Country",
     required: true,
   },
   postCode: {
-    type: Number, required: true
-  }
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = addressSchema;

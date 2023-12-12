@@ -12,26 +12,25 @@ import { useSearchParams, useRouter } from "next/navigation";
 import styles from "@/components/Authentication/Authentication.module.css";
 import { getSession, signIn } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next"
-
+import { getServerSession } from "next-auth/next";
 
 export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions)
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: "/",
         permanent: false,
       },
-    }
+    };
   }
 
   return {
     props: {
       session,
     },
-  }
+  };
 }
 
 export default function SignIn() {
@@ -41,13 +40,18 @@ export default function SignIn() {
 
   let callbackUrl = searchParams.get("callbackUrl");
   if (callbackUrl) {
-    const url = new URL(callbackUrl);
-    if (url.origin != globalThis.location?.origin) {
-      callbackUrl = '';
+    try {
+      const url = new URL(callbackUrl);
+      if (url.origin != globalThis.location?.origin) {
+        callbackUrl = "";
+      }
+    } catch (e) {}
+    if (callbackUrl.indexOf("logout") > -1) {
+      callbackUrl = "";
     }
   }
 
-  callbackUrl = callbackUrl || '/';
+  callbackUrl = callbackUrl || "/";
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -63,7 +67,6 @@ export default function SignIn() {
 
     const clientSession = await getSession();
     if (result && result.status == 200 && clientSession?.user?.token) {
-      localStorage.setItem("token", clientSession?.user?.token);
       router.push(callbackUrl);
     } else {
       setError("Invalid email or password");

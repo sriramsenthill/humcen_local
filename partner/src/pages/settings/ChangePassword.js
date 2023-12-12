@@ -38,22 +38,15 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const UID = response.data.userID;
-          setUserID(UID);
-        })
-        .catch((error) => {
-          console.error("Error fetching Partner profile Settings:", error);
-        });
-    }
+    axios
+      .get("/settings")
+      .then((response) => {
+        const UID = response.data.userID;
+        setUserID(UID);
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner profile Settings:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -164,24 +157,22 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/partner/password', {
-                    data: {
-                      password: Password
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/partner/password", {
+                      data: {
+                        password: Password,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Password", error));
-
-                }
-                else {
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Password",
+                        error
+                      )
+                    );
+                } else {
                   setEditMode(true);
-                };
+                }
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />

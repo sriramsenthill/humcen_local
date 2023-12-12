@@ -1,47 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ModernCard from "@/components/ModernCard";
-import AddCard from '@/components/AddCard';
+import AddCard from "@/components/AddCard";
 import Grid from "@mui/material/Grid";
 import styles from "@/styles/PageTitle.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import serviceList from './ServiceListArray';
-
+import serviceList from "./ServiceListArray";
 
 const MyPage = () => {
   const router = useRouter();
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/fields", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const fields = response.data;
-          const servicee = [];
-          Object.keys(fields).forEach((field) => {
-            if (fields[field] === true) {
-              servicee.push(field);
-            }
-          })
-          const filteredServices = serviceList.filter(service => servicee.includes(service.title));
-          setServices(filteredServices);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
+    axios
+      .get("/fields")
+      .then((response) => {
+        const fields = response.data;
+        const servicee = [];
+        Object.keys(fields).forEach((field) => {
+          if (fields[field] === true) {
+            servicee.push(field);
+          }
         });
-    }
+        const filteredServices = serviceList.filter((service) =>
+          servicee.includes(service.title)
+        );
+        setServices(filteredServices);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   return (
     <>
-      <div className={'card'}>
+      <div className={"card"}>
         <div className={styles.pageTitle}>
           <ul>
             <li>
@@ -50,10 +44,15 @@ const MyPage = () => {
             <li>Patent Services</li>
           </ul>
         </div>
-        <h1 className={styles.heading} style={{
-          marginBottom: "30px",
-          marginTop: "10px"
-        }}>My Patent Services</h1>
+        <h1
+          className={styles.heading}
+          style={{
+            marginBottom: "30px",
+            marginTop: "10px",
+          }}
+        >
+          My Patent Services
+        </h1>
         <Grid
           container
           rowSpacing={1}
@@ -61,7 +60,6 @@ const MyPage = () => {
         >
           {services.map((service, index) => (
             <Grid item xs={12} md={6} lg={4} xl={4}>
-
               <ModernCard
                 key={index}
                 title={service.title}
@@ -70,14 +68,12 @@ const MyPage = () => {
                 link={service.link}
               />
             </Grid>
-
           ))}
           <AddCard
             key="Add"
             title="Add Services"
             imageSrc="/images/patent_img/add.png"
           />
-
         </Grid>
       </div>
     </>

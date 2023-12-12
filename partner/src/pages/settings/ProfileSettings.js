@@ -48,53 +48,44 @@ export default function Profile() {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
-
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const UsID = response.data.userID;
-          setUserID(UsID);
-          const firstName = response.data.first_name;
-          setFirstName(firstName);
-          const email = response.data.email;
-          setEmail(email);
-          const lastName = response.data.last_name;
-          setLastName(lastName);
-          const applicantType = response.data.applicant_type;
-          setApplicantType(applicantType);
-          const businessName = response.data.business_name;
-          setBusinessName(businessName);
-          const companyID = response.data.company_id;
-          setCompanyID(companyID);
-          const vatPayer = response.data.vat_payer;
-          setVatPayer(vatPayer);
-          const phone = response.data.phno;
-          setPhone(phone);
-          const position = response.data.position;
-          setPosition(position);
-          const street = response.data.street;
-          setStreet(street);
-          const town = response.data.town;
-          setTown(town);
-          const postCode = response.data.post_code;
-          setPostCode(postCode);
-          const country = response.data.country;
-          setCountry(country);
-
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
-        });
-    }
+    axios
+      .get("/settings")
+      .then((response) => {
+        const UsID = response.data.userID;
+        setUserID(UsID);
+        const firstName = response.data.first_name;
+        setFirstName(firstName);
+        const email = response.data.email;
+        setEmail(email);
+        const lastName = response.data.last_name;
+        setLastName(lastName);
+        const applicantType = response.data.applicant_type;
+        setApplicantType(applicantType);
+        const businessName = response.data.business_name;
+        setBusinessName(businessName);
+        const companyID = response.data.company_id;
+        setCompanyID(companyID);
+        const vatPayer = response.data.vat_payer;
+        setVatPayer(vatPayer);
+        const phone = response.data.phno;
+        setPhone(phone);
+        const position = response.data.position;
+        setPosition(position);
+        const street = response.data.street;
+        setStreet(street);
+        const town = response.data.town;
+        setTown(town);
+        const postCode = response.data.post_code;
+        setPostCode(postCode);
+        const country = response.data.country;
+        setCountry(country);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -178,9 +169,7 @@ export default function Profile() {
                           onChange={(e) => setApplicantType(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {applicantType}
-                        </Typography>
+                        <Typography>{applicantType}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -426,9 +415,7 @@ export default function Profile() {
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {email}
-                        </Typography>
+                        <Typography>{email}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -554,9 +541,7 @@ export default function Profile() {
                           onChange={(e) => setStreet(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {street}
-                        </Typography>
+                        <Typography>{street}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -708,32 +693,32 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/settings', {
-                    data: {
-                      userId: UID,
-                      applicant_type: applicantType,
-                      business_name: businessName,
-                      company_id: companyID,
-                      vat_payer: vatPayer,
-                      first_name: firstName,
-                      last_name: lastName,
-                      email: email,
-                      phone: phone,
-                      position: position,
-                      street: street,
-                      town: town,
-                      post_code: postCode,
-                      country: country
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/settings", {
+                      data: {
+                        userId: UID,
+                        applicant_type: applicantType,
+                        business_name: businessName,
+                        company_id: companyID,
+                        vat_payer: vatPayer,
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: email,
+                        phone: phone,
+                        position: position,
+                        street: street,
+                        town: town,
+                        post_code: postCode,
+                        country: country,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Settings",
+                        error
+                      )
+                    );
                   window.location.reload(true);
                 } else {
                   setEditMode(true);
