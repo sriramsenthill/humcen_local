@@ -17,8 +17,11 @@ import Settings from "@mui/icons-material/Settings";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import Logout from "@mui/icons-material/Logout";
 import { commonUtils } from "frontend-module";
+import { signOut } from "next-auth/react"
+import { useRouter } from "next/router";
 
 const Profile = () => {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [partnerName, setPartnerName] = useState("");
   const [partnerAvatar, setPartnerAvatar] = useState("")
@@ -35,6 +38,13 @@ const Profile = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const logOut = () => {
+    signOut({ redirect: false, callbackUrl: '/' });
+    localStorage.removeItem('token');
+    router.push('authentication/logout');
+  }
+
   return (
     <>
       <Tooltip title="Account settings">
@@ -129,34 +139,6 @@ const Profile = () => {
             Profile
           </Link>
         </MenuItem>
-        {/* 
-        <MenuItem>
-          <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
-            <MailOutlineIcon fontSize="small" />
-          </ListItemIcon>
-          <Link
-            href="/email/inbox/"
-            fontSize="13px"
-            color="inherit"
-            underline="none"
-          >
-            Inbox
-          </Link>
-        </MenuItem>
-
-        <MenuItem>
-          <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
-            <ChatBubbleOutlineIcon fontSize="small" />
-          </ListItemIcon>
-          <Link
-            href="/apps/chat/"
-            fontSize="13px"
-            color="inherit"
-            underline="none"
-          >
-            Chat
-          </Link>
-        </MenuItem> */}
 
         <MenuItem>
           <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
@@ -188,13 +170,12 @@ const Profile = () => {
 
         <Divider />
 
-        <MenuItem>
+        <MenuItem onClick={logOut}>
           <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
             <Logout fontSize="small" />
           </ListItemIcon>
 
           <Link
-            href="/authentication/logout/"
             fontSize="13px"
             color="inherit"
             underline="none"

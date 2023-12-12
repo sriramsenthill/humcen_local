@@ -15,6 +15,9 @@ const addressSchema = new mongoose.Schema({
     ref: 'Country',
     required: true,
   },
+  postCode: {
+    type: Number, required: true
+  }
 });
 
 module.exports = addressSchema;

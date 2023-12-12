@@ -24,10 +24,6 @@ partnerRouter.use(function (req, res, next) {
   }
 });
 
-partnerRouter.get("/verify-token", (req, res) => {
-  res.status(200).json({ user: req.user });
-});
-
 //Partner_Settings
 const partnerSetttings = require("../partner/settings");
 partnerRouter.get("/img", partnerSetttings.fetchPartnerProfileImage);

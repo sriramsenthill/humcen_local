@@ -18,13 +18,12 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Partner',
   },
-  adminId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Admin',
-  },
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
+  },
+  profile_img: {
+    type: String,
   },
 });
 

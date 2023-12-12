@@ -6,6 +6,7 @@ const db = require("./db");
 const logger = require('./app/logger');
 const router = require("./app/routes/routes");
 const withoutAuth = require("./app/routes/withoutAuth");
+const adminRouter = require("./app/routes/adminRoutes");
 const partnerRouter = require("./app/routes/partnerRoutes");
 
 const app = express();
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
 // routes
 app.use(router);
 app.use('/api/partner', partnerRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/noauth', withoutAuth);
 
 // Error-handling middleware

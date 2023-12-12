@@ -1,5 +1,5 @@
 import React from 'react';
-import './_axios';
+import '../_axios';
 import '../styles/remixicon.css'
 import 'react-tabs/style/react-tabs.css';
 

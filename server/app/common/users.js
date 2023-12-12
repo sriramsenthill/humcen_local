@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const config = require("../../config");
 
-exports.create = async function (req, type, refId) {
+exports.create = async function (req, session, type, refId) {
   const existingUser = await User.findOne({
     email: req.body.email,
     orgId: req.orgId,
     statusFlag: 'A',
-  });
+  }).select('_id').lean().exec();
 
   if (existingUser) throw new Error('User already exists. Try creating with another email.');
   const user = new User(req.body);
@@ -26,7 +26,7 @@ exports.create = async function (req, type, refId) {
   user.prefillAuditInfo(req);
   user.modifiedBy = user._id;
   user.password = await bcrypt.hash(req.body.password, 11);
-  await user.save();
+  await user.save({ session });
   return user;
 }
 
