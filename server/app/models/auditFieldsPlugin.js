@@ -5,7 +5,7 @@ module.exports = function auditFieldsPlugin(schema) {
     orgId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      // required: true,
+      required: true,
       index: true,
     },
     modifiedBy: {

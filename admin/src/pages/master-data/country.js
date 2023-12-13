@@ -21,15 +21,20 @@ import {
   TableCell,
   TableBody,
   CircularProgress,
-  Typography
+  Typography,
+  TableFooter,
+  TablePagination
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import axios from 'axios'
 
 export default function Country() {
+  const rowsPerPage = 5
   const [open, setOpen] = useState(false)
+  const [tablePage, setTablePage] = useState(0)
   const [countries, setCountries] = useState([])
+  const [totalRecord, setSotalRecord] = useState(0)
   const [dataSaving, setDataSaving] = useState(true)
   const [dataLoading, setDataLoading] = useState(true)
   const [saveSnackbar, setSaveSnackbar] = useState(false)
@@ -50,7 +55,7 @@ export default function Country() {
   })
 
   useEffect(() => {
-    searchRecord()
+    searchRecord(true)
   }, [])
 
   const handleSearchChange = (event) => {
@@ -94,19 +99,34 @@ export default function Country() {
     setOpen(true)
   }
 
-  const searchRecord = async () => {
+  const searchRecord = async (getCount, pageNo) => {
     try {
       setDataLoading(true)
+      if (getCount) {
+        setSotalRecord(0)
+        setTablePage(0)
+        setCountries([])
+      }
+
       const res = await axios.post('/country/search', {
-        ...searchData
+        ...searchData,
+        getCount,
+        pageNo: pageNo + 1,
+        limit: rowsPerPage
       })
       setDataLoading(false)
       setCountries(res?.data?.countries || [])
+      getCount && setSotalRecord(res?.data?.total || 0)
     } catch (error) {
       setDataLoading(false)
       setSearchError(error.response?.data?.error || error.response?.statusText)
       console.error(error)
     }
+  }
+
+  const handleChangePage = (event, newPage) => {
+    setTablePage(newPage)
+    searchRecord(false, newPage)
   }
 
   const handleSave = async () => {
@@ -121,6 +141,12 @@ export default function Country() {
 
     try {
       await axios.post(url, { ...formData })
+      searchData.code = formData.code
+      searchData.name = ''
+      setSearchData({
+        code: formData.code,
+        name: ''
+      })
       setFormData({
         code: '',
         name: ''
@@ -128,7 +154,7 @@ export default function Country() {
       setDataSaving(false)
       setSaveSnackbar(true)
       handleClose()
-      searchRecord()
+      searchRecord(true)
     } catch (error) {
       setDataSaving(false)
       setSaveError(error.response?.data?.error || error.response?.statusText)
@@ -158,7 +184,6 @@ export default function Country() {
           <Grid item sm={12} md={4}>
             <TextField
               autoFocus
-              required
               fullWidth
               label='Code'
               name='code'
@@ -168,7 +193,6 @@ export default function Country() {
           </Grid>
           <Grid item sm={12} md={4}>
             <TextField
-              required
               fullWidth
               label='Name'
               name='name'
@@ -184,10 +208,10 @@ export default function Country() {
             direction='row'
             alignItems='flex-end'
           >
-            {dataLoading ? <CircularProgress /> : ''}
+            {dataLoading ? <CircularProgress sx={{ margin: '0 20px' }} /> : ''}
             <Button
               variant='outlined'
-              onClick={searchRecord}
+              onClick={() => searchRecord(true)}
               disabled={dataLoading}
               startIcon={<SearchIcon />}
             >
@@ -251,6 +275,18 @@ export default function Country() {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[rowsPerPage]}
+                  colSpan={4}
+                  count={totalRecord}
+                  rowsPerPage={rowsPerPage}
+                  page={tablePage}
+                  onPageChange={handleChangePage}
+                />
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       ) : (
@@ -263,7 +299,7 @@ export default function Country() {
             component='form'
             width='500px'
             sx={{
-              '& .MuiTextField-root': { m: 1, width: '25ch' }
+              '& .MuiTextField-root': { m: 1 }
             }}
             noValidate
             autoComplete='off'
@@ -292,7 +328,7 @@ export default function Country() {
         </DialogContent>
         <DialogActions>
           <span className='error-text'>{saveError}</span>
-          {dataSaving ? <CircularProgress /> : ''}
+          {dataSaving ? <CircularProgress sx={{ margin: '0 20px' }} /> : ''}
           <Button
             onClick={handleClose}
             variant='outlined'

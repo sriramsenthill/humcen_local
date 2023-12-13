@@ -18,6 +18,7 @@ partnerRouter.use(function (req, res, next) {
     const decodedUser = jwt.verify(token, config.jwtPartner);
     req.user = decodedUser;
     req.userId = decodedUser._id;
+    req.orgId = decodedUser.orgId;
     next();
   } catch (error) {
     res.status(401).json({ error: "Session Expired" });

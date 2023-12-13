@@ -27,14 +27,10 @@ export default async function handle(req, res) {
     }
   }
 
-  return new Promise((resolve, reject) => {
-    const proxy = httpProxy.createProxy()
-    proxy.once('proxyRes', resolve)
-    proxy.once('error', reject)
-    proxy.web(req, res, {
-      headers,
-      changeOrigin: true,
-      target: process.env.HUMCEN_SERVER_HOST
-    })
+  const proxy = httpProxy.createProxy()
+  proxy.web(req, res, {
+    headers,
+    changeOrigin: true,
+    target: process.env.HUMCEN_SERVER_HOST
   })
 }

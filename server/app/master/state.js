@@ -1,13 +1,13 @@
 const appUtils = require("../appUtils");
 const logger = require("../logger");
-const Country = require("../models/master/country");
+const State = require("../models/master/state");
 
 exports.create = async function (req, res) {
   if (!req.body.code || !req.body.name)
     return res.status(500).json({ error: "Incomplete data" });
 
   try {
-    const old = await Country.findOne({
+    const old = await State.findOne({
       statusFlag: "A",
       orgId: req.orgId,
       code: req.body.code,
@@ -19,10 +19,10 @@ exports.create = async function (req, res) {
       return res.status(500).json({ error: "Code already exists." });
     }
 
-    const country = new Country(req.body);
-    country.prefillAuditInfo(req);
-    await country.save();
-    res.status(200).json({ _id: country._id });
+    const state = new State(req.body);
+    state.prefillAuditInfo(req);
+    await state.save();
+    res.status(200).json({ _id: state._id });
   } catch (error) {
     logger.error(req, error);
     res.status(500).json({ error: error.message });
@@ -30,18 +30,19 @@ exports.create = async function (req, res) {
 };
 
 exports.update = async function (req, res) {
-  if (!req.body._id || !req.body.name)
+  if (!req.body._id || !req.body.name || !req.body.countryId)
     return res.status(500).json({ error: "Incomplete data" });
 
   try {
-    const country = await Country.findById(req.body._id);
-    if (!country || !country._id) {
-      return res.status(500).json({ error: "Country not found" });
+    const state = await State.findById(req.body._id);
+    if (!state || !state._id) {
+      return res.status(500).json({ error: "State not found" });
     }
 
-    country.name = req.body.name;
-    country.prefillAuditInfo(req);
-    await country.save();
+    state.name = req.body.name;
+    state.countryId = req.body.countryId;
+    state.prefillAuditInfo(req);
+    await state.save();
     res.status(200).json({});
   } catch (error) {
     logger.error(req, error);
@@ -51,7 +52,7 @@ exports.update = async function (req, res) {
 
 exports.search = async function (req, res) {
   try {
-    const query = Country.find({
+    const query = State.find({
       statusFlag: "A",
       orgId: req.orgId,
     });
@@ -61,6 +62,7 @@ exports.search = async function (req, res) {
       query.where("code").equals(appUtils.getStartsWithRegex(req.body.code));
     req.body.name &&
       query.where("name").equals(appUtils.getInbetweenRegex(req.body.name));
+    req.body.countryId && query.where("countryId").equals(req.body.countryId);
     const dataToSend = {};
     req.body.codeOrName &&
       query.and([
@@ -80,12 +82,12 @@ exports.search = async function (req, res) {
       dataToSend.total = await query.clone().countDocuments();
     }
 
+    query.populate("countryId", "code name");
     const limit = req.body.limit || 20;
     const pageNo = req.body.pageNo || 1;
     query.skip(limit * (pageNo - 1));
     query.limit(limit);
-    dataToSend.countries = await query.lean().exec();
-
+    dataToSend.states = await query.lean().exec();
     res.status(200).json(dataToSend);
   } catch (error) {
     logger.error(req, error);

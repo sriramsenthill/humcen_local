@@ -18,6 +18,7 @@ adminRouter.use(function (req, res, next) {
     const decodedUser = jwt.verify(token, config.jwtAdmin);
     req.user = decodedUser;
     req.userId = decodedUser._id;
+    req.orgId = decodedUser.orgId;
     next();
   } catch (error) {
     res.status(401).json({ error: "Session Expired" });
@@ -28,6 +29,11 @@ const country = require("../master/country");
 adminRouter.post("/country/create", country.create);
 adminRouter.post("/country/update", country.update);
 adminRouter.post("/country/search", country.search);
+
+const state = require("../master/state");
+adminRouter.post("/state/create", state.create);
+adminRouter.post("/state/update", state.update);
+adminRouter.post("/state/search", state.search);
 
 //ADMIN DATA
 adminRouter.get("/user", data.getUsers);

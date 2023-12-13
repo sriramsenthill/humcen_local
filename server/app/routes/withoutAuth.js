@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.use(function (req, res, next) {
   if (global.rootOrg) {
-    req.org = global.rootOrg;
     req.orgId = global.rootOrg._id;
   }
   next();
