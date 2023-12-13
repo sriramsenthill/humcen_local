@@ -29,8 +29,10 @@ partnerRouter.get("/getLogInPartner", partnerProfile.getLogInPartner);
 //Partner_Settings
 partnerRouter.get("/img", partnerSetttings.fetchPartnerProfileImage);
 partnerRouter.get("/settings", partnerSetttings.fetchPartnerSettings);
+partnerRouter.get("/settingsProfile", partnerSetttings.fetchPartnerProfileSettings);
 partnerRouter.get("/fields", partnerSetttings.fetchPartnerKnownFields);
 partnerRouter.put("/settings", partnerSetttings.updatePartnerSettings);
+partnerRouter.put("/settingsProfile", partnerSetttings.updatePartnerProfileSettings);
 partnerRouter.put("/bank-settings", partnerSetttings.updatePartnerBankDetails);
 partnerRouter.put("/pref-settings", partnerSetttings.updatePartnerPrefSettings);
 partnerRouter.put("/service-settings", partnerSetttings.editPartnerServices);
@@ -42,7 +44,6 @@ partnerRouter.get("/jobs/:id", engine.getPartnerJobsById);
 partnerRouter.get("/job_order", engine.getPartnerJobOrders);
 partnerRouter.put("/accept/:jobId", engine.acceptJobOrder);
 partnerRouter.put("/uploaded", engine.updateTimelineForUpload);
-
 partnerRouter.delete("/reject/:service/:country/:jobId", engine.rejectJobOrder);
 partnerRouter.get("/jobOrder/:services/:id", engine.getFilesForPartners);
 // partnerRouter.get("api/:services/:jobID", engine.getJobDetailsForPartners);

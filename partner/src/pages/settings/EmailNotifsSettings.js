@@ -16,6 +16,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import cardStyle from '@/styles/nc.module.css'
 
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
@@ -100,13 +101,13 @@ export default function Profile() {
       .then((response) => {
         const userId = response.data.userID;
         setUserID(UID);
-        const essentialEmails = response.data.pref.mails;
+        const essentialEmails = response.data.emailPreference.mails;
         setEssentialEmails(essentialEmails);
-        const orderUpdates = response.data.pref.order_updates;
+        const orderUpdates = response.data.emailPreference.orderUpdates;
         setOrderUpdates(orderUpdates);
-        const marketingMails = response.data.pref.marketing_emails;
+        const marketingMails = response.data.emailPreference.marketingEmails;
         setMarketingMails(marketingMails);
-        const newsletter = response.data.pref.newsletter;
+        const newsletter = response.data.emailPreference.newsletter;
         setNewsLetter(newsletter);
       })
       .catch((error) => {
@@ -114,13 +115,32 @@ export default function Profile() {
       });
   }, []);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleSubmit = () => {
+    if (editMode) {
+      setEditMode(false);
+      console.log(essentialEmails,orderUpdates,marketingMails,newsletter);
+      axios
+        .put("/pref-settings", {
+          data: {
+            userID: UID,
+            mails: essentialEmails,
+            orderUpdates: orderUpdates,
+            marketingEmails: marketingMails,
+            newsletter: newsletter,
+          },
+        })
+        .then((response) => res.json(response.data))
+        .catch((error) =>
+          console.error(
+            "Error in Updating Partner's Preferential Settings",
+            error
+          )
+        );
+      // window.location.reload(true);
+    } else {
+      setEditMode(true);
+    }
+  }
 
   return (
     <>
@@ -325,6 +345,7 @@ export default function Profile() {
             align="right"
             style={{ flexBasis: "40%" }}
           >
+           {!editMode ? (
             <IconButton
               color="#79E0F3"
               aria-label="add"
@@ -334,39 +355,17 @@ export default function Profile() {
                 height: "56px",
                 backgroundColor: "#ECFCFF",
               }}
-              onClick={() => {
-                if (editMode) {
-                  setEditMode(false);
-                  axios
-                    .put("/api/partner/pref-settings", {
-                      data: {
-                        userID: UID,
-                        mails: essentialEmails,
-                        order_updates: orderUpdates,
-                        marketing_emails: marketingMails,
-                        newsletter: newsletter,
-                      },
-                    })
-                    .then((response) => res.json(response.data))
-                    .catch((error) =>
-                      console.error(
-                        "Error in Updating Partner's Preferential Settings",
-                        error
-                      )
-                    );
-                  window.location.reload(true);
-                } else {
-                  setEditMode(true);
-                }
-              }}
+              onClick={handleSubmit}
             >
               <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
+          ) : (
+            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%'}} onClick={handleSubmit}>
+              <button className={cardStyle.button}>Submit</button>
+            </div>
+          )}
           </Grid>
         </Grid>
-        <Button variant="contained" color="primary" style={{width: '140px', marginTop: '10px'}} >
-          Submit
-        </Button>
       </Card>
     </>
   );

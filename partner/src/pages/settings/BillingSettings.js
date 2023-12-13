@@ -8,7 +8,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
 import { styled } from '@mui/system'
-
+import cardStyle from '@/styles/nc.module.css'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -83,17 +83,38 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get('email'),
-      password: data.get('password')
-    })
-  }
 
   const [editMode, setEditMode] = useState(false)
-
+  const handleSubmit = () => {
+    if (editMode === true) {
+      setEditMode(false)
+      axios
+        .put('/bank-settings', {
+          data: {
+            userId: UsID,
+            bankName: bankName,
+            accountNum: accountNum,
+            accountName: accountName,
+            branch: branch,
+            ifscCode: ifscCode,
+            address: address,
+            town: town,
+            postCode: postCode,
+            country: country
+          }
+        })
+        .then((response) => res.json(response.data))
+        .catch((error) =>
+          console.error(
+            "Error in Updating Partner's Bank Details Settings",
+            error
+          )
+        )
+    } else {
+      setEditMode(true)
+    }
+  }
+  
   return (
     <>
       <Card
@@ -504,52 +525,27 @@ export default function Profile() {
             align='right'
             style={{ flexBasis: '40%' }}
           >
+            {!editMode ? (
             <IconButton
-              color='#79E0F3'
-              aria-label='add'
+              color="#79E0F3"
+              aria-label="add"
               sx={{
-                borderRadius: '50%',
-                width: '56px',
-                height: '56px',
-                backgroundColor: '#ECFCFF'
+                borderRadius: "50%",
+                width: "56px",
+                height: "56px",
+                backgroundColor: "#ECFCFF",
               }}
-              onClick={() => {
-                if (editMode === true) {
-                  setEditMode(false)
-                  axios
-                    .put('/bank-settings', {
-                      data: {
-                        userId: UsID,
-                        bankName: bankName,
-                        accountNum: accountNum,
-                        accountName: accountName,
-                        branch: branch,
-                        ifscCode: ifscCode,
-                        address: address,
-                        town: town,
-                        postCode: postCode,
-                        country: country
-                      }
-                    })
-                    .then((response) => res.json(response.data))
-                    .catch((error) =>
-                      console.error(
-                        "Error in Updating Partner's Bank Details Settings",
-                        error
-                      )
-                    )
-                } else {
-                  setEditMode(true)
-                }
-              }}
+              onClick={handleSubmit}
             >
-              <EditIcon style={{ color: '#79E0F3' }} />
+              <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
+          ) : (
+            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%',marginTop:'550px'}} onClick={handleSubmit}>
+              <button className={cardStyle.button}>Submit</button>
+            </div>
+          )}
           </Grid>
         </Grid>
-        <Button variant="contained" color="primary" style={{width: '140px', marginTop: '10px'}} >
-          Submit
-        </Button>
       </Card>
     </>
   )

@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import { styled } from "@mui/system";
-
+import cardStyle from '@/styles/nc.module.css';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -56,16 +56,29 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
 
   const [editMode, setEditMode] = React.useState(false);
+
+  const handleSubmit = () => {
+    if (editMode) {
+      setEditMode(false)
+      axios
+        .put("password", {
+          data: {
+            password: Password,
+          },
+        })
+        .then((response) => res.json(response.data))
+        .catch((error) =>
+          console.error(
+            "Error in Updating Partner's Password",
+            error
+          )
+        );
+    } else {
+      setEditMode(true);
+    }
+  }
 
   return (
     <>
@@ -145,6 +158,7 @@ export default function Profile() {
             align="right"
             style={{ flexBasis: "40%" }}
           >
+            {!editMode ? (
             <IconButton
               color="#79E0F3"
               aria-label="add"
@@ -154,34 +168,17 @@ export default function Profile() {
                 height: "56px",
                 backgroundColor: "#ECFCFF",
               }}
-              onClick={() => {
-                if (editMode) {
-                  setEditMode(false);
-                  axios
-                    .put("/api/partner/password", {
-                      data: {
-                        password: Password,
-                      },
-                    })
-                    .then((response) => res.json(response.data))
-                    .catch((error) =>
-                      console.error(
-                        "Error in Updating Partner's Password",
-                        error
-                      )
-                    );
-                } else {
-                  setEditMode(true);
-                }
-              }}
+              onClick={handleSubmit}
             >
               <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
+          ) : (
+            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%'}} onClick={handleSubmit}>
+              <button className={cardStyle.button}>Submit</button>
+            </div>
+          )}
           </Grid>
         </Grid>
-        <Button variant="contained" color="primary" style={{width: '140px', marginTop: '10px'}} >
-          Submit
-        </Button>
       </Card>
     </>
   );

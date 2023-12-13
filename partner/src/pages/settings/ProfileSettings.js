@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import { styled } from "@mui/system";
-
+import cardStyle from '@/styles/nc.module.css'
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -16,7 +16,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
+import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 
@@ -40,7 +40,7 @@ export default function Profile() {
   const [applicantType, setApplicantType] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [companyID, setCompanyID] = useState("");
-  const [vatPayer, setVatPayer] = useState("");
+  const [vatPayer, setVatPayer] = useState(false);
   const [phone, setPhone] = useState("");
   const [position, setPosition] = useState("");
   const [street, setStreet] = useState("");
@@ -52,23 +52,23 @@ export default function Profile() {
 
   useEffect(() => {
     axios
-      .get("/settings")
+      .get("/settingsProfile")
       .then((response) => {
         const UsID = response.data.userID;
         setUserID(UsID);
-        const firstName = response.data.first_name;
+        const firstName = response.data.firstName;
         setFirstName(firstName);
         const email = response.data.email;
         setEmail(email);
-        const lastName = response.data.last_name;
+        const lastName = response.data.lastName;
         setLastName(lastName);
-        const applicantType = response.data.applicant_type;
+        const applicantType = response.data.applicantType;
         setApplicantType(applicantType);
-        const businessName = response.data.business_name;
+        const businessName = response.data.businessName;
         setBusinessName(businessName);
-        const companyID = response.data.company_id;
+        const companyID = response.data.companyId;
         setCompanyID(companyID);
-        const vatPayer = response.data.vat_payer;
+        const vatPayer = response.data.vatPayer;
         setVatPayer(vatPayer);
         const phone = response.data.phno;
         setPhone(phone);
@@ -78,7 +78,7 @@ export default function Profile() {
         setStreet(street);
         const town = response.data.town;
         setTown(town);
-        const postCode = response.data.post_code;
+        const postCode = response.data.postCode;
         setPostCode(postCode);
         const country = response.data.country;
         setCountry(country);
@@ -95,17 +95,53 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
-
   const [editMode, setEditMode] = useState(false);
-
+  const handleSubmit = () => {
+    if (editMode === true) {
+      axios
+        .put("/settingsProfile", {
+          data: {
+            userId: UID,
+            applicantType: applicantType,
+            businessName: businessName,
+            companyID: companyID,
+            vatPayer: vatPayer,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            position: position,
+            street: street,
+            town: town,
+            postCode: postCode,
+            country: country,
+          },
+        })
+        .then((response) =>{
+         res.json(response.data)
+        }
+        )
+        .catch((error) =>
+          console.error(
+            "Error in Updating Partner's Settings",
+            error
+          )
+        );
+      setEditMode(false);
+    } else {
+      setEditMode(true);
+    }
+  }
+  const boolArray = [
+    {
+      value: true,
+      label: 'Yes',
+    },
+    {
+      value: false,
+      label: 'No',
+    }
+  ]
   return (
     <>
       <Card
@@ -282,17 +318,21 @@ export default function Profile() {
                     >
                       {editMode ? (
                         <TextField
-                          required
-                          fullWidth
-                          id="vat"
-                          label="VAT Payer"
-                          name="name"
-                          placeholder="VAT Payer"
-                          value={vatPayer}
-                          onChange={(e) => setVatPayer(e.target.value)}
-                        />
+                        id="outlined-select-currency"
+                        select
+                        label="VAT Payer"
+                        onChange={(e) => setVatPayer(e.target.value)}
+                        // helperText="Please select your currency"
+                        fullWidth
+                      >
+                        {boolArray.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                       ) : (
-                        <Typography>{vatPayer}</Typography>
+                        <Typography>{vatPayer ? "Yes" : "No"}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -681,6 +721,7 @@ export default function Profile() {
             align="right"
             style={{ flexBasis: "40%" }}
           >
+            {!editMode ? (
             <IconButton
               color="#79E0F3"
               aria-label="add"
@@ -690,48 +731,17 @@ export default function Profile() {
                 height: "56px",
                 backgroundColor: "#ECFCFF",
               }}
-              onClick={() => {
-                if (editMode === true) {
-                  setEditMode(false);
-                  axios
-                    .put("/settings", {
-                      data: {
-                        userId: UID,
-                        applicant_type: applicantType,
-                        business_name: businessName,
-                        company_id: companyID,
-                        vat_payer: vatPayer,
-                        first_name: firstName,
-                        last_name: lastName,
-                        email: email,
-                        phone: phone,
-                        position: position,
-                        street: street,
-                        town: town,
-                        post_code: postCode,
-                        country: country,
-                      },
-                    })
-                    .then((response) => res.json(response.data))
-                    .catch((error) =>
-                      console.error(
-                        "Error in Updating Partner's Settings",
-                        error
-                      )
-                    );
-                  window.location.reload(true);
-                } else {
-                  setEditMode(true);
-                }
-              }}
+              onClick={handleSubmit}
             >
               <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
+          ) : (
+            <div className={cardStyle.buttonContainer} style={{marginTop:'840px',marginLeft:'60%'}} onClick={handleSubmit}>
+              <button className={cardStyle.button}>Submit</button>
+            </div>
+          )}
           </Grid>
         </Grid>
-        <Button variant="contained" color="primary" style={{width: '140px', marginTop: '15px'}} >
-          Submit
-        </Button>
       </Card>
     </>
   );

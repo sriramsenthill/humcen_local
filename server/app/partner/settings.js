@@ -1,9 +1,11 @@
 const servList = require("../../Works");
+const mongoose = require('mongoose');
+const emailPref = require('../models/emailPrefrences');
 const Partner = require("../models/partner"); // Import the Partner model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 const User = require("../models/user");
 const fetchPartnerProfileImage = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
 
   try {
     // Find the partner with the given userID
@@ -16,10 +18,10 @@ const fetchPartnerProfileImage = async (req, res) => {
   }
 };
 const fetchPartnerProfileSettings = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   try {
     // Find the partner with the given userID
-  const user = await User.findOne({ _id: userID });
+    const user = await User.findOne({ _id: userID });
     const partner = await Partner.findOne({ userId: userID  });
     const data ={
       userID: userID,
@@ -42,11 +44,9 @@ const fetchPartnerProfileSettings = async (req, res) => {
 };
 
 const fetchPartnerSettings = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   try {
-    // Find the partner with the given userID
     const partner = await Partner.findOne({ userId: userID  });
-    console.error(partner);
     res.json(partner);
   } catch (error) {
     // Handle any errors that occurred during the process
@@ -56,7 +56,7 @@ const fetchPartnerSettings = async (req, res) => {
 };
 
 const fetchPartnerKnownFields = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   try {
     // Find the partner with the given userID
     const partner = await Partner.findOne({ userId: userID  });
@@ -70,7 +70,7 @@ const fetchPartnerKnownFields = async (req, res) => {
 };
 
 const updatePartnerSettings = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   const partner = await Partner.findOne({ userId: userID  });
   partner.applicantType = req.body.data.applicantType;
   partner.businessName = req.body.data.businessName;
@@ -94,7 +94,7 @@ const updatePartnerSettings = async (req, res) => {
 };
 
 const updatePartnerBankDetails = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   const partner = await Partner.findOne({ userId: userID  });
   partner.bank.bankName = req.body.data.bankName;
   partner.bank.accountNum = req.body.data.accountNum;
@@ -114,12 +114,17 @@ const updatePartnerBankDetails = async (req, res) => {
 };
 
 const updatePartnerPrefSettings = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   const partner = await Partner.findOne({ userId: userID  });
-  partner.pref.mails = req.body.data.mails;
-  partner.pref.order_updates = req.body.data.order_updates;
-  partner.pref.marketing_emails = req.body.data.marketing_emails;
-  partner.pref.newsletter = req.body.data.newsletter;
+  const EmailPref = mongoose.model('EmailPref', emailPref);
+  const newEmailPref = new EmailPref({
+    mails: req.body.data.mails,
+    orderUpdates: req.body.data.orderUpdates,
+    marketingEmails: req.body.data.marketingEmails,
+    newsletter: req.body.data.newsletter,
+  });
+  partner.emailPreference = newEmailPref;
+  console.log(partner);
   partner
     .save()
     .then((res) => console.log("Partner's Preferentials Successfully Updated"))
@@ -133,7 +138,7 @@ const updatePartnerPrefSettings = async (req, res) => {
 
 const editPartnerServices = async (req, res) => {
   const serviceList = servList.map(elem => elem.title);
-  const userID = req.userID;
+  const userID = req.userId;
   const partner = await Partner.findOne({ userId: userID  });
   req.body.data.known_fields.forEach((field) => {
     partner.known_fields[field] = true;
@@ -154,7 +159,7 @@ const editPartnerServices = async (req, res) => {
 }
 
 const updatePartnerPassword = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   const partner = await Partner.findOne({ userId: userID  }); 
   const saltRounds = 10;
   bcrypt.genSalt(saltRounds, (err, salt) => {
@@ -182,6 +187,26 @@ const updatePartnerPassword = async (req, res) => {
   });
 };
 
+const updatePartnerProfileSettings = async (req, res) => {
+  try {
+    const userID = req.userId;
+    const partner = await Partner.findOne({ userId: userID  });
+    const user = await User.findOne({ _id: userID });
+    user.firstName = req.body.data.firstName;
+    user.email = req.body.data.email;
+    user.lastName = req.body.data.lastName;
+    partner.applicantType = req.body.data.applicantType;
+    partner.businessName = req.body.data.businessName;
+    partner.companyId = req.body.data.companyID;
+    partner.vatPayer = req.body.data.vatPayer;
+    user.phno = req.body.data.phone;
+    partner.position = req.body.data.position;
+    await Promise.all([user.save(), partner.save()]);
+    console.log('User and Partner saved successfully');
+  } catch (error) {
+    console.error("Error in saving user and partner: ", error);
+  }
+}
 module.exports = {
   fetchPartnerProfileImage,
   fetchPartnerSettings,
@@ -191,5 +216,6 @@ module.exports = {
   updatePartnerPrefSettings,
   updatePartnerPassword,
   editPartnerServices,
-  fetchPartnerProfileSettings
+  fetchPartnerProfileSettings,
+  updatePartnerProfileSettings
 };
