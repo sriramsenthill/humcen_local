@@ -174,25 +174,7 @@ const SignUpForm = () => {
               >
                 <Grid container alignItems='center' spacing={2}>
                   <h1>Sign Up</h1>
-                  <Typography fontSize='15px' mb='30px' mt='15px' ml='20px'>
-                    Already have an account?{' '}
-                    <Link
-                      href='/authentication/sign-in/'
-                      className='primaryColor text-decoration-none'
-                    >
-                      Log In
-                    </Link>
-                  </Typography>
                   <Grid item xs={12}>
-                    <Typography
-                      component='label'
-                      sx={{
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        mb: '10px',
-                        display: 'block'
-                      }}
-                    ></Typography>
                     <TextField
                       autoComplete='given-name'
                       name='firstName'
@@ -212,15 +194,6 @@ const SignUpForm = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Typography
-                      component='label'
-                      sx={{
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        mb: '10px',
-                        display: 'block'
-                      }}
-                    ></Typography>
                     <TextField
                       required
                       fullWidth
@@ -239,15 +212,6 @@ const SignUpForm = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Typography
-                      component='label'
-                      sx={{
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        mb: '10px',
-                        display: 'block'
-                      }}
-                    ></Typography>
                     <TextField
                       required
                       fullWidth
@@ -267,15 +231,6 @@ const SignUpForm = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Typography
-                      component='label'
-                      sx={{
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        mb: '10px',
-                        display: 'block'
-                      }}
-                    ></Typography>
                     <TextField
                       required
                       fullWidth
@@ -330,6 +285,16 @@ const SignUpForm = () => {
               >
                 Sign up
               </Button>
+
+              <Typography style={{ fontSize: '15px', marginBottom: '30px', marginTop: '15px', marginLeft: '20px', textAlign: 'center' }}>
+                Already have an account?{' '}
+                <Link
+                  href='/authentication/sign-in/'
+                  className='primaryColor text-decoration-none'
+                >
+                  Log In
+                </Link>
+              </Typography>
 
               <Typography
                 fontSize='12px'
