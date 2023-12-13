@@ -729,6 +729,9 @@ export default function Profile() {
             </IconButton>
           </Grid>
         </Grid>
+        <Button variant="contained" color="primary" style={{width: '140px', marginTop: '15px'}} >
+          Submit
+        </Button>
       </Card>
     </>
   );
