@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
+const seeder = require("./seeder");
 const config = require("../config");
 const logger = require("../app/logger");
-const Organization = require("../app/models/organization");
-const seeder = require("./seeder");
 
 async function connect() {
   try {
@@ -16,16 +15,7 @@ async function connect() {
 
 async function init() {
   await connect();
-  try {
-    let org = await Organization.findOne({ code: 'CLOUD' });
-    if (!org) {
-      org = await seeder();
-      logger.info('Root Org was created successfully...!');
-    }
-    global.rootOrg = org && org.toJSON();
-  } catch (error) {
-    logger.error("Root Org error:", error);
-  }
+  seeder();
 }
 
 exports.init = init;

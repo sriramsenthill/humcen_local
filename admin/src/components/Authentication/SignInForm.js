@@ -1,77 +1,82 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Link from "next/link";
-import Grid from "@mui/material/Grid";
-import { Typography, Card } from "@mui/material";
-import { Box } from "@mui/system";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import { useSearchParams, useRouter } from "next/navigation";
-import styles from "@/components/Authentication/Authentication.module.css";
-import { getSession, signIn } from "next-auth/react";
+import React, { useState } from 'react'
+import Link from 'next/link'
+import Grid from '@mui/material/Grid'
+import { Typography, Card } from '@mui/material'
+import { Box } from '@mui/system'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import { useSearchParams, useRouter } from 'next/navigation'
+import styles from '@/components/Authentication/Authentication.module.css'
+import { getSession, signIn } from 'next-auth/react'
 
 const SignInForm = () => {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const [error, setError] = useState('')
+  const searchParams = useSearchParams()
 
-  let callbackUrl = searchParams.get("callbackUrl");
+  let callbackUrl = searchParams.get('callbackUrl')
   if (callbackUrl) {
-    const url = new URL(callbackUrl);
-    if (url.origin != globalThis.location?.origin) {
-      callbackUrl = '';
+    try {
+      const url = new URL(callbackUrl)
+      if (url.origin != globalThis.location?.origin) {
+        callbackUrl = ''
+      }
+    } catch (e) {}
+    if (callbackUrl.indexOf('logout') > -1) {
+      callbackUrl = ''
     }
   }
 
-  callbackUrl = callbackUrl || '/';
+  callbackUrl = callbackUrl || '/'
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const username = data.get("email");
-    const password = data.get("password");
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const username = data.get('email')
+    const password = data.get('password')
 
-    const result = await signIn("credentials", {
+    const result = await signIn('credentials', {
       username,
       password,
       callbackUrl,
-      redirect: false,
-    });
+      redirect: false
+    })
 
-    const clientSession = await getSession();
+    const clientSession = await getSession()
     if (result && result.status == 200 && clientSession?.user?.token) {
-      localStorage.setItem("token", clientSession?.user?.token);
-      router.push(callbackUrl);
+      router.push(callbackUrl)
     } else {
-      setError("Invalid email or password");
+      setError('Invalid email or password')
     }
-  };
+  }
 
   return (
     <>
-      <div className="authenticationBox">
+      <div className='authenticationBox'>
         <div className={styles.container}>
           <div className={styles.leftContainer}>
             <div className={styles.topContainer}>
               <div className={styles.cardContainer}>
                 <img
-                  src="/images/sign.png"
-                  alt="favicon"
+                  src='/images/sign.png'
+                  alt='favicon'
                   className={styles.sign}
                 />
-                <Card className={styles.floatingCard} >
+                <Card className={styles.floatingCard}>
                   <h2>Applied patent</h2>
-                  <p>200<strong>+ </strong> </p>
+                  <p>
+                    200<strong>+ </strong>{' '}
+                  </p>
                 </Card>
               </div>
             </div>
             <div className={styles.bottomContainer}>
-              <Typography as="h1" mb="5px">
+              <Typography as='h1' mb='5px'>
                 <img
-                  src="/images/logo-white.png"
-                  alt="favicon"
+                  src='/images/logo-white.png'
+                  alt='favicon'
                   className={styles.favicon}
                 />
                 <Typography className={styles.textt}>
@@ -81,36 +86,37 @@ const SignInForm = () => {
                   <strong> border patent</strong> seamlessly
                 </Typography>
                 <Typography className={styles.text2}>
-                  Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally.
+                  Blockchain Driven One Stop IP platform to protect your{' '}
+                  <br></br>Inventions Globally.
                 </Typography>
               </Typography>
             </div>
           </div>
           <div className={styles.rightContainer}>
             <h1>Login Your account</h1>
-            <Typography fontSize="15px" mb="30px">
+            <Typography fontSize='15px' mb='30px'>
               Admin Portal
             </Typography>
             <Box>
-              <Box component="form" noValidate onSubmit={handleSubmit}>
+              <Box component='form' noValidate onSubmit={handleSubmit}>
                 <Box
                   sx={{
-                    background: "#fff",
-                    padding: "  30px 20px",
-                    borderRadius: "10px",
-                    mb: "20px",
+                    background: '#fff',
+                    padding: '  30px 20px',
+                    borderRadius: '10px',
+                    mb: '20px'
                   }}
-                  className="bg-black"
+                  className='bg-black'
                 >
-                  <Grid container alignItems="center" spacing={2}>
+                  <Grid container alignItems='center' spacing={2}>
                     <Grid item xs={12}>
                       <Typography
-                        component="label"
+                        component='label'
                         sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
+                          fontWeight: '500',
+                          fontSize: '14px',
+                          mb: '10px',
+                          display: 'block'
                         }}
                       >
                         Email
@@ -119,24 +125,24 @@ const SignInForm = () => {
                       <TextField
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        id='email'
+                        label='Email Address'
+                        name='email'
+                        autoComplete='email'
                         InputProps={{
-                          style: { borderRadius: 8 },
+                          style: { borderRadius: 8 }
                         }}
                       />
                     </Grid>
 
                     <Grid item xs={12}>
                       <Typography
-                        component="label"
+                        component='label'
                         sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
+                          fontWeight: '500',
+                          fontSize: '14px',
+                          mb: '10px',
+                          display: 'block'
                         }}
                       >
                         Password
@@ -145,13 +151,13 @@ const SignInForm = () => {
                       <TextField
                         required
                         fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
+                        name='password'
+                        label='Password'
+                        type='password'
+                        id='password'
+                        autoComplete='new-password'
                         InputProps={{
-                          style: { borderRadius: 8 },
+                          style: { borderRadius: 8 }
                         }}
                       />
                     </Grid>
@@ -160,29 +166,29 @@ const SignInForm = () => {
 
                 {error && (
                   <Typography
-                    variant="body2"
-                    color="error"
-                    align="center"
+                    variant='body2'
+                    color='error'
+                    align='center'
                     sx={{ mb: 2 }}
                   >
                     {error}
                   </Typography>
                 )}
 
-                <Grid container alignItems="center" spacing={2} >
-                  <Grid item xs={5} sm={5} ml="20px">
+                <Grid container alignItems='center' spacing={2}>
+                  <Grid item xs={5} sm={5} ml='20px'>
                     <FormControlLabel
                       control={
-                        <Checkbox value="allowExtraEmails" color="primary" />
+                        <Checkbox value='allowExtraEmails' color='primary' />
                       }
-                      label="Remember me."
+                      label='Remember me.'
                     />
                   </Grid>
 
-                  <Grid item xs={5} sm={5} textAlign="end" ml="20px">
+                  <Grid item xs={5} sm={5} textAlign='end' ml='20px'>
                     <Link
-                      href="/authentication/forgot-password"
-                      className="primaryColor text-decoration-none"
+                      href='/authentication/forgot-password'
+                      className='primaryColor text-decoration-none'
                     >
                       Forgot your password?
                     </Link>
@@ -190,25 +196,34 @@ const SignInForm = () => {
                 </Grid>
 
                 <Button
-                  type="submit"
+                  type='submit'
                   fullWidth
-                  variant="contained"
+                  variant='contained'
                   sx={{
-                    mt: "20px",
-                    textTransform: "capitalize",
-                    borderRadius: "100px", /* Changed to 100px for circular button */
-                    fontWeight: "500",
-                    fontSize: "16px",
-                    marginLeft: "20px", padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
-                    color: "#fff !important",
-                    width: "450px", /* Set the width to 483px */
-                    height: "48px", /* Set the height to 48px */
-                    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+                    mt: '20px',
+                    textTransform: 'capitalize',
+                    borderRadius:
+                      '100px' /* Changed to 100px for circular button */,
+                    fontWeight: '500',
+                    fontSize: '16px',
+                    marginLeft: '20px',
+                    padding:
+                      '14px 0px 14px 0px' /* Adjust the padding as needed */,
+                    color: '#fff !important',
+                    width: '450px' /* Set the width to 483px */,
+                    height: '48px' /* Set the height to 48px */,
+                    background:
+                      'linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)'
                   }}
                 >
                   Log In
                 </Button>
-                <Typography fontSize="12px" mt="20%" textAlign="center" color="#676B5F">
+                <Typography
+                  fontSize='12px'
+                  mt='20%'
+                  textAlign='center'
+                  color='#676B5F'
+                >
                   2023 Copyrights. All Rights Reserved
                 </Typography>
               </Box>
@@ -217,7 +232,7 @@ const SignInForm = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SignInForm;
+export default SignInForm

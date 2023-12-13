@@ -44,12 +44,9 @@ export default function Profile() {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
-
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
       axios
         .get("/settings", {
           headers: {
@@ -82,7 +79,6 @@ export default function Profile() {
         .catch((error) => {
           console.error("Error fetching Partner's Bank Details Settings:", error);
         });
-    }
   }, []);
 
   const handleClick = (event) => {
@@ -166,9 +162,7 @@ export default function Profile() {
                           onChange={(e) => setBankName(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {bankName}
-                        </Typography>
+                        <Typography>{bankName}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -414,9 +408,7 @@ export default function Profile() {
                           onChange={(e) => setTown(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {town}
-                        </Typography>
+                        <Typography>{town}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -529,7 +521,6 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
                   axios.put('/bank-settings', {
                     data: {
                       userId: UsID,
@@ -543,14 +534,14 @@ export default function Profile() {
                       postCode: postCode,
                       country: country
                     }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
                   })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Bank Details Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Bank Details Settings",
+                        error
+                      )
+                    );
                 } else {
                   setEditMode(true);
                 }

@@ -24,7 +24,7 @@ import { FormControlLabel } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import serviceList from "@/pages/my-patent-services/ServiceListArray";
 
-const servList = serviceList.map(elem => elem.title);
+const servList = serviceList.map((elem) => elem.title);
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -88,7 +88,6 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
-
 export default function Profile() {
   const [editMode, setEditMode] = React.useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,52 +96,31 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const userId = response.data.userID;
-          setUserID(UID);
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching Partner's Preferential Settings:",
-            error
-          );
-        });
-    }
+    axios
+      .get("/settings")
+      .then((response) => {
+        const userId = response.data.userID;
+        setUserID(UID);
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner's Preferential Settings:", error);
+      });
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/fields", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const totalYes = []
-          const yesServices = response.data;
-          yesServices.forEach(service => totalYes.push(service));
-          setYesServices(totalYes);
-          console.log("Yes Services : " + Object.entries(yesServices));
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching Partner's Known Fields Settings:",
-            error
-          );
-        });
-    }
+    axios
+      .get("/fields")
+      .then((response) => {
+        const totalYes = [];
+        const yesServices = response.data;
+        yesServices.forEach((service) => totalYes.push(service));
+        setYesServices(totalYes);
+        console.log("Yes Services : " + Object.entries(yesServices));
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner's Known Fields Settings:", error);
+      });
   }, []);
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -155,8 +133,6 @@ export default function Profile() {
   const handleKnownFieldsChange = (values) => {
     setKnownFieldsValues(values);
   };
-
-
 
   return (
     <>
@@ -181,12 +157,16 @@ export default function Profile() {
               color: "#223345",
               textAlign: "center",
               paddingRight: "200px",
-            }}>
-            Added Services</Typography>
-          <div style={{
-            paddingLeft: "70px",
-            paddingBottom: "30px",
-          }}>
+            }}
+          >
+            Added Services
+          </Typography>
+          <div
+            style={{
+              paddingLeft: "70px",
+              paddingBottom: "30px",
+            }}
+          >
             <KnownSettings
               onChange={handleKnownFieldsChange}
               edit={!editMode}
@@ -215,24 +195,23 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/partner/service-settings', {
-                    data: {
-                      userID: UID,
-                      known_fields: knownFieldsValues,
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/partner/service-settings", {
+                      data: {
+                        userID: UID,
+                        known_fields: knownFieldsValues,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Preferential Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Preferential Settings",
+                        error
+                      )
+                    );
                   window.location.href = "/settings";
-                }
-                else {
-                  setEditMode(true)
+                } else {
+                  setEditMode(true);
                 }
               }}
             >

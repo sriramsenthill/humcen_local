@@ -7,10 +7,14 @@ import Link from "next/link";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
 import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import CustomDropZone from "./CustomDropBox";
-
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -32,16 +36,15 @@ const WhiteDialog = styled(Dialog)(({ theme }) => ({
     backgroundColor: "white",
     width: "490px",
     height: "360px",
-    padding: '6px',
+    padding: "6px",
     borderRadius: "10px",
   },
 }));
 
-
 const CenteredDialogActions = styled(DialogActions)({
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
 });
 
 const JobDetails = ({ services, jobNo }) => {
@@ -77,40 +80,20 @@ const JobDetails = ({ services, jobNo }) => {
       setIsSubmitted(true); // If you want to show the success dialog
 
       try {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          // Handle the case when the user is not authenticated
-          console.error("User not authenticated");
-          return;
-        }
         if (!files) {
-
         } else {
           // Make the PUT request to update the job files
-          const response = await axios.put(
-            'partner/job-files',
-            {
-              job_no: id,
-              service: service,
-              country: country,
-              partnerID: partID,
-              partnerName: partName,
-              job_files: files,
-            },
-            {
-              headers: {
-                "Authorization": token,
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const response = await axios.put("partner/job-files", {
+            job_no: id,
+            service: service,
+            country: country,
+            partnerID: partID,
+            partnerName: partName,
+            job_files: files,
+          });
 
           console.log("Job Files Updated:", response.data);
-
-
         }
-
 
         // Set a state or handle any other logic after successful submission
         // For example, you can show a success message and redirect the user to another page
@@ -120,9 +103,6 @@ const JobDetails = ({ services, jobNo }) => {
         console.error("Error in Updating Job Files", error);
         // Handle the error, show an error message, or implement any other error handling logic
       }
-
-
-
     }
   };
 
@@ -130,34 +110,16 @@ const JobDetails = ({ services, jobNo }) => {
   const handleOk = async () => {
     setIsSubmitted(false);
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        // Handle the case when the user is not authenticated
-        console.error("User not authenticated");
-        return;
-      }
       // Update the Timeline
-      const timelineResponse = await axios.put(
-        "partner/uploaded",
-        {
-          job_no: id,
-          activity: 5,
-        },
-        {
-          headers: {
-            "Authorization": token,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const timelineResponse = await axios.put("partner/uploaded", {
+        job_no: id,
+        activity: 5,
+      });
 
       console.log("Timeline Updated:", timelineResponse.data);
-
     } catch (error) {
       console.error("Error updating timeline:", error);
     }
-
   };
 
   const handleOkClick = () => {
@@ -165,100 +127,82 @@ const JobDetails = ({ services, jobNo }) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setJobNum(id);
+    setJobNum(id);
 
-      axios.get(`partner/jobs/${id}`, {
-        headers: {
-          Authorization: token,
-        },
-      }).then((response) => {
-        const partnerUploadDate = response.data.date_activity[4];
-        console.log(partnerUploadDate);
-        if (partnerUploadDate === "") {
-          setShowUpload(true);
-        }
-      })
+    axios.get(`partner/jobs/${id}`).then((response) => {
+      const partnerUploadDate = response.data.date_activity[4];
+      console.log(partnerUploadDate);
+      if (partnerUploadDate === "") {
+        setShowUpload(true);
+      }
+    });
 
-
-      api
-        .get(`${services}/${id}`, {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setPersonalInfo(Object.entries(response.data).map(([key, value]) => ({
+    api
+      .get(`${services}/${id}`)
+      .then((response) => {
+        console.log(response.data);
+        setPersonalInfo(
+          Object.entries(response.data).map(([key, value]) => ({
             title: key,
             text: value,
-          })));
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
-        }
+          }))
         );
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
 
-      api
-        .get(`partnerDetails/${services}/${id}`, {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          console.log("Hey", response.data);
-          const partnerInfo = response.data;
-          setPartID(partnerInfo.partnerID);
-          setJob(jobNo);
-          setPartName(partnerInfo.partnerName);
-          setService(partnerInfo.service);
-          setCountry(partnerInfo.country);
-        })
-        .catch((error) => {
-          console.error("Error fetching Partner Details", error);
-        });
+    api
+      .get(`partnerDetails/${services}/${id}`)
+      .then((response) => {
+        console.log("Hey", response.data);
+        const partnerInfo = response.data;
+        setPartID(partnerInfo.partnerID);
+        setJob(jobNo);
+        setPartName(partnerInfo.partnerName);
+        setService(partnerInfo.service);
+        setCountry(partnerInfo.country);
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner Details", error);
+      });
 
-      api
-        .get(`partner/job_files_details/${id}`, {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setStatus(response.data.verification);
-          if (response.data.job_files.length > 0) {
-            setShowUpload(false);
-          }
-          if (response.data.decided === true && response.data.access_provided === false) {
-            setTextColor("red");
-          } else if (response.data.decided === true && response.data.access_provided === true) {
-            setTextColor("green");
-          } else {
-            setTextColor("orange");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching Partner Details", error);
-        });
+    api
+      .get(`partner/job_files_details/${id}`)
+      .then((response) => {
+        console.log(response.data);
+        setStatus(response.data.verification);
+        if (response.data.job_files.length > 0) {
+          setShowUpload(false);
+        }
+        if (
+          response.data.decided === true &&
+          response.data.access_provided === false
+        ) {
+          setTextColor("red");
+        } else if (
+          response.data.decided === true &&
+          response.data.access_provided === true
+        ) {
+          setTextColor("green");
+        } else {
+          setTextColor("orange");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner Details", error);
+      });
 
-      axios.get(`partner/jobs/${id}`, {
-        headers: {
-          Authorization: token,
-        },
-      }).then(response => {
+    axios
+      .get(`partner/jobs/${id}`)
+      .then((response) => {
         const specificJob = response.data;
         setAccepted(response.data.Accepted);
-      }).catch((err) => {
-        console.error("Error in checking Accepted Status: ", err);
       })
-
-
-    }
+      .catch((err) => {
+        console.error("Error in checking Accepted Status: ", err);
+      });
   }, [services, jobNo, id]);
-
-
 
   return (
     <>
@@ -270,26 +214,38 @@ const JobDetails = ({ services, jobNo }) => {
           mb: "15px",
         }}
       >
-        <Box sx={{ padding: '20px' }}>
+        <Box sx={{ padding: "20px" }}>
           {personalInfo.map((info) => (
-            <Box sx={{ padding: '5px', backgroundColor: '#fff', borderRadius: "20px" }} className={styles.containerBox}>
-
+            <Box
+              sx={{
+                padding: "5px",
+                backgroundColor: "#fff",
+                borderRadius: "20px",
+              }}
+              className={styles.containerBox}
+            >
               <ul className={styles.list}>
-                <li style={{
-                  textAlign: "left",
-                }}>
+                <li
+                  style={{
+                    textAlign: "left",
+                  }}
+                >
                   <h3 className={styles.emailheading}>{info.title}</h3>
                 </li>
-                <li style={{
-                  textAlign: "right",
-                }}>
-                  <p className={styles.email} style={{ width: '100px' }}>{info.text}</p>
+                <li
+                  style={{
+                    textAlign: "right",
+                  }}
+                >
+                  <p className={styles.email} style={{ width: "100px" }}>
+                    {info.text}
+                  </p>
                 </li>
               </ul>
 
               <hr className={styles.line} style={{ width: "100%" }} />
-
-            </Box>))}
+            </Box>
+          ))}
 
           {/* <ul className={styles.list}>
             <li style={{
@@ -320,73 +276,104 @@ const JobDetails = ({ services, jobNo }) => {
           </Typography>
 
           <Typography>{info.text}</Typography> */}
-          {upload && isAccepted &&
-            (<ul className={styles.list}>
-              <li style={{
-                position: "relative",
-                right: "4%",
-                textAlign: "left",
-                width: "200px",
-              }}>
-                <h3 className={styles.emailheading}>Upload your Completed Work</h3>
+          {upload && isAccepted && (
+            <ul className={styles.list}>
+              <li
+                style={{
+                  position: "relative",
+                  right: "4%",
+                  textAlign: "left",
+                  width: "200px",
+                }}
+              >
+                <h3 className={styles.emailheading}>
+                  Upload your Completed Work
+                </h3>
               </li>
-              <li style={{
-                position: "relative",
-                right: "3%",
-                textAlign: "right",
-                bottom: "50%",
-                width: "150px",
-                marginRight: '33px',
-              }}>
-                <p className={styles.email} style={{ width: '200px' }} ><CustomDropZone files={files} onFileChange={getFiles} /></p>
+              <li
+                style={{
+                  position: "relative",
+                  right: "3%",
+                  textAlign: "right",
+                  bottom: "50%",
+                  width: "150px",
+                  marginRight: "33px",
+                }}
+              >
+                <p className={styles.email} style={{ width: "200px" }}>
+                  <CustomDropZone files={files} onFileChange={getFiles} />
+                </p>
               </li>
-            </ul>)}
+            </ul>
+          )}
           <Box
             key="Status"
             sx={{
-              display: 'flex',
-              borderBottom: '1px solid #E1E7F5',
+              display: "flex",
+              borderBottom: "1px solid #E1E7F5",
 
-              py: '10px',
+              py: "10px",
             }}
-          >
-          </Box>
+          ></Box>
         </Box>
       </Card>
-      {upload && isAccepted && (<Button
-        sx={{
-          background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-          position: "relative",
-          bottom: "10%",
-          left: "40%",
-          bottom: "15px",
-          color: "white",
-          borderRadius: "100px",
-          width: "10%",
-          height: "88%",
-          textTransform: "none",
-          "&:hover": {
-            background: "#00002B",
-          },
-        }}
-        onClick={handleSubmit}
-      >
-        Submit
-      </Button>)}
+      {upload && isAccepted && (
+        <Button
+          sx={{
+            background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+            position: "relative",
+            bottom: "10%",
+            left: "40%",
+            bottom: "15px",
+            color: "white",
+            borderRadius: "100px",
+            width: "10%",
+            height: "88%",
+            textTransform: "none",
+            "&:hover": {
+              background: "#00002B",
+            },
+          }}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+      )}
       <WhiteDialog open={isSubmitted}>
         <CenteredDialogActions>
           <DialogTitle>
             {/* Replace 'your-image-url.jpg' with the actual URL of the image */}
-            <img src="/images/done 2done.jpg" alt="Done" style={{ width: "80px", height: '80px', marginBottom: "0px" }} />
+            <img
+              src="/images/done 2done.jpg"
+              alt="Done"
+              style={{ width: "80px", height: "80px", marginBottom: "0px" }}
+            />
           </DialogTitle>
           <DialogContent>
-            <h1 style={{ textAlign: "center", fontWeight: "600", fontSize: "22px", fontFamily: 'Inter', color: "#00002B" }}>Your Work has been Submitted Successfully!</h1>
+            <h1
+              style={{
+                textAlign: "center",
+                fontWeight: "600",
+                fontSize: "22px",
+                fontFamily: "Inter",
+                color: "#00002B",
+              }}
+            >
+              Your Work has been Submitted Successfully!
+            </h1>
           </DialogContent>
           <DialogActions>
-            <ColorButton onClick={() => { handleOk(); router.push("/"); }} style={{ width: "120px", height: "40px", fontFamily: 'Inter' }}>OK</ColorButton>
+            <ColorButton
+              onClick={() => {
+                handleOk();
+                router.push("/");
+              }}
+              style={{ width: "120px", height: "40px", fontFamily: "Inter" }}
+            >
+              OK
+            </ColorButton>
           </DialogActions>
         </CenteredDialogActions>
-
       </WhiteDialog>
       <Dialog open={isEmpty}>
         <DialogTitle>Failed</DialogTitle>

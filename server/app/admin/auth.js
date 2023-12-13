@@ -1,13 +1,13 @@
+const logger = require("../logger");
+const users = require("../common/users");
 
-const logger = require('../logger');
-const users = require('../common/users');
-
-const type = 'ADMIN';
+const type = "ADMIN";
 
 const signInAdmin = async (req, res) => {
   try {
     const user = await users.isValidUser(req, type);
-    if (!user) return res.status(401).json({ error: "Invalid email or password" });
+    if (!user)
+      return res.status(401).json({ error: "Invalid email or password" });
 
     const token = users.generateJwt(user, type);
     if (!token) return res.status(500).json({});
@@ -20,5 +20,5 @@ const signInAdmin = async (req, res) => {
 };
 
 module.exports = {
-  signInAdmin
+  signInAdmin,
 };

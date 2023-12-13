@@ -1,9 +1,8 @@
-
-const logger = require('../logger');
-const users = require('../common/users');
+const logger = require("../logger");
+const users = require("../common/users");
 const Partner = require("../models/partner"); // Import the Partner model
 
-const type = 'PARTNER';
+const type = "PARTNER";
 
 const signUpPartner = async (req, res) => {
   let session = null;
@@ -22,7 +21,7 @@ const signUpPartner = async (req, res) => {
   } catch (error) {
     logger.error(req, "Error creating partner:", error);
     res.status(500).json({ error: error.message });
-    session && await session.abortTransaction();
+    session && (await session.abortTransaction());
   } finally {
     session && session.endSession();
   }
@@ -31,7 +30,8 @@ const signUpPartner = async (req, res) => {
 const signInPartner = async (req, res) => {
   try {
     const user = await users.isValidUser(req, type);
-    if (!user) return res.status(401).json({ error: "Invalid email or password" });
+    if (!user)
+      return res.status(401).json({ error: "Invalid email or password" });
 
     const token = users.generateJwt(user, type);
     if (!token) return res.status(500).json({});
@@ -45,5 +45,5 @@ const signInPartner = async (req, res) => {
 
 module.exports = {
   signUpPartner,
-  signInPartner
+  signInPartner,
 };

@@ -1,6 +1,6 @@
 :root {
   --bodyFontFamily: "Inter"
-  --bodyTextColor: #5B5B98;
+    --bodyTextColor: #5B5B98;
   --primaryColor: #00ACF6;
   --secondaryColor: #02E1B9;
   --successColor: #00B69B;
@@ -14,15 +14,23 @@
   --transition: all ease .5s;
   --box-shadow: 0 0 20px 3px rgba(0, 0, 0, 0.05);
 }
-.blue{
+
+.blue {
   color: #00ACF6;
 }
-html, body {
+
+html,
+body {
   background-color: #F8FCFF !important;
   font-family: var(--bodyFontFamily) !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--headingColor);
 }
 
@@ -30,7 +38,37 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--bodyFontFamily) !important;
 }
 
-div, label, a, p, tspan, span, li, table, tbody, tfoot, thead, th, td, canvas, button, input, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, select, time, del {
+div,
+label,
+a,
+p,
+tspan,
+span,
+li,
+table,
+tbody,
+tfoot,
+thead,
+th,
+td,
+canvas,
+button,
+input,
+::placeholder,
+abbr,
+address,
+blockquote,
+caption,
+cite,
+code,
+dd,
+dl,
+mark,
+option,
+pre,
+select,
+time,
+del {
   font-family: var(--bodyFontFamily) !important;
 }
 
@@ -793,16 +831,20 @@ img {
   position: relative;
   transition: all 0.5s ease-out;
 }
+
 .main-wrapper-content.active {
   padding-left: 0;
 }
+
 .main-wrapper-content.active .LeftSidebarNav {
   left: -100%;
 }
+
 .main-wrapper-content.active .main-content {
   padding-left: 30px;
   padding-right: 30px;
 }
+
 .main-wrapper-content .main-content {
   padding-right: 30px;
 }
@@ -813,23 +855,28 @@ img {
     padding-right: 15px !important;
   }
 }
+
 @media only screen and (max-width: 1199px) {
   .main-wrapper-content {
     padding: 0;
   }
+
   .main-wrapper-content .LeftSidebarNav {
     left: -100%;
     width: 280px;
   }
+
   .main-wrapper-content .main-content {
     padding-left: 30px;
     padding-right: 30px;
   }
+
   .main-wrapper-content.active .LeftSidebarNav {
     z-index: 99999;
     left: 0;
   }
 }
+
 @media only screen and (min-width: 2200px) {
   .main-wrapper-content .main-content {
     max-width: 2200px;
@@ -837,6 +884,7 @@ img {
     margin-right: auto;
   }
 }
+
 /* End Main wrapper content */
 /* React Tabs Tab List */
 .react-tabs__tab-list .react-tabs__tab--selected {
@@ -856,7 +904,8 @@ img {
 }
 
 /* Product Details Tabs */
-.product-img-slider .swiper-button-next:after, .product-img-slider .swiper-button-prev:after {
+.product-img-slider .swiper-button-next:after,
+.product-img-slider .swiper-button-prev:after {
   color: var(--primaryColor);
   font-size: 25px;
 }
@@ -864,6 +913,7 @@ img {
 .product-details-tabs .react-tabs__tab-list {
   border-bottom: 1px solid #dfdfdf;
 }
+
 .product-details-tabs .react-tabs__tab-list .react-tabs__tab {
   color: #A9A9C8;
   font-weight: 500;
@@ -876,10 +926,13 @@ img {
   border-left: none;
   border-bottom: 2px solid transparent;
 }
+
 .product-details-tabs .react-tabs__tab-list .react-tabs__tab:last-child {
   margin-right: 0;
 }
-.product-details-tabs .react-tabs__tab-list .react-tabs__tab:hover, .product-details-tabs .react-tabs__tab-list .react-tabs__tab.react-tabs__tab--selected {
+
+.product-details-tabs .react-tabs__tab-list .react-tabs__tab:hover,
+.product-details-tabs .react-tabs__tab-list .react-tabs__tab.react-tabs__tab--selected {
   background-color: transparent;
   border-top: none;
   border-right: none;
@@ -887,51 +940,65 @@ img {
   border-bottom: 2px solid var(--primaryColor);
   color: #260944;
 }
+
 .product-details-tabs .react-tabs__tab-list .react-tabs__tab:focus:after {
   background: transparent;
 }
+
 .product-details-tabs .react-tabs__tab-panel {
   margin-top: 20px;
 }
+
 .product-details-tabs .product-description h1 {
   font-size: 22px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description h2 {
   font-size: 20px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description h3 {
   font-size: 18px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description h4 {
   font-size: 16px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description h5 {
   font-size: 15px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description h6 {
   font-size: 14px;
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .product-description p:last-child {
   margin-bottom: 0;
 }
-.product-details-tabs .product-description ul li, .product-details-tabs .product-description ol li {
+
+.product-details-tabs .product-description ul li,
+.product-details-tabs .product-description ol li {
   margin-bottom: 10px;
 }
-.product-details-tabs .product-description ul li:last-child, .product-details-tabs .product-description ol li:last-child {
+
+.product-details-tabs .product-description ul li:last-child,
+.product-details-tabs .product-description ol li:last-child {
   margin-bottom: 0;
 }
+
 .product-details-tabs .review-card .content {
   background: #F7FAFF;
   border-radius: 8px;
@@ -939,40 +1006,49 @@ img {
   padding: 25px;
   margin-bottom: 30px;
 }
+
 .product-details-tabs .review-card .content .reating {
   color: #FFBC2B;
   margin-bottom: 10px;
   font-size: 15px;
 }
+
 .product-details-tabs .review-card .content .reating i {
   margin-right: 5px;
 }
+
 .product-details-tabs .review-card .content .reating i:last-child {
   margin-right: 0;
 }
+
 .product-details-tabs .review-card .content p {
   margin-top: 0;
   margin-bottom: 10px;
 }
+
 .product-details-tabs .review-card .content p:last-child {
   margin-bottom: 0;
 }
+
 .product-details-tabs .review-card .content .down-arrow {
   position: absolute;
   bottom: -20px;
   left: 25px;
 }
+
 .product-details-tabs .review-card .info {
   display: flex;
   align-items: center;
   margin-left: 30px;
 }
+
 .product-details-tabs .review-card .info img {
   border-radius: 100%;
   width: 30px;
   height: 30px;
   margin-right: 10px;
 }
+
 .product-details-tabs .review-card .info h4 {
   margin: 0;
   font-weight: 500;
@@ -983,7 +1059,9 @@ img {
 [class=dark] .product-details-tabs .react-tabs__tab-list {
   border-bottom: 1px solid var(--borderColor);
 }
-[class=dark] .product-details-tabs .react-tabs__tab-list .react-tabs__tab:hover, [class=dark] .product-details-tabs .react-tabs__tab-list .react-tabs__tab.react-tabs__tab--selected {
+
+[class=dark] .product-details-tabs .react-tabs__tab-list .react-tabs__tab:hover,
+[class=dark] .product-details-tabs .react-tabs__tab-list .react-tabs__tab.react-tabs__tab--selected {
   color: var(--primaryColor);
 }
 
@@ -991,48 +1069,68 @@ img {
   margin-right: 0;
   margin-left: 30px;
 }
+
 [dir=rtl] .product-details-tabs .react-tabs__tab-list .react-tabs__tab:last-child {
   margin-left: 0;
 }
+
 [dir=rtl] .product-details-tabs .review-card .content .reating i {
   margin-right: 0;
   margin-left: 5px;
 }
+
 [dir=rtl] .product-details-tabs .review-card .content .reating i:last-child {
   margin-left: 0;
 }
+
 [dir=rtl] .product-details-tabs .review-card .content .down-arrow {
   left: auto;
   right: 25px;
 }
+
 [dir=rtl] .product-details-tabs .review-card .info {
   margin-left: auto;
   margin-right: 30px;
 }
+
 [dir=rtl] .product-details-tabs .review-card .info img {
   margin-right: 0;
   margin-left: 10px;
 }
 
 /* Testimonial Style */
-.testimonialStyle1 .swiper-button-next, .testimonialStyle1 .swiper-button-prev, .testimonialStyle2 .swiper-button-next, .testimonialStyle2 .swiper-button-prev {
+.testimonialStyle1 .swiper-button-next,
+.testimonialStyle1 .swiper-button-prev,
+.testimonialStyle2 .swiper-button-next,
+.testimonialStyle2 .swiper-button-prev {
   color: var(--primaryColor);
 }
-.testimonialStyle1 .swiper-button-next::after, .testimonialStyle1 .swiper-button-prev::after, .testimonialStyle2 .swiper-button-next::after, .testimonialStyle2 .swiper-button-prev::after {
+
+.testimonialStyle1 .swiper-button-next::after,
+.testimonialStyle1 .swiper-button-prev::after,
+.testimonialStyle2 .swiper-button-next::after,
+.testimonialStyle2 .swiper-button-prev::after {
   font-size: 25px;
 }
-.testimonialStyle1 .swiper-button-next, .testimonialStyle2 .swiper-button-next {
+
+.testimonialStyle1 .swiper-button-next,
+.testimonialStyle2 .swiper-button-next {
   right: 0;
 }
-.testimonialStyle1 .swiper-button-prev, .testimonialStyle2 .swiper-button-prev {
+
+.testimonialStyle1 .swiper-button-prev,
+.testimonialStyle2 .swiper-button-prev {
   left: 0;
 }
 
-[dir=rtl] .testimonialStyle1 .swiper-button-next, [dir=rtl] .testimonialStyle2 .swiper-button-next {
+[dir=rtl] .testimonialStyle1 .swiper-button-next,
+[dir=rtl] .testimonialStyle2 .swiper-button-next {
   right: auto;
   left: 0;
 }
-[dir=rtl] .testimonialStyle1 .swiper-button-prev, [dir=rtl] .testimonialStyle2 .swiper-button-prev {
+
+[dir=rtl] .testimonialStyle1 .swiper-button-prev,
+[dir=rtl] .testimonialStyle2 .swiper-button-prev {
   left: auto;
   right: 0;
 }
@@ -1040,16 +1138,18 @@ img {
 .testimonialStyle3 .swiper-pagination {
   position: relative;
 }
+
 .testimonialStyle3 .swiper-pagination .swiper-pagination-bullet {
   width: 10px;
   height: 10px;
 }
+
 .testimonialStyle3 .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
   background-color: var(--primaryColor);
 }
 
 /* Active File Manager Link */
-.activeFMLink > a {
+.activeFMLink>a {
   color: var(--primaryColor) !important;
 }
 
@@ -1063,7 +1163,8 @@ img {
 }
 
 /* End Authentication box */
-.apexcharts-yaxis text, .apexcharts-xaxis text {
+.apexcharts-yaxis text,
+.apexcharts-xaxis text {
   fill: var(--bodyTextColor);
 }
 
@@ -1084,6 +1185,7 @@ img {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
   z-index: 1290;
 }
+
 .scroll-to-top i:hover {
   transition: var(--transition);
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -1100,9 +1202,11 @@ img {
   background-color: rgba(0, 0, 0, 0.2);
   transition: var(--transition);
 }
+
 .control-panel-modal.show {
   right: 0;
 }
+
 .control-panel-modal .settings-btn {
   position: fixed;
   bottom: 70px;
@@ -1120,6 +1224,7 @@ img {
   transition: var(--transition);
   animation: rotate 2s linear infinite;
 }
+
 .control-panel-modal .settings-btn:hover {
   background-color: #d32979;
 }
@@ -1128,10 +1233,12 @@ img {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
+
 .control-panel-dialog {
   width: 320px;
   background: #fff;
@@ -1140,11 +1247,13 @@ img {
   z-index: 999999;
   position: relative;
 }
+
 .control-panel-dialog .control-panel-content {
   overflow-y: auto;
   height: 100%;
   padding-bottom: 150px;
 }
+
 .control-panel-dialog .control-panel-footer {
   position: absolute;
   bottom: 0;
@@ -1152,4 +1261,10 @@ img {
   background-color: #F5F5F5;
   padding: 16px 24px;
   width: 100%;
-}/*# sourceMappingURL=globals.css.map */
+}
+
+/*# sourceMappingURL=globals.css.map */
+
+.error-text {
+  color: red;
+}

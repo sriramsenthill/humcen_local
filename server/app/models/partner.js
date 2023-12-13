@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const addressSchema = require('./address');
-const emailPref = require('./emailPrefrences');
-const auditFieldsPlugin = require('./auditFieldsPlugin');
+const mongoose = require("mongoose");
+const addressSchema = require("./address");
+const emailPref = require("./emailPrefrences");
+const auditFieldsPlugin = require("./auditFieldsPlugin");
 
 const PartnerSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'State',
+    ref: "State",
     index: true,
     required: true,
   },
@@ -81,11 +81,10 @@ const PartnerSchema = new mongoose.Schema({
     },
     country: {
       type: String,
-    }
+    },
   },
-
 });
 
 PartnerSchema.plugin(auditFieldsPlugin);
-const Partner = mongoose.model('Partner', PartnerSchema);
+const Partner = mongoose.model("Partner", PartnerSchema);
 module.exports = Partner;

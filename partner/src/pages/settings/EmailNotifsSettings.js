@@ -84,7 +84,6 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
-
 export default function Profile() {
   const [editMode, setEditMode] = React.useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -96,36 +95,24 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const userId = response.data.userID;
-          setUserID(UID);
-          const essentialEmails = response.data.pref.mails;
-          setEssentialEmails(essentialEmails);
-          const orderUpdates = response.data.pref.order_updates;
-          setOrderUpdates(orderUpdates);
-          const marketingMails = response.data.pref.marketing_emails;
-          setMarketingMails(marketingMails);
-          const newsletter = response.data.pref.newsletter;
-          setNewsLetter(newsletter);
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching Partner's Preferential Settings:",
-            error
-          );
-        });
-    }
+    axios
+      .get("/settings")
+      .then((response) => {
+        const userId = response.data.userID;
+        setUserID(UID);
+        const essentialEmails = response.data.pref.mails;
+        setEssentialEmails(essentialEmails);
+        const orderUpdates = response.data.pref.order_updates;
+        setOrderUpdates(orderUpdates);
+        const marketingMails = response.data.pref.marketing_emails;
+        setMarketingMails(marketingMails);
+        const newsletter = response.data.pref.newsletter;
+        setNewsLetter(newsletter);
+      })
+      .catch((error) => {
+        console.error("Error fetching Partner's Preferential Settings:", error);
+      });
   }, []);
-
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -134,8 +121,6 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-
 
   return (
     <>
@@ -281,9 +266,7 @@ export default function Profile() {
                             sx={{ m: 1 }}
                             disabled={!editMode}
                             checked={marketingMails}
-                            onChange={() =>
-                              setMarketingMails(!marketingMails)
-                            }
+                            onChange={() => setMarketingMails(!marketingMails)}
                           />
                         }
                       />
@@ -354,27 +337,26 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/partner/pref-settings', {
-                    data: {
-                      userID: UID,
-                      mails: essentialEmails,
-                      order_updates: orderUpdates,
-                      marketing_emails: marketingMails,
-                      newsletter: newsletter,
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/partner/pref-settings", {
+                      data: {
+                        userID: UID,
+                        mails: essentialEmails,
+                        order_updates: orderUpdates,
+                        marketing_emails: marketingMails,
+                        newsletter: newsletter,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Partner's Preferential Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Partner's Preferential Settings",
+                        error
+                      )
+                    );
                   window.location.reload(true);
-                }
-                else {
-                  setEditMode(true)
+                } else {
+                  setEditMode(true);
                 }
               }}
             >

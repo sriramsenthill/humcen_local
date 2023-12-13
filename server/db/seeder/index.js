@@ -1,5 +1,6 @@
-const organization = require("./organization");
+const master = require("./master");
 
 module.exports = async function () {
-  return organization();
-}
+  await master.organization();
+  await master.adminUser();
+};
