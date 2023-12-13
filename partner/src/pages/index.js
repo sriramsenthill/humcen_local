@@ -1,88 +1,119 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import Grid from "@mui/material/Grid";
-import { Card } from "@mui/material";
-import Link from "next/link";
+import React from 'react'
+import { useState, useEffect } from 'react'
+import Grid from '@mui/material/Grid'
+import { Card } from '@mui/material'
+import Link from 'next/link'
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 // import { Carousel } from "react-responsive-carousel";
-import styles from "@/styles/PageTitle.module.css";
-import cardStyle from "@/styles/nc.module.css";
+import styles from '@/styles/PageTitle.module.css'
+import cardStyle from '@/styles/nc.module.css'
 // import Performance from "@/components/Dashboard/eCommerce/Performance";
-import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
-import NewOrder from "@/components/index_comp/new_orders";
-import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
-import axios from "axios";
-import { Typography } from "@mui/material";
-import { commonUtils } from 'frontend-module';
+import RecentOrders from '@/components/Dashboard/eCommerce/RecentOrders'
+import NewOrder from '@/components/index_comp/new_orders'
+import NewCustomers from '@/components/Dashboard/eCommerce/NewCustomers'
+import axios from 'axios'
+import { Typography } from '@mui/material'
+import { commonUtils } from 'frontend-module'
+import _axios from '@/_axios'
+
+export async function getServerSideProps(context) {
+  let partner = null
+  try {
+    const axiosInstance = await _axios.getServerAxios(context.req, context.res)
+    if (axiosInstance) {
+      const res = await axiosInstance.get('getLogInPartner')
+      if (res?.data?.partner && !res.data.partner.profileStage) {
+        return {
+          redirect: {
+            destination: '/settings', // the URL to redirect to
+            permanent: false // set to true for permanent redirection (HTTP 301)
+          }
+        }
+      } else {
+        return {
+          props: { partner }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('err', e)
+  }
+
+  return {
+    props: {
+      partner: null
+    }
+  }
+}
 
 async function fetchJobOrders() {
   try {
-    const response = await axios.get('/job_order');
-    const jobOrders = response.data; // Extract the jobOrders array from the response data
+    const response = await axios.get('/job_order')
+    const jobOrders = response.data // Extract the jobOrders array from the response data
     console.log(jobOrders)
     if (Array.isArray(jobOrders)) {
-      const filteredJobOrders = jobOrders   // .filter(order => order.Accepted === true);
+      const filteredJobOrders = jobOrders // .filter(order => order.Accepted === true);
       // console.log(filteredJobOrders);
-      return filteredJobOrders;
+      return filteredJobOrders
     } else {
-      console.error('Invalid data format: Expected an array');
-      return [];
+      console.error('Invalid data format: Expected an array')
+      return []
     }
   } catch (error) {
-    console.error('Error fetching job orders:', error);
-    return [];
+    console.error('Error fetching job orders:', error)
+    return []
   }
 }
 
 function eCommerce() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [partnerName, setPartnerName] = useState("");
-  const [getJobs, setJobs] = useState('');
-  const open = Boolean(anchorEl);
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [partnerName, setPartnerName] = useState('')
+  const [getJobs, setJobs] = useState('')
+  const open = Boolean(anchorEl)
 
   useEffect(() => {
-    setPartnerName(commonUtils.getUserName());
-  }, []);
+    setPartnerName(commonUtils.getUserName())
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchJobOrders();
-      setJobs(data);
-      console.log(data);
-    };
+      const data = await fetchJobOrders()
+      setJobs(data)
+      console.log(data)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const carouselImages = [
     {
-      src: "/images/partner1.jpg",
-      alt: "image1",
-      link: "https://www.youtube.com/watch?v=49HTIoCccDY",
+      src: '/images/partner1.jpg',
+      alt: 'image1',
+      link: 'https://www.youtube.com/watch?v=49HTIoCccDY'
     },
     {
-      src: "/images/partner2.jpg",
-      alt: "image2",
-      link: "https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB",
+      src: '/images/partner2.jpg',
+      alt: 'image2',
+      link: 'https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB'
     },
     {
-      src: "/images/partner3.jpg",
-      alt: "image3",
-      link: "https://www.amazon.in/amazonprime",
-    },
-  ];
+      src: '/images/partner3.jpg',
+      alt: 'image3',
+      link: 'https://www.amazon.in/amazonprime'
+    }
+  ]
 
   const handleCarClick = (link) => {
-    window.open(link, "_blank");
-  };
+    window.open(link, '_blank')
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
   return (
     <>
       <div className={'card'}>
@@ -90,32 +121,33 @@ function eCommerce() {
         <div className={styles.pageTitle}>
           <ul>
             <li>
-              <Link href="/">Dashboard</Link>
+              <Link href='/'>Dashboard</Link>
             </li>
             <li>Home</li>
           </ul>
         </div>
         <h1>Welcome Back, {partnerName}!</h1>
-        {getJobs.length === 0 ? <div className={cardStyle.container}>
-          <div className={cardStyle.content}>
-            <h1>Your account is now active</h1>
-            <Typography className={cardStyle.text1}>
-              Browse our services and explore all the ways to use Humcen
-            </Typography>
+        {getJobs.length === 0 ? (
+          <div className={cardStyle.container}>
+            <div className={cardStyle.content}>
+              <h1>Your account is now active</h1>
+              <Typography className={cardStyle.text1}>
+                Browse our services and explore all the ways to use Humcen
+              </Typography>
+            </div>
+            <div className={cardStyle.buttonContainer}>
+              <button className={cardStyle.button}>Active</button>
+            </div>
           </div>
-          <div className={cardStyle.buttonContainer}>
-
-            <button className={cardStyle.button}>Active</button>
-
-          </div>
-        </div> :
+        ) : (
           <>
             <Card
               sx={{
-                boxShadow: "0px 4px 13px rgba(0, 0, 0, 0.1)",
-                borderRadius: "20px",
-                marginBottom: "20px"
-              }}>
+                boxShadow: '0px 4px 13px rgba(0, 0, 0, 0.1)',
+                borderRadius: '20px',
+                marginBottom: '20px'
+              }}
+            >
               {/* <Carousel
                 autoPlay={true}
                 infiniteLoop={true}
@@ -171,11 +203,10 @@ function eCommerce() {
               </Grid>
             </Grid>
           </>
-        }
-
+        )}
       </div>
     </>
-  );
+  )
 }
 
-export default eCommerce;
+export default eCommerce

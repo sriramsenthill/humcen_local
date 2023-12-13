@@ -27,3 +27,23 @@ axios.interceptors.response.use(
     }
   }
 )
+
+const _axios = {}
+_axios.getServerAxios = async function (req, res) {
+  try {
+    const session = await getServerSession(req, res, authOptions)
+    if (!session || !session.user || !session.user.token) return null
+
+    const axiosObj = axios.create({
+      headers: {
+        Authorization: session.user.token
+      }
+    })
+
+    return axiosObj
+  } catch (e) {
+    return null
+  }
+}
+
+export default _axios

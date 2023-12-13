@@ -98,7 +98,7 @@ export default function Country() {
     try {
       setDataLoading(true)
       const res = await axios.post('/country/search', {
-        ...formData
+        ...searchData
       })
       setDataLoading(false)
       setCountries(res?.data?.countries || [])

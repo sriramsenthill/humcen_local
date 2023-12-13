@@ -3,11 +3,11 @@ const Partner = require("../models/partner"); // Import the Partner model
 const bcrypt = require("bcrypt"); // Import the bcrypt library
 
 const fetchPartnerProfileImage = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
 
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userId: userID  });
+    const partner = await Partner.findOne({ userId: userID });
 
     res.json(partner.profile_img);
   } catch (error) {
@@ -18,10 +18,10 @@ const fetchPartnerProfileImage = async (req, res) => {
 };
 
 const fetchPartnerSettings = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userId: userID  });
+    const partner = await Partner.findOne({ userId: userID });
     res.json(partner);
   } catch (error) {
     // Handle any errors that occurred during the process
@@ -31,12 +31,11 @@ const fetchPartnerSettings = async (req, res) => {
 };
 
 const fetchPartnerKnownFields = async (req, res) => {
-  const userID = req.userID;
+  const userID = req.userId;
   try {
     // Find the partner with the given userID
-    const partner = await Partner.findOne({ userId: userID  });
+    const partner = await Partner.findOne({ userId: userID });
     res.json(partner.known_fields);
-
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
@@ -45,8 +44,8 @@ const fetchPartnerKnownFields = async (req, res) => {
 };
 
 const updatePartnerSettings = async (req, res) => {
-  const userID = req.userID;
-  const partner = await Partner.findOne({ userId: userID  });
+  const userID = req.userId;
+  const partner = await Partner.findOne({ userId: userID });
   partner.applicant_type = req.body.data.applicant_type;
   partner.business_name = req.body.data.business_name;
   partner.company_id = req.body.data.company_id;
@@ -69,8 +68,8 @@ const updatePartnerSettings = async (req, res) => {
 };
 
 const updatePartnerBankDetails = async (req, res) => {
-  const userID = req.userID;
-  const partner = await Partner.findOne({ userId: userID  });
+  const userID = req.userId;
+  const partner = await Partner.findOne({ userId: userID });
   partner.bank.bankName = req.body.data.bankName;
   partner.bank.accountNum = req.body.data.accountNum;
   partner.bank.accountName = req.body.data.accountName;
@@ -89,8 +88,8 @@ const updatePartnerBankDetails = async (req, res) => {
 };
 
 const updatePartnerPrefSettings = async (req, res) => {
-  const userID = req.userID;
-  const partner = await Partner.findOne({ userId: userID  });
+  const userID = req.userId;
+  const partner = await Partner.findOne({ userId: userID });
   partner.pref.mails = req.body.data.mails;
   partner.pref.order_updates = req.body.data.order_updates;
   partner.pref.marketing_emails = req.body.data.marketing_emails;
@@ -107,30 +106,31 @@ const updatePartnerPrefSettings = async (req, res) => {
 };
 
 const editPartnerServices = async (req, res) => {
-  const serviceList = servList.map(elem => elem.title);
-  const userID = req.userID;
-  const partner = await Partner.findOne({ userId: userID  });
+  const serviceList = servList.map((elem) => elem.title);
+  const userID = req.userId;
+  const partner = await Partner.findOne({ userId: userID });
   req.body.data.known_fields.forEach((field) => {
     partner.known_fields[field] = true;
   });
-  const remService = serviceList.filter((elem) => !req.body.data.known_fields.includes(elem));
+  const remService = serviceList.filter(
+    (elem) => !req.body.data.known_fields.includes(elem)
+  );
   remService.forEach((service) => {
     partner.known_fields[service] = false;
   });
   partner
     .save()
-    .then((res) => console.log("Partner's Service Settings Successfully Updated"))
+    .then((res) =>
+      console.log("Partner's Service Settings Successfully Updated")
+    )
     .catch((error) =>
-      console.error(
-        "Error in updating Partner's Service Settings: ",
-        error
-      )
+      console.error("Error in updating Partner's Service Settings: ", error)
     );
-}
+};
 
 const updatePartnerPassword = async (req, res) => {
-  const userID = req.userID;
-  const partner = await Partner.findOne({ userId: userID  }); 
+  const userID = req.userId;
+  const partner = await Partner.findOne({ userId: userID });
   const saltRounds = 10;
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {

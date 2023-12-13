@@ -1,7 +1,10 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const config = require("../../config");
 
+const config = require("../../config");
+const engine = require("../partner/engine");
+const partnerSetttings = require("../partner/settings");
+const partnerProfile = require("../partner/partnerProfile");
 const partnerRouter = express.Router();
 
 partnerRouter.use(function (req, res, next) {
@@ -14,15 +17,16 @@ partnerRouter.use(function (req, res, next) {
   try {
     const decodedUser = jwt.verify(token, config.jwtPartner);
     req.user = decodedUser;
-    req.userID = decodedUser._id;
+    req.userId = decodedUser._id;
     next();
   } catch (error) {
     res.status(401).json({ error: "Session Expired" });
   }
 });
 
+partnerRouter.get("/getLogInPartner", partnerProfile.getLogInPartner);
+
 //Partner_Settings
-const partnerSetttings = require("../partner/settings");
 partnerRouter.get("/img", partnerSetttings.fetchPartnerProfileImage);
 partnerRouter.get("/settings", partnerSetttings.fetchPartnerSettings);
 partnerRouter.get("/fields", partnerSetttings.fetchPartnerKnownFields);
@@ -33,7 +37,7 @@ partnerRouter.put("/service-settings", partnerSetttings.editPartnerServices);
 partnerRouter.put("/password", partnerSetttings.updatePartnerPassword);
 
 //Partner_engine
-const engine = require("../partner/engine");
+
 partnerRouter.get("/jobs/:id", engine.getPartnerJobsById);
 partnerRouter.get("/job_order", engine.getPartnerJobOrders);
 partnerRouter.put("/accept/:jobId", engine.acceptJobOrder);

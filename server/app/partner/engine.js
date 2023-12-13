@@ -23,7 +23,7 @@ const Customer = require("../models/customer");
 
 const getPartnerJobsById = async (req, res) => {
   try {
-    const userID = req.userID;
+    const userID = req.userId;
     console.log("userID:", userID); // Check the value of userID
 
     const jobNumber = req.params.id; // Get the job number from the URL parameter
@@ -54,16 +54,15 @@ const getPartnerJobsById = async (req, res) => {
     if (copyJobs._id) {
       delete copyJobs._id.job_no;
     }
-    console.log("California ", copyJobs)
+    console.log("California ", copyJobs);
 
     const fakeIDs = await renderJobNumbers(jobLists);
-    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, "").trim();
     console.log(cleanedArray);
     copyJobs.og_id = jobLists[0];
     console.log("This " + copyJobs);
 
     copyJobs._id.job_no = cleanedArray;
-
 
     if (!specificJob) {
       return res
@@ -80,7 +79,7 @@ const getPartnerJobsById = async (req, res) => {
 
 const getPartnerJobOrders = async (req, res) => {
   try {
-    const userID = req.userID;
+    const userID = req.userId;
     let jobLists = [];
     console.log("userID:", userID); // Check the value of userID
 
@@ -102,36 +101,32 @@ const getPartnerJobOrders = async (req, res) => {
     // console.log("jobOrders:", jobOrders); // Check the fetched job orders
     // Remove the _id field from each object in copyJobs
     if (jobOrders.length > 0) {
-
       const copyJobs = JSON.parse(JSON.stringify(jobOrders));
       copyJobs.forEach((job) => {
         delete job._id.job_no;
       });
       jobOrders.forEach((job) => {
         jobLists.push(job._id.job_no);
-      })
+      });
 
       const fakeIDs = await renderJobNumbers(jobLists);
-      const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+      const cleanedArray = fakeIDs.map((item) => item.replace(/'/g, "").trim());
 
       for (let jobs = 0; jobs < copyJobs.length; jobs++) {
-        copyJobs[jobs].og_id = jobLists[jobs]
-        copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        copyJobs[jobs].og_id = jobLists[jobs];
+        copyJobs[jobs]._id.job_no = cleanedArray[jobs];
       }
       res.json(copyJobs);
     }
-
-
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-
 const acceptJobOrder = async (req, res) => {
   const { jobId } = req.params;
-  const userID = req.userID;
+  const userID = req.userId;
 
   try {
     // Fetch the partner document based on the user ID
@@ -142,15 +137,12 @@ const acceptJobOrder = async (req, res) => {
     }
 
     // Update the Accepted field of the specified job ID to true
-    const updatedJobOrder = await JobOrder.findOne(
-      { "_id.job_no": jobId },
-    );
-
+    const updatedJobOrder = await JobOrder.findOne({ "_id.job_no": jobId });
 
     if (!updatedJobOrder) {
       return res.status(500).json({ error: "Job order not found" });
     }
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { year: "numeric", month: "long", day: "numeric" };
     const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     updatedJobOrder.Accepted = true;
@@ -167,20 +159,40 @@ const acceptJobOrder = async (req, res) => {
       updatedJobOrder.date_partner[steps] = formattedDate;
     }
 
-    updatedJobOrder.save().then(() => {
-      console.log("Job Order saved successfully.");
-    }).catch((err) => {
-      console.log("Error in saving Job Order");
-    })
+    updatedJobOrder
+      .save()
+      .then(() => {
+        console.log("Job Order saved successfully.");
+      })
+      .catch((err) => {
+        console.log("Error in saving Job Order");
+      });
 
     partner.in_progress_jobs = partner.in_progress_jobs + 1;
-    partner.save().then((response) => { console.log("Job added to In Progress section of Partner") })
+    partner.save().then((response) => {
+      console.log("Job added to In Progress section of Partner");
+    });
     res.json({ message: "Job order accepted successfully" });
 
-    await AllNotifications.sendToUser(Number(userID), "Work  " + jobId + " has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.");
-    await AllNotifications.sendToPartner(Number(partner.userID), "Job Order of ID " + jobId + "is accepted and now, You can work on the Job without any hindrances.");
-    await AllNotifications.sendToAdmin("Partner ID " + partner.userID + " has accepted the Job ID " + jobId);
-
+    await AllNotifications.sendToUser(
+      Number(userID),
+      "Work  " +
+        jobId +
+        " has been assigned to Partner named " +
+        partner.first_name +
+        " " +
+        partner.last_name +
+        " Successfully."
+    );
+    await AllNotifications.sendToPartner(
+      Number(partner.userID),
+      "Job Order of ID " +
+        jobId +
+        "is accepted and now, You can work on the Job without any hindrances."
+    );
+    await AllNotifications.sendToAdmin(
+      "Partner ID " + partner.userID + " has accepted the Job ID " + jobId
+    );
   } catch (error) {
     console.error("Error accepting job order:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -191,7 +203,7 @@ const rejectJobOrder = async (req, res) => {
   const jobId = req.params.jobId;
   const service = req.params.service;
   const country = req.params.country;
-  const userID = req.userID;
+  const userID = req.userId;
 
   try {
     // Fetch the partner document based on the user ID
@@ -226,19 +238,27 @@ const rejectJobOrder = async (req, res) => {
 
     // Find a partner with is_free set to true to assign the rejected job
 
-    const findPartner = await Partner.findOne({ is_free: true, country: country, rejected_jobs: { $nin: [parseInt(jobId)] }, ['known_fields.' + service]: true });
+    const findPartner = await Partner.findOne({
+      is_free: true,
+      country: country,
+      rejected_jobs: { $nin: [parseInt(jobId)] },
+      ["known_fields." + service]: true,
+    });
 
     if (!findPartner) {
-
       // For Patent Drafting Rejection
       if (service === "Patent Drafting") {
         // Getting the Drafting Details
-        const rejectedJob = await Drafting.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await Drafting.findOne({
+          "_id.job_no": parseInt(jobId),
+        }).lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -260,10 +280,12 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedDrafting = new Unassigned(unassigned);
 
-
-            rejectedDrafting.save()
+            rejectedDrafting
+              .save()
               .then(() => {
-                console.log("Rejected Drafting Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Drafting Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
                 console.error("Failed to reject the Drafting Job:", err);
@@ -273,7 +295,9 @@ const rejectJobOrder = async (req, res) => {
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -286,7 +310,9 @@ const rejectJobOrder = async (req, res) => {
             Drafting.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Drafting with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Drafting with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -294,8 +320,6 @@ const rejectJobOrder = async (req, res) => {
               .catch((error) => {
                 console.error("Error deleting job from Drafting:", error);
               });
-
-
           }
         }
       }
@@ -303,12 +327,16 @@ const rejectJobOrder = async (req, res) => {
       // For Patent Filing Rejection
       else if (service === "Patent Filing") {
         // Getting the Filing Details
-        const rejectedJob = await Filing.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await Filing.findOne({
+          "_id.job_no": parseInt(jobId),
+        }).lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -330,10 +358,12 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedFiling = new Unassigned(unassigned);
 
-
-            rejectedFiling.save()
+            rejectedFiling
+              .save()
               .then(() => {
-                console.log("Rejected Filing Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Filing Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
                 console.error("Failed to reject the Filing Job:", err);
@@ -343,7 +373,9 @@ const rejectJobOrder = async (req, res) => {
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -356,7 +388,9 @@ const rejectJobOrder = async (req, res) => {
             Filing.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Filing with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Filing with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -369,15 +403,18 @@ const rejectJobOrder = async (req, res) => {
       }
 
       // Patent Search Rejection
-
       else if (service === "Patent Search") {
         // Getting the Patent Search Details
-        const rejectedJob = await Search.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await Search.findOne({
+          "_id.job_no": parseInt(jobId),
+        }).lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -399,10 +436,12 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedSearch = new Unassigned(unassigned);
 
-
-            rejectedSearch.save()
+            rejectedSearch
+              .save()
               .then(() => {
-                console.log("Rejected Patent Search Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Search Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
                 console.error("Failed to reject the Patent Search Job:", err);
@@ -412,7 +451,9 @@ const rejectJobOrder = async (req, res) => {
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -425,7 +466,9 @@ const rejectJobOrder = async (req, res) => {
             Search.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Search with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Search with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -438,15 +481,18 @@ const rejectJobOrder = async (req, res) => {
       }
 
       // Response to FER Office Action Rejection
-
       else if (service === "Response To FER Office Action") {
         // Getting the Response to FER Details
-        const rejectedJob = await responseToFer.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await responseToFer
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -468,10 +514,12 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedFER = new Unassigned(unassigned);
 
-
-            rejectedFER.save()
+            rejectedFER
+              .save()
               .then(() => {
-                console.log("Rejected Response To FER Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Response To FER Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
                 console.error("Failed to reject the Response To FER Job:", err);
@@ -481,7 +529,9 @@ const rejectJobOrder = async (req, res) => {
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -491,16 +541,22 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Response To FER traces
-            responseToFer.deleteOne({ "_id.job_no": jobId })
+            responseToFer
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Response To FER with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Response To FER with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Response To FER:", error);
+                console.error(
+                  "Error deleting job from Response To FER:",
+                  error
+                );
               });
           }
         }
@@ -509,12 +565,16 @@ const rejectJobOrder = async (req, res) => {
       // Freedom to Operate Search Rejection
       else if (service === "Freedom To Operate") {
         // Getting the Freedom To Operate Search Details
-        const rejectedJob = await freedomToOperate.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await freedomToOperate
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -536,19 +596,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedFTO = new Unassigned(unassigned);
 
-            rejectedFTO.save()
+            rejectedFTO
+              .save()
               .then(() => {
-                console.log("Rejected Freedom To Operate Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Freedom To Operate Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Freedom To Operate Job:", err);
+                console.error(
+                  "Failed to reject the Freedom To Operate Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -558,16 +626,22 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Freedom To Operate Search traces
-            freedomToOperate.deleteOne({ "_id.job_no": jobId })
+            freedomToOperate
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Freedom To Operate with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Freedom To Operate with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Freedom To Operate:", error);
+                console.error(
+                  "Error deleting job from Freedom To Operate:",
+                  error
+                );
               });
           }
         }
@@ -576,12 +650,16 @@ const rejectJobOrder = async (req, res) => {
       // Freedom to Patent Landscape Rejection
       else if (service === "Freedom to Patent Landscape") {
         // Getting the Freedom to Patent Landscape Details
-        const rejectedJob = await patentLandscape.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentLandscape
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -603,19 +681,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedLandscape = new Unassigned(unassigned);
 
-            rejectedLandscape.save()
+            rejectedLandscape
+              .save()
               .then(() => {
-                console.log("Rejected Freedom to Patent Landscape Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Freedom to Patent Landscape Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Freedom to Patent Landscape Job:", err);
+                console.error(
+                  "Failed to reject the Freedom to Patent Landscape Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -625,16 +711,22 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Freedom to Patent Landscape traces
-            patentLandscape.deleteOne({ "_id.job_no": jobId })
+            patentLandscape
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Freedom to Patent Landscape with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Freedom to Patent Landscape with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Freedom to Patent Landscape :", error);
+                console.error(
+                  "Error deleting job from Freedom to Patent Landscape :",
+                  error
+                );
               });
           }
         }
@@ -643,12 +735,16 @@ const rejectJobOrder = async (req, res) => {
       // Freedom to Patent Portfolio Rejection
       else if (service === "Patent Portfolio Analysis") {
         // Getting the Patent Portfolio Analysis Details
-        const rejectedJob = await patentPortfolioAnalysis.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentPortfolioAnalysis
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -670,19 +766,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedPortfolio = new Unassigned(unassigned);
 
-            rejectedPortfolio.save()
+            rejectedPortfolio
+              .save()
               .then(() => {
-                console.log("Rejected Patent Portfolio Analysis Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Portfolio Analysis Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Patent Portfolio Analysis Job:", err);
+                console.error(
+                  "Failed to reject the Patent Portfolio Analysis Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -692,29 +796,39 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Patent Portfolio Analysis traces
-            patentPortfolioAnalysis.deleteOne({ "_id.job_no": jobId })
+            patentPortfolioAnalysis
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Portfolio Analysis with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Portfolio Analysis with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Patent Portfolio Analysis :", error);
+                console.error(
+                  "Error deleting job from Patent Portfolio Analysis :",
+                  error
+                );
               });
           }
         }
       }
-      // Patent Translation Services Rejection 
+      // Patent Translation Services Rejection
       else if (service === "Patent Translation Services") {
         // Getting the Patent Portfolio Analysis Details
-        const rejectedJob = await patentTranslation.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentTranslation
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -736,19 +850,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedTranslation = new Unassigned(unassigned);
 
-            rejectedTranslation.save()
+            rejectedTranslation
+              .save()
               .then(() => {
-                console.log("Rejected Patent Translation Services Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Translation Services Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Patent Translation Services Job:", err);
+                console.error(
+                  "Failed to reject the Patent Translation Services Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -758,16 +880,22 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Patent Translation Services traces
-            patentTranslation.deleteOne({ "_id.job_no": jobId })
+            patentTranslation
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Translation Services with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Translation Services with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Patent Translation Services :", error);
+                console.error(
+                  "Error deleting job from Patent Translation Services :",
+                  error
+                );
               });
           }
         }
@@ -776,12 +904,16 @@ const rejectJobOrder = async (req, res) => {
       // Patent Illustration Rejection
       else if (service === "Patent Illustration") {
         // Getting the Patent Portfolio Analysis Details
-        const rejectedJob = await patentIllustration.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentIllustration
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -790,9 +922,10 @@ const rejectJobOrder = async (req, res) => {
               .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
               .lean();
 
-            const newUnassignedIllustrationNo = latestUnassignedIllustrationOrder
-              ? latestUnassignedIllustrationOrder._id.job_no + 1
-              : 1000;
+            const newUnassignedIllustrationNo =
+              latestUnassignedIllustrationOrder
+                ? latestUnassignedIllustrationOrder._id.job_no + 1
+                : 1000;
 
             // Clone the rejectedJob object and remove _id.job_no property
             const unassigned = { ...rejectedJob };
@@ -803,20 +936,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedIllustration = new Unassigned(unassigned);
 
-
-            rejectedIllustration.save()
+            rejectedIllustration
+              .save()
               .then(() => {
-                console.log("Rejected Patent Illustration Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Illustration Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Patent Illustration Job:", err);
+                console.error(
+                  "Failed to reject the Patent Illustration Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -826,16 +966,22 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Patent Illustration traces
-            patentIllustration.deleteOne({ "_id.job_no": jobId })
+            patentIllustration
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Illustration with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Illustration with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Patent Illustration :", error);
+                console.error(
+                  "Error deleting job from Patent Illustration :",
+                  error
+                );
               });
           }
         }
@@ -843,12 +989,16 @@ const rejectJobOrder = async (req, res) => {
       // Patent Watch Rejection
       else if (service === "Patent Watch") {
         // Getting the Patent Watch Details
-        const rejectedJob = await patentWatch.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentWatch
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -870,9 +1020,12 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedWatch = new Unassigned(unassigned);
 
-            rejectedWatch.save()
+            rejectedWatch
+              .save()
               .then(() => {
-                console.log("Rejected Patent Watch Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Watch Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
                 console.error("Failed to reject the Patent Watch Job:", err);
@@ -882,7 +1035,9 @@ const rejectJobOrder = async (req, res) => {
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -892,10 +1047,13 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Patent Watch traces
-            patentWatch.deleteOne({ "_id.job_no": jobId })
+            patentWatch
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Watch with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Watch with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -909,12 +1067,16 @@ const rejectJobOrder = async (req, res) => {
       // Patent Licensing and Commercialization Services Rejection
       else if (service === "Patent Licensing and Commercialization Services") {
         // Getting the Patent Watch Details
-        const rejectedJob = await patentLicense.findOne({ "_id.job_no": parseInt(jobId) }).lean();
+        const rejectedJob = await patentLicense
+          .findOne({ "_id.job_no": parseInt(jobId) })
+          .lean();
         if (!rejectedJob) {
           console.error("No Job Details present for Job Number " + jobId);
         } else {
           // Getting the Job Order details
-          const jobOrderDetails = await JobOrder.findOne({ "_id.job_no": parseInt(jobId) });
+          const jobOrderDetails = await JobOrder.findOne({
+            "_id.job_no": parseInt(jobId),
+          });
           if (!jobOrderDetails) {
             console.error("No Job Details present for Job Number " + jobId);
           } else {
@@ -936,19 +1098,27 @@ const rejectJobOrder = async (req, res) => {
 
             const rejectedLicense = new Unassigned(unassigned);
 
-            rejectedLicense.save()
+            rejectedLicense
+              .save()
               .then(() => {
-                console.log("Rejected Patent Licensing Successfully sent to Unassigned Jobs");
+                console.log(
+                  "Rejected Patent Licensing Successfully sent to Unassigned Jobs"
+                );
               })
               .catch((err) => {
-                console.error("Failed to reject the Patent Licensing Job:", err);
+                console.error(
+                  "Failed to reject the Patent Licensing Job:",
+                  err
+                );
               });
 
             // Deleting JobOrder traces
             JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Job Order with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
@@ -958,25 +1128,46 @@ const rejectJobOrder = async (req, res) => {
               });
 
             // Deleting Patent Licensing traces
-            patentLicense.deleteOne({ "_id.job_no": jobId })
+            patentLicense
+              .deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
-                  console.log(`Successfully deleted job from Patent Licensing with job number ${jobId}`);
+                  console.log(
+                    `Successfully deleted job from Patent Licensing with job number ${jobId}`
+                  );
                 } else {
                   console.log(`Job with job number ${jobId} not found`);
                 }
               })
               .catch((error) => {
-                console.error("Error deleting job from Patent Licensing :", error);
+                console.error(
+                  "Error deleting job from Patent Licensing :",
+                  error
+                );
               });
           }
         }
       }
 
-      await AllNotifications.sendToAdmin("Partner has rejected the Job ID " + jobId + " assigned by User of ID " + userID + ". Go to Unassigned Jobs section and assign the task to other Partners.")
-      await AllNotifications.sendToUser("A New Partner will be assigned for the Job " + jobId + " . Sorry for the Inconvenience.");
+      await AllNotifications.sendToAdmin(
+        "Partner has rejected the Job ID " +
+          jobId +
+          " assigned by User of ID " +
+          userID +
+          ". Go to Unassigned Jobs section and assign the task to other Partners."
+      );
+      await AllNotifications.sendToUser(
+        "A New Partner will be assigned for the Job " +
+          jobId +
+          " . Sorry for the Inconvenience."
+      );
 
-      return res.status(200).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
+      return res
+        .status(200)
+        .json({
+          error:
+            "No available partner found. Sending the Job Order to Unassigned Jobs",
+        });
     }
     console.log(findPartner);
     // Assign the rejected job to the new partner
@@ -987,11 +1178,22 @@ const rejectJobOrder = async (req, res) => {
     await findPartner.save();
 
     res.json({
-      message: "Job order rejected successfully and reassigned to another partner",
+      message:
+        "Job order rejected successfully and reassigned to another partner",
     });
 
-    await AllNotifications.sendToAdmin("Job " + jobId + " has been re-assigned to the Partner ID " + findPartner.userID + " successfully.");
-    await AllNotifications.sendToUser("Job ID " + jobId + " has been re-assigned to another Partner successfully. Thanks for Waiting.");
+    await AllNotifications.sendToAdmin(
+      "Job " +
+        jobId +
+        " has been re-assigned to the Partner ID " +
+        findPartner.userID +
+        " successfully."
+    );
+    await AllNotifications.sendToUser(
+      "Job ID " +
+        jobId +
+        " has been re-assigned to another Partner successfully. Thanks for Waiting."
+    );
   } catch (error) {
     console.error("Error rejecting job order:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1008,15 +1210,24 @@ const getFilesForPartners = async (req, res) => {
       const jobDetails = await Drafting.findOne({ "_id.job_no": jobId });
 
       // Check if job details exist and have invention details
-      if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
+      if (
+        !jobDetails ||
+        !jobDetails.service_specific_files ||
+        !jobDetails.service_specific_files.invention_details
+      ) {
         return res.status(500).json({ error: "File not found" });
       }
       let fileDataList = [];
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.service_specific_files.invention_details.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.service_specific_files.invention_details.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1024,19 +1235,33 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Drafting_Invention_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Drafting_Invention_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
-
       }
 
       // Send the file data as a response to the frontend
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Patent Filing
     else if (service === "Patent Filing") {
       const jobDetails = await Filing.findOne({ "_id.job_no": jobId });
-      if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
+      if (
+        !jobDetails ||
+        !jobDetails.service_specific_files ||
+        !jobDetails.service_specific_files.details ||
+        !jobDetails.service_specific_files.applicants ||
+        !jobDetails.service_specific_files.investors
+      ) {
         return res.status(500).json({ error: "File not found" });
       }
 
@@ -1044,8 +1269,13 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.service_specific_files.details.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.details[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.service_specific_files.details.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.service_specific_files.details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1053,12 +1283,22 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Filing_Invention_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Filing_Invention_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      for (let totalFiles = 0; totalFiles < jobDetails.service_specific_files.applicants.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.applicants[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.service_specific_files.applicants.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.service_specific_files.applicants[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1066,12 +1306,22 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Filing_Applicant_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Filing_Applicant_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      for (let totalFiles = 0; totalFiles < jobDetails.service_specific_files.investors.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.investors[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.service_specific_files.investors.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.service_specific_files.investors[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1079,12 +1329,20 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Filing_Investors_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Filing_Investors_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Patent Search
@@ -1098,7 +1356,11 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.technical_diagram.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.technical_diagram.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.technical_diagram[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1107,17 +1369,29 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Search_Technical_Diagram_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Search_Technical_Diagram_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Response To FER/ Office Action
     else if (service === "Response To FER Office Action") {
       const jobDetails = await responseToFer.findOne({ "_id.job_no": jobId });
-      if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
+      if (
+        !jobDetails ||
+        !jobDetails.fer ||
+        !jobDetails.complete_specifications
+      ) {
         return res.status(500).json({ error: "File not found" });
       }
 
@@ -1125,7 +1399,11 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.fer.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.fer.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.fer[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1134,11 +1412,20 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Response_To_FER_Office_Action_FER_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Response_To_FER_Office_Action_FER_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      for (let totalFiles = 0; totalFiles < jobDetails.complete_specifications.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.complete_specifications.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.complete_specifications[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1147,18 +1434,32 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Response_To_FER_Office_Action_Complete_Specifications_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Response_To_FER_Office_Action_Complete_Specifications_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Freedom To Operate Search
     else if (service === "Freedom To Operate") {
-      const jobDetails = await freedomToOperate.findOne({ "_id.job_no": jobId });
-      if (!jobDetails || !jobDetails.invention_description || !jobDetails.patent_application_details) {
+      const jobDetails = await freedomToOperate.findOne({
+        "_id.job_no": jobId,
+      });
+      if (
+        !jobDetails ||
+        !jobDetails.invention_description ||
+        !jobDetails.patent_application_details
+      ) {
         return res.status(500).json({ error: "File not found" });
       }
 
@@ -1166,7 +1467,11 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.invention_description.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.invention_description.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.invention_description[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1175,12 +1480,22 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Freedom_To_Operate_Invention_Description_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Freedom_To_Operate_Invention_Description_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      for (let totalFiles = 0; totalFiles < jobDetails.patent_application_details.length; totalFiles++) {
-        const inventionDetails = jobDetails.patent_application_details[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.patent_application_details.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.patent_application_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1188,16 +1503,27 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Freedom_To_Operate_Patent_Application_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Freedom_To_Operate_Patent_Application_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Freedom to Patent Portfolio Analysis
     else if (service === "Patent Portfolio Analysis") {
-      const jobDetails = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobId });
+      const jobDetails = await patentPortfolioAnalysis.findOne({
+        "_id.job_no": jobId,
+      });
       if (!jobDetails || !jobDetails.service_specific_files.invention_details) {
         return res.status(500).json({ error: "File not found" });
       }
@@ -1206,8 +1532,13 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.service_specific_files.invention_details.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.service_specific_files.invention_details.length;
+        totalFiles++
+      ) {
+        const inventionDetails =
+          jobDetails.service_specific_files.invention_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(500).json({ error: "File not found" });
@@ -1215,17 +1546,27 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Portfolio_Analysis_Invention_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Portfolio_Analysis_Invention_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Patent Translation Service
     else if (service === "Patent Translation Services") {
-      const jobDetails = await patentTranslation.findOne({ "_id.job_no": jobId });
+      const jobDetails = await patentTranslation.findOne({
+        "_id.job_no": jobId,
+      });
       if (!jobDetails || !jobDetails.document_details) {
         return res.status(500).json({ error: "File not found" });
       }
@@ -1234,7 +1575,11 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.document_details.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.document_details.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.document_details[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1243,17 +1588,27 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Translation_Document_Details_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Translation_Document_Details_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
 
     // For Patent Illustration
     else if (service === "Patent Illustration") {
-      const jobDetails = await patentIllustration.findOne({ "_id.job_no": jobId });
+      const jobDetails = await patentIllustration.findOne({
+        "_id.job_no": jobId,
+      });
       if (!jobDetails || !jobDetails.preferred_style) {
         return res.status(500).json({ error: "File not found" });
       }
@@ -1262,7 +1617,11 @@ const getFilesForPartners = async (req, res) => {
       let fileNameList = [];
       let fileMIMEList = [];
       // Extract the file data from the job details
-      for (let totalFiles = 0; totalFiles < jobDetails.preferred_style.length; totalFiles++) {
+      for (
+        let totalFiles = 0;
+        totalFiles < jobDetails.preferred_style.length;
+        totalFiles++
+      ) {
         const inventionDetails = jobDetails.preferred_style[totalFiles];
         // Check if base64 data is present
         if (!inventionDetails.base64) {
@@ -1271,17 +1630,24 @@ const getFilesForPartners = async (req, res) => {
 
         const { base64, name, type } = inventionDetails;
         fileDataList.push(base64);
-        fileNameList.push("Patent_Illustration_Preferred_Style_" + (totalFiles + 1) + '.' + name.split(".")[1]);
+        fileNameList.push(
+          "Patent_Illustration_Preferred_Style_" +
+            (totalFiles + 1) +
+            "." +
+            name.split(".")[1]
+        );
         fileMIMEList.push(type);
       }
 
-      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
-
+      res.json({
+        fileData: fileDataList,
+        fileName: fileNameList,
+        fileMIME: fileMIMEList,
+      });
     }
-
   } catch (error) {
-    console.error('Error retrieving file:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error retrieving file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -1296,109 +1662,110 @@ const getJobDetailsForPartners = async (req, res) => {
     let neededData = {};
     let jobData;
 
-
     if (serviceName === "Patent Drafting") {
       jobData = await Drafting.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.domain,
-        "Country": jobData.country,
-        "Title": jobData.job_title,
-        "Keywords": jobData.keywords,
-        "Budget": jobData.budget,
-        "Time of Delivery": jobData.time_of_delivery
+        Domain: jobData.domain,
+        Country: jobData.country,
+        Title: jobData.job_title,
+        Keywords: jobData.keywords,
+        Budget: jobData.budget,
+        "Time of Delivery": jobData.time_of_delivery,
       };
     } else if (serviceName === "Patent Filing") {
       jobData = await Filing.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.domain,
-        "Country": jobData.country,
-        "Title": jobData.job_title,
-        "Keywords": jobData.keywords,
-        "Budget": jobData.budget,
-        "Time of Delivery": jobData.time_of_delivery
+        Domain: jobData.domain,
+        Country: jobData.country,
+        Title: jobData.job_title,
+        Keywords: jobData.keywords,
+        Budget: jobData.budget,
+        "Time of Delivery": jobData.time_of_delivery,
       };
     } else if (serviceName === "Patent Search") {
       jobData = await Search.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
-        "Description": jobData.invention_description,
-        "Keywords": jobData.keywords
+        Domain: jobData.field,
+        Description: jobData.invention_description,
+        Keywords: jobData.keywords,
       };
     } else if (serviceName === "Response to FER Office Action") {
       console.log("Yes");
       jobData = await responseToFer.findOne({ "_id.job_no": jobID });
       console.log(jobData);
       neededData = {
-        "Domain": jobData.field,
-        "Strategy": jobData.response_strategy,
-        "Country": jobData.country
+        Domain: jobData.field,
+        Strategy: jobData.response_strategy,
+        Country: jobData.country,
       };
     } else if (serviceName === "Freedom To Operate") {
       jobData = await freedomToOperate.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
-        "Keywords": jobData.keywords,
-        "Country": jobData.country
+        Domain: jobData.field,
+        Keywords: jobData.keywords,
+        Country: jobData.country,
       };
     } else if (serviceName === "Freedom to Patent Landscape") {
       jobData = await patentLandscape.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
+        Domain: jobData.field,
         "Tech Description": jobData.technology_description,
-        "Keywords": jobData.keywords,
+        Keywords: jobData.keywords,
         "Competitor Info": jobData.competitor_information,
-        "Country": jobData.country
+        Country: jobData.country,
       };
     } else if (serviceName === "Patent Portfolio Analysis") {
       jobData = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
-        "Objectives": jobData.business_objectives,
+        Domain: jobData.field,
+        Objectives: jobData.business_objectives,
         "Market Info": jobData.market_and_industry_information,
-        "Country": jobData.country
+        Country: jobData.country,
       };
     } else if (serviceName === "Patent Translation Services") {
       jobData = await patentTranslation.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
+        Domain: jobData.field,
         "Source Language": jobData.source_language,
         "Target Language": jobData.target_language,
-        "Additional Info": jobData.additional_instructions
+        "Additional Info": jobData.additional_instructions,
       };
     } else if (serviceName === "Patent Illustration") {
       jobData = await patentIllustration.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
+        Domain: jobData.field,
         "Patent Specifications": jobData.patent_specifications,
-        "Drawing Requirements": jobData.drawing_requirements
+        "Drawing Requirements": jobData.drawing_requirements,
       };
     } else if (serviceName === "Patent Watch") {
       jobData = await patentWatch.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
+        Domain: jobData.field,
         "Tech Focus": jobData.industry_focus,
         "Competitor Info": jobData.competitor_information,
         "Geographic Scope": jobData.geographic_scope,
-        "Keywords": jobData.keywords,
-        "Monitoring Duration": jobData.monitoring_duration
+        Keywords: jobData.keywords,
+        "Monitoring Duration": jobData.monitoring_duration,
       };
-    } else if (serviceName === "Patent Licensing and Commercialization Services") {
+    } else if (
+      serviceName === "Patent Licensing and Commercialization Services"
+    ) {
       jobData = await patentLicense.findOne({ "_id.job_no": jobID });
       neededData = {
-        "Domain": jobData.field,
+        Domain: jobData.field,
         "Patent Info": jobData.patent_information,
-        "Goals": jobData.commercialization_goals,
+        Goals: jobData.commercialization_goals,
         "Competitive Landscape": jobData.competitive_landscape,
         "Tech Description": jobData.technology_description,
-        "Country": jobData.country
+        Country: jobData.country,
       };
     } else {
       jobData = await responseToFer.findOne({ "_id.job_no": jobID });
       console.log(jobData);
       neededData = {
-        "Domain": jobData.field,
-        "Strategy": jobData.response_strategy,
-        "Country": jobData.country
+        Domain: jobData.field,
+        Strategy: jobData.response_strategy,
+        Country: jobData.country,
       };
     }
 
@@ -1420,45 +1787,58 @@ const findPartnersWithJobNo = async (req, res) => {
   console.log("Params " + parseInt(jobID));
   try {
     const partner = await Partner.findOne({ jobs: { $in: [parseInt(jobID)] } }); // Finding Partners according to the given Job ID
-    res.json({ partnerID: partner.userID, partnerName: partner.full_name, country: partner.country, service: service });
-
-
+    res.json({
+      partnerID: partner.userID,
+      partnerName: partner.full_name,
+      country: partner.country,
+      service: service,
+    });
   } catch (err) {
     console.error("Error in Finding Partner according to Job ID", err);
   }
-
-
 };
 
 const addJobFiles = async (req, res) => {
   console.log("Requests " + req.body.partnerID);
   const job = req.body;
-  const findAdmin = await Admin.findOne({ _id: "64803aa4b57edc54d6b276cb" })
+  const findAdmin = await Admin.findOne({ _id: "64803aa4b57edc54d6b276cb" });
   try {
-    const jobFile = await JobFiles.findOne({ "_id.job_no": job.job_no })
+    const jobFile = await JobFiles.findOne({ "_id.job_no": job.job_no });
     if (!jobFile) {
-      const taskFile = new JobFiles(
-        {
-          "_id.job_no": job.job_no,
-          service: job.service,
-          country: job.country,
-          partnerID: job.partnerID,
-          partnerName: job.partnerName,
-          decided: false,
-          job_files: job.job_files,
-          verification: "Job Files sent to the Admin Successfully for Verification",
-        }).save().then((response) => {
+      const taskFile = new JobFiles({
+        "_id.job_no": job.job_no,
+        service: job.service,
+        country: job.country,
+        partnerID: job.partnerID,
+        partnerName: job.partnerName,
+        decided: false,
+        job_files: job.job_files,
+        verification:
+          "Job Files sent to the Admin Successfully for Verification",
+      })
+        .save()
+        .then((response) => {
           console.log("Job Files added Successfully");
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log("Error in Updating Job Files");
         });
-      await AllNotifications.sendToAdmin("Partner's Work for Job ID " + job.job_no + " has been received successfully.");
-      await AllNotifications.sendToPartner(Number(job.partnerID), "Your Work on Job ID " + job.job_no + " has been sent successfully.");
+      await AllNotifications.sendToAdmin(
+        "Partner's Work for Job ID " +
+          job.job_no +
+          " has been received successfully."
+      );
+      await AllNotifications.sendToPartner(
+        Number(job.partnerID),
+        "Your Work on Job ID " + job.job_no + " has been sent successfully."
+      );
     } else {
       jobFile.job_files = job.job_files;
       jobFile.decided = false;
-      jobFile.verification = "Job Files sent to the Admin Successfully for Verification";
-      jobFile.save()
+      jobFile.verification =
+        "Job Files sent to the Admin Successfully for Verification";
+      jobFile
+        .save()
         .then((response) => {
           console.log("Job Files Updated Successfully");
         })
@@ -1467,31 +1847,28 @@ const addJobFiles = async (req, res) => {
         });
     }
 
-
-
     const attachments = [];
     const subject = `Verification for partner submission files for ${job.service} with job no ${job.job_no}`;
     const text = `Verify the submission files form the ${job.partnerID} partner for ${job.service} with job no ${job.job_no}`;
 
     // Prepare the data for the table in the email
     const tableData = [
-      { label: 'Job Number :', value: job.job_no },
-      { label: 'Service :', value: job.service },
-      { label: 'Country :', value: job.country },
-      { label: 'Partner ID :', value: job.partnerID },
+      { label: "Job Number :", value: job.job_no },
+      { label: "Service :", value: job.service },
+      { label: "Country :", value: job.country },
+      { label: "Partner ID :", value: job.partnerID },
     ];
-
 
     // Ensure invention_details is an array and not empty
     if (Array.isArray(job.job_files) && job.job_files.length > 0) {
       // Iterate through the invention_details array and add each file as a separate attachment
       for (const item of job.job_files) {
         if (item.name && item.base64) {
-          const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+          const base64Content = item.base64.split(";base64,").pop(); // Get the actual base64 content
           attachments.push({
             filename: item.name,
             content: base64Content,
-            encoding: 'base64', // Specify that the content is base64-encoded
+            encoding: "base64", // Specify that the content is base64-encoded
           });
         }
       }
@@ -1499,13 +1876,10 @@ const addJobFiles = async (req, res) => {
 
     // Send the email with tableData and attachments
     sendEmail(findAdmin.email, subject, text, tableData, attachments);
-
-
   } catch (err) {
     console.error("Error in Updating Job Files", err);
   }
-
-}
+};
 
 // Fetch Partner's Work Files for Partner
 const getJobFilesDetailsForPartners = async (req, res) => {
@@ -1517,16 +1891,14 @@ const getJobFilesDetailsForPartners = async (req, res) => {
     } else {
       res.json(jobFile);
     }
-
   } catch (error) {
     console.error("Error in fetching Job Details File.", error);
   }
-}
+};
 
 const updateTimelineForUpload = async (req, res) => {
   try {
-    const userID = req.userID;
-
+    const userID = req.userId;
 
     const timeLineStatus = req.body.activity;
     console.log(timeLineStatus);
@@ -1549,24 +1921,32 @@ const updateTimelineForUpload = async (req, res) => {
     // Fetch the job order details for the provided job number
     const specificJob = await JobOrder.findOne({ "_id.job_no": jobNumber });
 
-
     if (!specificJob) {
       return res
         .status(404)
         .json({ error: "No job found with the provided job number" });
     } else {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const options = { year: "numeric", month: "long", day: "numeric" };
       specificJob.steps_done_activity = timeLineStatus;
-      specificJob.date_activity[4] = new Date().toLocaleDateString(undefined, options);
+      specificJob.date_activity[4] = new Date().toLocaleDateString(
+        undefined,
+        options
+      );
 
-      specificJob.save().then((response) => {
-        console.log("Timeline Updated Successfully for Partner Work Upload" + response);
-      }).catch((error) => {
-        console.error("Error in Updating Partner Activity Timeline Status: " + error);
-      });
+      specificJob
+        .save()
+        .then((response) => {
+          console.log(
+            "Timeline Updated Successfully for Partner Work Upload" + response
+          );
+        })
+        .catch((error) => {
+          console.error(
+            "Error in Updating Partner Activity Timeline Status: " + error
+          );
+        });
       console.log(specificJob);
     }
-
   } catch (error) {
     console.error("Error fetching job order:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1576,7 +1956,9 @@ const updateTimelineForUpload = async (req, res) => {
 const getAssignedBulkOrderFile = async (req, res) => {
   try {
     const fileID = req.params.id;
-    const thatBulkOrderFile = await BulkOrder.findOne({ "_id.job_no": Number(fileID) }).select("bulk_order_files");
+    const thatBulkOrderFile = await BulkOrder.findOne({
+      "_id.job_no": Number(fileID),
+    }).select("bulk_order_files");
     if (!thatBulkOrderFile) {
       console.log("No Bulk Order File found for ID " + fileID);
     } else {
@@ -1585,9 +1967,9 @@ const getAssignedBulkOrderFile = async (req, res) => {
       console.log("Successfully sent that File.");
     }
   } catch (error) {
-    console.error('Error in getting Assigned Bulk Order File : ' + error);
+    console.error("Error in getting Assigned Bulk Order File : " + error);
   }
-}
+};
 
 const saveInUnassigned = async (docs) => {
   try {
@@ -1598,10 +1980,10 @@ const saveInUnassigned = async (docs) => {
       // Handle duplicate key error
     } else {
       // Handle other errors
-      console.error(`Error while saving document :"` + err)
+      console.error(`Error while saving document :"` + err);
     }
   }
-}
+};
 
 const sendIdleJobToUnassigned = async (req, res) => {
   // Getting the Job IDs
@@ -1645,7 +2027,9 @@ const sendIdleJobToUnassigned = async (req, res) => {
 
     for (let job = 0; job < jobOrders.length; job++) {
       if (jobOrders[job].service === "Patent Drafting") {
-        const draftDetails = await Drafting.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const draftDetails = await Drafting.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const draftDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1661,19 +2045,34 @@ const sendIdleJobToUnassigned = async (req, res) => {
           service_specific_files: draftDetails.service_specific_files,
           job_title: draftDetails.job_title,
           keywords: draftDetails.keywords,
-        }
+        };
         let result = Number(newUnassignedNo) + Number(job);
         unassignedDocs.push(draftDoc);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
-        const deleteService = await Drafting.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Drafting successfully.")
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
+        const deleteService = await Drafting.deleteOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        })
+          .then(() => {
+            console.log("Files deleted from Patent Drafting successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Patent Filing") {
-        const filingDetails = await Filing.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const filingDetails = await Filing.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const filingDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1689,19 +2088,34 @@ const sendIdleJobToUnassigned = async (req, res) => {
           service_specific_files: filingDetails.service_specific_files,
           job_title: filingDetails.job_title,
           keywords: filingDetails.keywords,
-        }
+        };
         let result = Number(newUnassignedNo) + Number(job);
         unassignedDocs.push(filingDoc);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
-        const deleteService = await Filing.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Filing successfully.")
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
+        const deleteService = await Filing.deleteOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        })
+          .then(() => {
+            console.log("Files deleted from Patent Filing successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Patent Search") {
-        const searchDetails = await Search.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const searchDetails = await Search.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const searchDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1716,21 +2130,37 @@ const sendIdleJobToUnassigned = async (req, res) => {
           // Common for all
           keywords: searchDetails.keywords,
           technical_diagram: searchDetails.technical_diagram,
-          invention_description: searchDetails.invention_description
-        }
+          invention_description: searchDetails.invention_description,
+        };
         let result = Number(newUnassignedNo) + Number(job);
         unassignedDocs.push(searchDoc);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await Search.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Search successfully.")
-        }).catch((err) => {
-          console.error("No files found.")
-        });
+        const deleteService = await Search.deleteOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        })
+          .then(() => {
+            console.log("Files deleted from Patent Search successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Response to FER Office Action") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const ferDetails = await responseToFer.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const ferDetails = await responseToFer.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const ferDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1746,24 +2176,37 @@ const sendIdleJobToUnassigned = async (req, res) => {
           fer: ferDetails.fer,
           complete_specifications: ferDetails.complete_specifications,
           response_strategy: ferDetails.response_strategy,
-
-        }
+        };
         unassignedDocs.push(ferDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await responseToFer.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Response To FER/ Office Action successfully.")
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
-      }
-
-      else if (jobOrders[job].service === "Freedom To Operate") {
+        const deleteService = await responseToFer
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log(
+              "Files deleted from Response To FER/ Office Action successfully."
+            );
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
+      } else if (jobOrders[job].service === "Freedom To Operate") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const ftoDetails = await freedomToOperate.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const ftoDetails = await freedomToOperate.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const ftoDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1778,24 +2221,36 @@ const sendIdleJobToUnassigned = async (req, res) => {
           // Common for all services upto this
           invention_description: ftoDetails.invention_description,
           patent_application_details: ftoDetails.patent_application_details,
-          keywords: ftoDetails.keywords
-        }
+          keywords: ftoDetails.keywords,
+        };
         unassignedDocs.push(ftoDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await freedomToOperate.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Freedom To Operate successfully.")
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
-      }
-
-      else if (jobOrders[job.service] === "Freedom to Patent Landscape") {
+        const deleteService = await freedomToOperate
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log("Files deleted from Freedom To Operate successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
+      } else if (jobOrders[job.service] === "Freedom to Patent Landscape") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const landscapeDetails = await patentLandscape.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const landscapeDetails = await patentLandscape.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const landscapeDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1811,23 +2266,37 @@ const sendIdleJobToUnassigned = async (req, res) => {
           technology_description: landscapeDetails.technology_description,
           keywords: landscapeDetails.keywords,
           competitor_information: landscapeDetails.competitor_information,
-        }
+        };
         unassignedDocs.push(landscapeDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentLandscape.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Freedom to Patent Landscape successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
-      }
-
-      else if (jobOrders[job].service === "Patent Portfolio Analysis") {
+        const deleteService = await patentLandscape
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log(
+              "Files deleted from Freedom to Patent Landscape successfully."
+            );
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
+      } else if (jobOrders[job].service === "Patent Portfolio Analysis") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const portfolioDetails = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const portfolioDetails = await patentPortfolioAnalysis.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const portfolioDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1840,23 +2309,41 @@ const sendIdleJobToUnassigned = async (req, res) => {
           userID: jobOrders[job].userID,
           time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
           // Common for all services upto this
-          market_and_industry_information: portfolioDetails.market_and_industry_information,
+          market_and_industry_information:
+            portfolioDetails.market_and_industry_information,
           business_objectives: portfolioDetails.business_objectives,
           service_specific_files: portfolioDetails.service_specific_files,
-        }
+        };
         unassignedDocs.push(portfolioDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentPortfolioAnalysis.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Portfolio Analysis successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
+        const deleteService = await patentPortfolioAnalysis
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log(
+              "Files deleted from Patent Portfolio Analysis successfully."
+            );
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Patent Translation Services") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const translationDetails = await patentTranslation.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const translationDetails = await patentTranslation.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const translationDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1873,22 +2360,37 @@ const sendIdleJobToUnassigned = async (req, res) => {
           target_language: translationDetails.target_language,
           additional_instructions: translationDetails.additional_instructions,
           document_details: translationDetails.document_details,
-        }
+        };
         unassignedDocs.push(translationDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentTranslation.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Translation Service successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
-
+        const deleteService = await patentTranslation
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log(
+              "Files deleted from Patent Translation Service successfully."
+            );
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Patent Illustration") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const illustrationDetails = await patentIllustration.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const illustrationDetails = await patentIllustration.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const illustrationDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1904,21 +2406,35 @@ const sendIdleJobToUnassigned = async (req, res) => {
           patent_specifications: illustrationDetails.patent_specifications,
           drawing_requirements: illustrationDetails.drawing_requirements,
           preferred_style: illustrationDetails.preferred_style,
-        }
+        };
         unassignedDocs.push(illustrationDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentIllustration.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Illustration successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
+        const deleteService = await patentIllustration
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log("Files deleted from Patent Illustration successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       } else if (jobOrders[job].service === "Patent Watch") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const watchDetails = await patentWatch.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const watchDetails = await patentWatch.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const watchDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1936,21 +2452,38 @@ const sendIdleJobToUnassigned = async (req, res) => {
           geographic_scope: watchDetails.geographic_scope,
           keywords: watchDetails.keywords,
           monitoring_duration: watchDetails.monitoring_duration,
-        }
+        };
         unassignedDocs.push(watchDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentWatch.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Watch successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
-      } else if (jobOrders[job].service === "Patent Licensing and Commercialization Services") {
+        const deleteService = await patentWatch
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log("Files deleted from Patent Watch successfully.");
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
+      } else if (
+        jobOrders[job].service ===
+        "Patent Licensing and Commercialization Services"
+      ) {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
-        const licenseDetails = await patentLicense.findOne({ "_id.job_no": jobOrders[job]._id.job_no });
+        const licenseDetails = await patentLicense.findOne({
+          "_id.job_no": jobOrders[job]._id.job_no,
+        });
 
         const licenseDoc = {
           "_id.job_no": newUnassignedNo + job,
@@ -1967,38 +2500,59 @@ const sendIdleJobToUnassigned = async (req, res) => {
           commercialization_goals: licenseDetails.commercialization_goals,
           competitive_landscape: licenseDetails.competitive_landscape,
           technology_description: licenseDetails.technology_description,
-        }
+        };
         unassignedDocs.push(watchDoc);
         let result = Number(newUnassignedNo) + Number(job);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully as ID of " + result);
-        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        await AllNotifications.sendToAdmin(
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully as ID of " +
+            result
+        );
+        await AllNotifications.sendToPartner(
+          Number(partID),
+          "Idle Job Order of ID " +
+            jobOrders[job]._id.job_no +
+            " has been redirected to Unassigned Jobs successfully"
+        );
 
-        const deleteService = await patentLicense.deleteOne({ "_id.job_no": jobOrders[job]._id.job_no }).then(() => {
-          console.log("Files deleted from Patent Licensing and Commercialization Services successfully.");
-        }).catch((err) => {
-          console.error("No files found.")
-        });
-
+        const deleteService = await patentLicense
+          .deleteOne({ "_id.job_no": jobOrders[job]._id.job_no })
+          .then(() => {
+            console.log(
+              "Files deleted from Patent Licensing and Commercialization Services successfully."
+            );
+          })
+          .catch((err) => {
+            console.error("No files found.");
+          });
       }
-
     }
     // Saving the Unassigned Order
     await saveInUnassigned(unassignedDocs);
 
     // Deleting Job Order
     for (let job = 0; job < jobIDs.length; job++) {
-      const deleteOrder = await JobOrder.deleteOne({ "_id.job_no": jobIDs[job] }).then(() => {
-        console.log("Job Order of ID " + jobIDs[job] + " deleted Successfully");
-      }).catch((err) => {
-        console.error("No Job found for that ID");
-      });
+      const deleteOrder = await JobOrder.deleteOne({
+        "_id.job_no": jobIDs[job],
+      })
+        .then(() => {
+          console.log(
+            "Job Order of ID " + jobIDs[job] + " deleted Successfully"
+          );
+        })
+        .catch((err) => {
+          console.error("No Job found for that ID");
+        });
     }
 
     // Updating Partner Details
     try {
       const removeThatJob = await Partner.findOne({ userID: Number(partID) });
       if (removeThatJob) {
-        removeThatJob.jobs = removeThatJob.jobs.filter(jobID => !jobIDs.includes(jobID));
+        removeThatJob.jobs = removeThatJob.jobs.filter(
+          (jobID) => !jobIDs.includes(jobID)
+        );
         const updatedPartner = await removeThatJob.save();
         console.log("Updated Partner:", updatedPartner);
       } else {
@@ -2012,11 +2566,15 @@ const sendIdleJobToUnassigned = async (req, res) => {
 
     for (let users = 0; users < custIDs.length; users++) {
       try {
-        const findThatCustomer = await Customer.findOne({ userID: Number(custIDs[users]) });
+        const findThatCustomer = await Customer.findOne({
+          userID: Number(custIDs[users]),
+        });
         if (!findThatCustomer) {
           console.log("No Customer Found for ID " + custIDs[users]);
         } else {
-          findThatCustomer.jobs = findThatCustomer.jobs.filter(jobID => !jobIDs.includes(jobID));
+          findThatCustomer.jobs = findThatCustomer.jobs.filter(
+            (jobID) => !jobIDs.includes(jobID)
+          );
           const updatedCustomer = await findThatCustomer.save();
           console.log("Customer details updated Successfully");
         }
@@ -2025,103 +2583,130 @@ const sendIdleJobToUnassigned = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error("Error in sending Idle Jobs to Unassigned : " + error)
+    console.error("Error in sending Idle Jobs to Unassigned : " + error);
   }
-}
+};
 
 const getPartnerNotification = async (req, res) => {
   const partnerID = req.params.userID;
   console.log(partnerID);
-  const thatPartnerNotifs = await NotificationPartner.findOne({ partner_Id: Number(partnerID) });
+  const thatPartnerNotifs = await NotificationPartner.findOne({
+    partner_Id: Number(partnerID),
+  });
   if (!thatPartnerNotifs) {
     console.error("Notifications for Partner ID " + partnerID + " not exists.");
   } else {
     res.json(thatPartnerNotifs.notifications);
   }
-}
+};
 
 const notificationPartnerSeen = async (req, res) => {
   const notificID = req.params.userID;
   const partnerID = req.params.notifId;
 
   console.log(partnerID, notificID);
-  const thatPartnerNotifs = await NotificationPartner.findOne({ partner_Id: Number(partnerID) });
+  const thatPartnerNotifs = await NotificationPartner.findOne({
+    partner_Id: Number(partnerID),
+  });
   console.log(thatPartnerNotifs);
   if (!thatPartnerNotifs) {
     console.error("That Notification doesn't exists.");
   } else {
     thatPartnerNotifs.notifications[parseInt(notificID) - 1].seen = true;
-    thatPartnerNotifs.save().then(() => {
-      console.log("Notification Seen");
-    }).catch((error) => {
-      console.error('Error in seeing the Notification : ' + error);
-    })
+    thatPartnerNotifs
+      .save()
+      .then(() => {
+        console.log("Notification Seen");
+      })
+      .catch((error) => {
+        console.error("Error in seeing the Notification : " + error);
+      });
   }
-}
+};
 
 const notifcationsPartnerDelete = async (req, res) => {
   const partnerID = req.params.userID;
   const listOfNotifDeleted = req.body.deletedNotifs;
 
   try {
-    const findNotification = await NotificationPartner.findOne({ partner_Id: Number(partnerID) });
+    const findNotification = await NotificationPartner.findOne({
+      partner_Id: Number(partnerID),
+    });
     if (!findNotification) {
       console.log("No Notifications available for Partner ID " + partnerID);
     } else {
-      const updatedNotifs = findNotification.notifications.filter(notif => !listOfNotifDeleted.includes(notif.notifNum));
+      const updatedNotifs = findNotification.notifications.filter(
+        (notif) => !listOfNotifDeleted.includes(notif.notifNum)
+      );
       findNotification.notifications = updatedNotifs;
-      findNotification.save().then(() => {
-        console.log("Notifications deleted Successfully.")
-      }).catch((err) => {
-        console.error('Error in deleting Notifications : ' + err);
-      })
+      findNotification
+        .save()
+        .then(() => {
+          console.log("Notifications deleted Successfully.");
+        })
+        .catch((err) => {
+          console.error("Error in deleting Notifications : " + err);
+        });
     }
   } catch (err) {
     console.error("Error in deleting Notifications : " + err);
   }
-}
+};
 
 const sortPartnerNotifications = async (req, res) => {
   const partnerID = req.params.userID;
   const interval = req.params.days;
 
   const today = new Date();
-  const totalNotifs = await NotificationPartner.findOne({ partner_Id: Number(partnerID) });
+  const totalNotifs = await NotificationPartner.findOne({
+    partner_Id: Number(partnerID),
+  });
   if (!totalNotifs) {
     console.log("No Notifcations Left to Sort.");
   } else {
     const sortedNotifs = totalNotifs.notifications.filter((notif) => {
-      return Math.round((today.getTime() - new Date(notif.notifDate).getTime()) / (1000 * 3600 * 24)) <= Number(interval)
+      return (
+        Math.round(
+          (today.getTime() - new Date(notif.notifDate).getTime()) /
+            (1000 * 3600 * 24)
+        ) <= Number(interval)
+      );
     });
     console.log(sortedNotifs.length);
     console.log("Sorted Notifications sent Successfully. ");
-    res.status(200).json(sortedNotifs)
+    res.status(200).json(sortedNotifs);
   }
-}
+};
 
 const clearRecentPartnerNotifs = async (req, res) => {
   const partnerID = req.params.userID;
 
   try {
-    const allNotifications = await NotificationPartner.findOne({ partner_Id: Number(partnerID) });
+    const allNotifications = await NotificationPartner.findOne({
+      partner_Id: Number(partnerID),
+    });
     if (!allNotifications) {
       console.log("No Notifications found.");
     } else {
-      allNotifications.notifications = allNotifications.notifications.map((notification) => {
-        notification.seen = true;
-        return notification;
-      });
-      allNotifications.save().then(() => {
-        console.log("All Recent Notifications Successfully Cleared");
-      }).catch((err) => {
-        console.error('Error in Clearing out Recent Notifications : ' + err)
-      })
+      allNotifications.notifications = allNotifications.notifications.map(
+        (notification) => {
+          notification.seen = true;
+          return notification;
+        }
+      );
+      allNotifications
+        .save()
+        .then(() => {
+          console.log("All Recent Notifications Successfully Cleared");
+        })
+        .catch((err) => {
+          console.error("Error in Clearing out Recent Notifications : " + err);
+        });
     }
   } catch (error) {
     console.error("Error in Clearing out Recent Notifications : " + error);
   }
-}
-
+};
 
 module.exports = {
   getPartnerJobsById,
@@ -2140,5 +2725,5 @@ module.exports = {
   notificationPartnerSeen,
   notifcationsPartnerDelete,
   sortPartnerNotifications,
-  clearRecentPartnerNotifs
+  clearRecentPartnerNotifs,
 };

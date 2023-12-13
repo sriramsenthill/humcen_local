@@ -17,7 +17,7 @@ adminRouter.use(function (req, res, next) {
   try {
     const decodedUser = jwt.verify(token, config.jwtAdmin);
     req.user = decodedUser;
-    req.userID = decodedUser._id;
+    req.userId = decodedUser._id;
     next();
   } catch (error) {
     res.status(401).json({ error: "Session Expired" });

@@ -10,6 +10,7 @@ const PartnerSchema = new mongoose.Schema({
     index: true,
     required: true,
   },
+  profileStage: { type: Number },
   emailPreference: emailPref,
   address: addressSchema,
   age: {

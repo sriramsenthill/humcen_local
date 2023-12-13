@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 module.exports = function auditFieldsPlugin(schema) {
   schema.add({
     orgId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Organization',
+      ref: "Organization",
       // required: true,
       index: true,
     },
     modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
       index: true,
     },
@@ -24,8 +24,8 @@ module.exports = function auditFieldsPlugin(schema) {
 
   schema.methods.prefillAuditInfo = function (req) {
     this.orgId = this.orgId || req.orgId;
-    this.modifiedBy = req.userID;
+    this.modifiedBy = req.userId;
     this.modifiedAt = Date.now();
-    this.statusFlag = this.statusFlag || 'A';
-  }
+    this.statusFlag = this.statusFlag || "A";
+  };
 };
