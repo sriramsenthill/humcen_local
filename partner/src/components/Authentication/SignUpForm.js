@@ -90,7 +90,7 @@ const SignUpForm = () => {
           ...formData
         })
 
-        if (res?.data?._id) {
+        if (res?.data?.id) {
           router.push('/authentication/sign-in/')
         } else {
           setSignupError('Server Error')
