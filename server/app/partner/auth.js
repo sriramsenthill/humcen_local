@@ -17,7 +17,7 @@ const signUpPartner = async (req, res) => {
     partner.modifiedBy = user._id;
     await partner.save({ session });
     await session.commitTransaction();
-    res.status(200).json({});
+    res.status(200).json({ id: user._id });
   } catch (error) {
     logger.error(req, "Error creating partner:", error);
     res.status(500).json({ error: error.message });

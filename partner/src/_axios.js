@@ -26,6 +26,8 @@ axios.interceptors.response.use(
       } else {
         globalThis.location.href = '/authentication/logout'
       }
+    } else {
+      return Promise.reject(error)
     }
   }
 )

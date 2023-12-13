@@ -39,6 +39,10 @@ const SignUpForm = () => {
       [name]: value
     }))
 
+    validateFormField(name, value)
+  }
+
+  const validateFormField = (name, value) => {
     switch (name) {
       case 'firstName':
         setFirstNameValid(value.trim() !== '')
@@ -82,19 +86,16 @@ const SignUpForm = () => {
 
     if (formValid) {
       try {
-        await axios.post('/api/noauth/partner/signup', {
+        const res = await axios.post('/api/noauth/partner/signup', {
           ...formData
         })
 
-        router.push('/authentication/sign-in/')
-
-        // Reset the form data
-        setFormData({
-          email: '',
-          firstName: '',
-          lastName: '',
-          password: ''
-        })
+        if (res?.data?._id) {
+          router.push('/authentication/sign-in/')
+        } else {
+          setSignupError('Server Error')
+          console.log('res-->', res)
+        }
       } catch (error) {
         setSignupError(
           error.response?.data?.error || error.response?.statusText
@@ -102,30 +103,10 @@ const SignUpForm = () => {
         console.error('Error saving user data:', error)
       }
     } else {
-      // Validate each field individually and display errors
-      setFirstNameValid(formData.firstName.trim() !== '')
-      setLastNameValid(formData.lastName.trim() !== '')
-      setEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      setPasswordValid(formData.password.length >= 8)
-
-      setFirstNameError(
-        formData.firstName.trim() === '' ? 'First name is required' : ''
-      )
-      setLastNameError(
-        formData.lastName.trim() === '' ? 'Last name is required' : ''
-      )
-      setEmailError(
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-          ? ''
-          : 'Invalid email address'
-      )
-      setPasswordError(
-        formData.password.length < 8
-          ? 'Password must be at least 8 characters'
-          : ''
-      )
-
-      console.log('Please correct the form errors before submitting.')
+      validateFormField('firstName', formData.firstName)
+      validateFormField('lastName', formData.lastName)
+      validateFormField('email', formData.email)
+      validateFormField('password', formData.password)
     }
   }
 

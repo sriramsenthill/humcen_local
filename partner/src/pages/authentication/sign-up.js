@@ -1,6 +1,6 @@
-import SignUpForm from '@/components/Authentication/SignUpForm';
-import { authOptions } from "../api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next"
+import SignUpForm from '@/components/Authentication/SignUpForm'
+import { authOptions } from '../api/auth/[...nextauth]'
+import { getServerSession } from 'next-auth/next'
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -9,15 +9,15 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         destination: '/',
-        permanent: false,
-      },
+        permanent: false
+      }
     }
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   }
 }
 
@@ -26,5 +26,5 @@ export default function SignUp() {
     <>
       <SignUpForm />
     </>
-  );
+  )
 }

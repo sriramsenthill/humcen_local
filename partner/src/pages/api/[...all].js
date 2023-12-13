@@ -11,16 +11,20 @@ export const config = {
 }
 
 export default async function handle(req, res) {
+  console.log('Inside proxy:', req.url)
   const headers = {}
-  try {
-    const session = await getServerSession(req, res, authOptions)
-    if (session?.user?.token) {
-      headers.Authorization = session.user.token
-    } else {
+
+  if (req.url.indexOf('/api/noauth') === -1) {
+    try {
+      const session = await getServerSession(req, res, authOptions)
+      if (session?.user?.token) {
+        headers.Authorization = session.user.token
+      } else {
+        res.status(401).json({ error: 'Session Expired' })
+      }
+    } catch (e) {
       res.status(401).json({ error: 'Session Expired' })
     }
-  } catch (e) {
-    res.status(401).json({ error: 'Session Expired' })
   }
 
   return new Promise((resolve, reject) => {
