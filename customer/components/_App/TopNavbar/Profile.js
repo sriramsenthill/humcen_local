@@ -27,35 +27,15 @@ const Profile = () => {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // axios
-      //   .get("/api/user/img", {
-      //     headers: {
-      //       Authorization: token,
-      //     },
-      //   })
-      //   .then((response) => {
-      //     const  imageUrl  = response.data;
-      //     setProfileImg(imageUrl);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error fetching profile image:", error);
-      //   });              
-      axios
-        .get("/api/user/name", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const userName = response.data;
-          setUserName(userName);
-        })
-        .catch((error) => {
-          console.error("Error fetching User Name:", error);
-        });
-    }
+    axios
+      .get("/api/user/name")
+      .then((response) => {
+        const userName = response.data;
+        setUserName(userName);
+      })
+      .catch((error) => {
+        console.error("Error fetching User Name:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -65,7 +45,6 @@ const Profile = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   return (
     <>
@@ -151,8 +130,6 @@ const Profile = () => {
         </MenuItem>
 
         <Divider />
-
-
 
         {/* <MenuItem>
           <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>

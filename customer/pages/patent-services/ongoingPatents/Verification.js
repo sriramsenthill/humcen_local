@@ -36,14 +36,14 @@ const ColorButton = styled(Button)(({ theme }) => ({
   textTransform: "none",
   fontSize: "14px",
   fontWeight: "400",
-  textAlign: 'center',
+  textAlign: "center",
   height: "48px",
 }));
 
 const CenteredDialogActions = styled(DialogActions)({
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
 });
 
 const WhiteDialog = styled(Dialog)(({ theme }) => ({
@@ -51,17 +51,16 @@ const WhiteDialog = styled(Dialog)(({ theme }) => ({
     backgroundColor: "white",
     width: "530px",
     height: "420px",
-    padding: '15px',
+    padding: "15px",
     borderRadius: "10px",
   },
 }));
 
-
 const CustomDialogTitle = styled(DialogTitle)({
   width: "390px",
-  textAlign: 'center',
-  fontSize: '22px',
-  marginBottom: '17px',
+  textAlign: "center",
+  fontSize: "22px",
+  marginBottom: "17px",
 });
 
 const TextAreaBox = styled(Box)({
@@ -70,13 +69,12 @@ const TextAreaBox = styled(Box)({
   padding: "15px 314px 87px 16px",
   borderRadius: "8px",
   backgroundColor: "#ECEFF0",
-
 });
 
 const CustomTextArea = styled(TextField)({
   width: "100%",
   border: "none !important",
-  outline: "none !important"
+  outline: "none !important",
 });
 
 const Verifications = ({ jobNumber }) => {
@@ -88,7 +86,7 @@ const Verifications = ({ jobNumber }) => {
   const [jobID, setJobID] = useState("");
   const [Service, setService] = useState("");
   const [approval, setApprovalStatus] = useState(false); // Initially User won't approve the Work
-  const [reasons, setReasons] = useState("") // Initially User won't give any reason
+  const [reasons, setReasons] = useState(""); // Initially User won't give any reason
   const [decisions, setDecisions] = useState(false);
   const [jobs, setJobOrder] = useState("");
 
@@ -111,8 +109,6 @@ const Verifications = ({ jobNumber }) => {
     };
 
     fetchJobData();
-
-
   }, [id]); // Add 'id' as a dependency
 
   useEffect(() => {
@@ -126,9 +122,15 @@ const Verifications = ({ jobNumber }) => {
         const token = localStorage.getItem("token");
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          console.error("Unauthorized: You do not have access to this resource.", error);
+          console.error(
+            "Unauthorized: You do not have access to this resource.",
+            error
+          );
         } else {
-          console.error("Error in giving access for the User to download the File.", error);
+          console.error(
+            "Error in giving access for the User to download the File.",
+            error
+          );
         }
       }
     };
@@ -136,7 +138,6 @@ const Verifications = ({ jobNumber }) => {
     if (jobID) {
       fetchJobFileData(jobID);
     }
-
   }, [jobID]);
 
   if (!job) {
@@ -160,7 +161,7 @@ const Verifications = ({ jobNumber }) => {
   };
 
   const handleClose = () => {
-    console.log('Reasons:', reasons);
+    console.log("Reasons:", reasons);
     setOpen(false);
   };
 
@@ -168,32 +169,20 @@ const Verifications = ({ jobNumber }) => {
     setReasons(event.target.value);
   };
 
-
   const handleApprove = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        const response = await axios.put(`user/job_order/approve/${jobID}`, {
-          status: "Completed",
-          steps: 4,
-          activity: 10,
-          user_steps: 6,
-          verif: "Job Completed Successfully",
-        },
-          {
-            headers: {
-              "Authorization": token,
-              "Content-Type": "application/json",
-            },
-          });
-        console.log("Successfully sent the Approval Request" + response.data);
-      }
+      const response = await axios.put(`user/job_order/approve/${jobID}`, {
+        status: "Completed",
+        steps: 4,
+        activity: 10,
+        user_steps: 6,
+        verif: "Job Completed Successfully",
+      });
+      console.log("Successfully sent the Approval Request" + response.data);
     } catch (error) {
       console.error("Error fetching job order data:", error);
     }
-
-  }
+  };
 
   const handleReject = async (id, rejectionInfo) => {
     try {
@@ -206,20 +195,14 @@ const Verifications = ({ jobNumber }) => {
           activity: 4,
           user_steps: 3,
           verif: rejectionInfo,
-        },
-          {
-            headers: {
-              "Authorization": token,
-              "Content-Type": "application/json",
-            },
-          });
+        });
         console.log("Successfully sent the Rejection Request" + response.data);
       }
       window.location.reload(true);
     } catch (error) {
       console.error("Error fetching job order data:", error);
     }
-  }
+  };
 
   // For Users to Download and Verify Partner's Work
   const onClickDownload = async (jobId) => {
@@ -260,157 +243,171 @@ const Verifications = ({ jobNumber }) => {
 
       // Clean up the temporary link
       URL.revokeObjectURL(link.href);
-
     } catch (error) {
-      console.error('Error downloading file:', error);
+      console.error("Error downloading file:", error);
     }
   };
 
-
   return (
     <>
-      {downloadStatus ? (<Card
-        sx={{
-          boxShadow: "none",
-          borderRadius: "10px",
-          border: "1px solid #00000033",
-          mb: "15px",
-          width: "100%",
-          padding: "1%",
-          margin: "0 auto",
-          mt: '45px',
-          ml: "10px",
-          mr: "10px",
-        }}
-
-      >
-        <Grid
+      {downloadStatus ? (
+        <Card
+          sx={{
+            boxShadow: "none",
+            borderRadius: "10px",
+            border: "1px solid #00000033",
+            mb: "15px",
+            width: "100%",
+            padding: "1%",
+            margin: "0 auto",
+            mt: "45px",
+            ml: "10px",
+            mr: "10px",
+          }}
         >
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              padding: "8px",
-            }}
-          >
+          <Grid>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                padding: "8px",
+              }}
+            >
+              <tbody>
+                <tr>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Patent Type
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Customer Name
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Partner Name
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Location
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Budget
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Assigned
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    Status
+                  </td>
+                  <td className={styles.label} style={{ paddingRight: "10px" }}>
+                    Approval
+                  </td>
 
-            <tbody>
-              <tr>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Patent Type
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Customer Name
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Partner Name
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Location
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Budget
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Assigned
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
-                  Status
-                </td>
-                <td className={styles.label} style={{ paddingRight: "10px" }}>
-                  Approval
-                </td>
-
-                <td
-                  className={styles.label}
-                  style={{ padding: "5px" }}
-                  rowSpan={2}
-                > <Button
-                  sx={{
-                    background: !decisions ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#D3D3D3",
-                    color: "white",
-                    borderRadius: "100px",
-                    width: "95%",
-                    height: "100%",
-                    textTransform: "none",
-                  }}
-                  onClick={() => onClickDownload(jobID)}
-                  disabled={decisions}
-                >
-
-                    Download Drafts
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: "5px", }}>{service}</td>
-                <td style={{ padding: "5px", }}>{customerName}</td>
-                <td style={{ padding: "5px", }}>{partnerName}</td>
-                <td style={{ padding: "5px", }}>{country}</td>
-                <td style={{ padding: "5px", }}>{budget}</td>
-                <td style={{ padding: "5px", }}>Yes</td>
-                <td style={{ padding: "5px", }}>{status}</td>
-
-                {decisions ? (
-                  <td style={{ padding: "5px", }}>Given</td>
-                ) : (
-                  <td style={{ padding: "5px", }}>
+                  <td
+                    className={styles.label}
+                    style={{ padding: "5px" }}
+                    rowSpan={2}
+                  >
+                    {" "}
                     <Button
-                      style={{
-                        maxWidth: "15px",
-                        maxHeight: "15px",
-                        minWidth: "15px",
-                        minHeight: "15px",
-                        paddingRight: "20px",
+                      sx={{
+                        background: !decisions
+                          ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"
+                          : "#D3D3D3",
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "95%",
+                        height: "100%",
+                        textTransform: "none",
                       }}
-                      onClick={() => {
-                        window.location.reload(true);
-                        handleApprove(jobID);
-                      }}
+                      onClick={() => onClickDownload(jobID)}
+                      disabled={decisions}
                     >
-                      <CheckCircleIcon color="success" />
-                    </Button>
-                    <Button
-                      style={{
-                        maxWidth: "15px",
-                        maxHeight: "15px",
-                        minWidth: "15px",
-                        minHeight: "15px",
-                      }}
-                      onClick={() => {
-                        handleClickOpen();
-                      }}
-                    >
-                      <CancelIcon sx={{ color: "#D9000D" }} />
+                      Download Drafts
                     </Button>
                   </td>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </Grid>
-      </Card>) : (
+                </tr>
+                <tr>
+                  <td style={{ padding: "5px" }}>{service}</td>
+                  <td style={{ padding: "5px" }}>{customerName}</td>
+                  <td style={{ padding: "5px" }}>{partnerName}</td>
+                  <td style={{ padding: "5px" }}>{country}</td>
+                  <td style={{ padding: "5px" }}>{budget}</td>
+                  <td style={{ padding: "5px" }}>Yes</td>
+                  <td style={{ padding: "5px" }}>{status}</td>
+
+                  {decisions ? (
+                    <td style={{ padding: "5px" }}>Given</td>
+                  ) : (
+                    <td style={{ padding: "5px" }}>
+                      <Button
+                        style={{
+                          maxWidth: "15px",
+                          maxHeight: "15px",
+                          minWidth: "15px",
+                          minHeight: "15px",
+                          paddingRight: "20px",
+                        }}
+                        onClick={() => {
+                          window.location.reload(true);
+                          handleApprove(jobID);
+                        }}
+                      >
+                        <CheckCircleIcon color="success" />
+                      </Button>
+                      <Button
+                        style={{
+                          maxWidth: "15px",
+                          maxHeight: "15px",
+                          minWidth: "15px",
+                          minHeight: "15px",
+                        }}
+                        onClick={() => {
+                          handleClickOpen();
+                        }}
+                      >
+                        <CancelIcon sx={{ color: "#D9000D" }} />
+                      </Button>
+                    </td>
+                  )}
+                </tr>
+              </tbody>
+            </table>
+          </Grid>
+        </Card>
+      ) : (
         <div>No Access given by the Admin. Please Wait.</div>
       )}
       <WhiteDialog open={open} onClose={handleClose}>
         <CenteredDialogActions>
-          <CustomDialogTitle>Type your reasons to inform the IP Partner</CustomDialogTitle>
+          <CustomDialogTitle>
+            Type your reasons to inform the IP Partner
+          </CustomDialogTitle>
           <DialogContent>
-            <TextAreaBox
-            >
+            <TextAreaBox>
               <textarea
                 rows={6}
                 cols={60}
                 placeholder="Type Your Reasons"
                 value={reasons}
                 onChange={handleReasonsChange}
-                style={{ border: "none !important", fontFamily: 'Roboto', outline: "none !important", backgroundColor: 'transparent', borderWidth: "0px", outline: "none" }}
-              >
-              </textarea>
+                style={{
+                  border: "none !important",
+                  fontFamily: "Roboto",
+                  outline: "none !important",
+                  backgroundColor: "transparent",
+                  borderWidth: "0px",
+                  outline: "none",
+                }}
+              ></textarea>
             </TextAreaBox>
           </DialogContent>
           <DialogActions>
-            <ColorButton style={{ width: "150px" }} sx={{ width: "15%" }} onClick={() => { window.location.reload(true); handleReject(jobID, reasons) }}>
+            <ColorButton
+              style={{ width: "150px" }}
+              sx={{ width: "15%" }}
+              onClick={() => {
+                window.location.reload(true);
+                handleReject(jobID, reasons);
+              }}
+            >
               Submit
             </ColorButton>
           </DialogActions>

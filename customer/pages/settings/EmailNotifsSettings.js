@@ -95,30 +95,26 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/api/user/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const userId = response.data.userID;
-          setUserID(UID);
-          const essentialEmails = response.data.pref.mails;
-          setEssentialEmails(essentialEmails);
-          const orderUpdates = response.data.pref.order_updates;
-          setOrderUpdates(orderUpdates);
-          const marketingMails = response.data.pref.marketing_emails;
-          setMarketingMails(marketingMails);
-          const newsletter = response.data.pref.newsletter;
-          setNewsLetter(newsletter);
-        })
-        .catch((error) => {
-          console.error("Error fetching Customer's Preferential Settings:", error);
-        });
-    }
+    axios
+      .get("/api/user/settings")
+      .then((response) => {
+        const userId = response.data.userID;
+        setUserID(UID);
+        const essentialEmails = response.data.pref.mails;
+        setEssentialEmails(essentialEmails);
+        const orderUpdates = response.data.pref.order_updates;
+        setOrderUpdates(orderUpdates);
+        const marketingMails = response.data.pref.marketing_emails;
+        setMarketingMails(marketingMails);
+        const newsletter = response.data.pref.newsletter;
+        setNewsLetter(newsletter);
+      })
+      .catch((error) => {
+        console.error(
+          "Error fetching Customer's Preferential Settings:",
+          error
+        );
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -191,7 +187,9 @@ export default function Profile() {
                             sx={{ m: 1 }}
                             disabled={!editMode}
                             checked={essentialEmails}
-                            onChange={() => setEssentialEmails(!essentialEmails)}
+                            onChange={() =>
+                              setEssentialEmails(!essentialEmails)
+                            }
                           />
                         }
                       />
@@ -349,29 +347,27 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/user/pref-settings', {
-                    data: {
-                      userID: UID,
-                      mails: essentialEmails,
-                      order_updates: orderUpdates,
-                      marketing_emails: marketingMails,
-                      newsletter: newsletter
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/user/pref-settings", {
+                      data: {
+                        userID: UID,
+                        mails: essentialEmails,
+                        order_updates: orderUpdates,
+                        marketing_emails: marketingMails,
+                        newsletter: newsletter,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Customer's Preferential Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Customer's Preferential Settings",
+                        error
+                      )
+                    );
                   window.location.reload(true);
-                }
-                else {
+                } else {
                   setEditMode(true);
                 }
-
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />

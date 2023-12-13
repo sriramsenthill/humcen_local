@@ -41,30 +41,23 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/api/user/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const UID = response.data.userId;
-          setUserID(UID);
-          const firstname = response.data.first_name;
-          setFirstName(firstname);
-          const surname = response.data.last_name;
-          setLastName(surname);
-          const emailid = response.data.email;
-          setEmail(emailid);
-          const phone = response.data.phno;
-          setPhone(phone);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
-        });
-    }
+    axios
+      .get("/api/user/settings")
+      .then((response) => {
+        const UID = response.data.userId;
+        setUserID(UID);
+        const firstname = response.data.first_name;
+        setFirstName(firstname);
+        const surname = response.data.last_name;
+        setLastName(surname);
+        const emailid = response.data.email;
+        setEmail(emailid);
+        const phone = response.data.phno;
+        setPhone(phone);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -229,9 +222,7 @@ export default function Profile() {
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       ) : (
-                        <Typography>
-                          {emailID}
-                        </Typography>
+                        <Typography>{emailID}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -304,25 +295,24 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/user/settings', {
-                    data: {
-                      userId: UID,
-                      fName: firstName,
-                      lName: lastName,
-                      email: emailID,
-                      phone: phone
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/user/settings", {
+                      data: {
+                        userId: UID,
+                        fName: firstName,
+                        lName: lastName,
+                        email: emailID,
+                        phone: phone,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Customer's Settings", error));
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Customer's Settings",
+                        error
+                      )
+                    );
                   window.location.reload(true);
-
                 } else {
                   setEditMode(true);
                 }

@@ -38,22 +38,15 @@ export default function Profile() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/api/user/settings", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const UID = response.data.userId;
-          setUserID(UID);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile Settings:", error);
-        });
-    }
+    axios
+      .get("/api/user/settings")
+      .then((response) => {
+        const UID = response.data.userId;
+        setUserID(UID);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile Settings:", error);
+      });
   }, []);
 
   const handleClick = (event) => {
@@ -164,23 +157,21 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) {
                   setEditMode(false);
-                  const token = localStorage.getItem("token");
-                  axios.put('/api/user/password', {
-                    data: {
-                      password: Password
-                    }
-                  }, {
-                    headers: {
-                      "Authorization": token,
-                      "Content-Type": "application/json"
-                    }
-                  })
+                  axios
+                    .put("/api/user/password", {
+                      data: {
+                        password: Password,
+                      },
+                    })
                     .then((response) => res.json(response.data))
-                    .catch((error) => console.error("Error in Updating Customer's Password", error));
-
-                }
-                else {
-                  setEditMode(true)
+                    .catch((error) =>
+                      console.error(
+                        "Error in Updating Customer's Password",
+                        error
+                      )
+                    );
+                } else {
+                  setEditMode(true);
                 }
               }}
             >

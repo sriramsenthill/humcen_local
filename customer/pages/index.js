@@ -29,22 +29,15 @@ const eCommerce = () => {
 
   customerDataResponse();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .get("/api/user/name", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const nameData = response.data;
-          setName(nameData);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile name:", error);
-        });
-    }
+    axios
+      .get("/api/user/name")
+      .then((response) => {
+        const nameData = response.data;
+        setName(nameData);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile name:", error);
+      });
   }, []);
 
   const carouselImages = [
@@ -73,8 +66,6 @@ const eCommerce = () => {
     setAnchorEl(null);
   };
 
-
-
   return (
     <>
       <Grid item xs={12} md={12} lg={12} xl={8}>
@@ -90,8 +81,9 @@ const eCommerce = () => {
                 sx={{
                   boxShadow: "0px 4px 13px rgba(0, 0, 0, 0.1)",
                   borderRadius: "20px",
-                  marginBottom: "20px"
-                }}>
+                  marginBottom: "20px",
+                }}
+              >
                 <Carousel
                   autoPlay={true}
                   infiniteLoop={true}
