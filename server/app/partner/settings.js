@@ -160,7 +160,7 @@ const editPartnerServices = async (req, res) => {
 
 const updatePartnerPassword = async (req, res) => {
   const userID = req.userId;
-  const partner = await Partner.findOne({ userId: userID  }); 
+  const user = await User.findOne({ _id: userID  }); 
   const saltRounds = 10;
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
@@ -174,8 +174,8 @@ const updatePartnerPassword = async (req, res) => {
         return res.status(500).send("Error creating/updating Partner");
       }
 
-      partner.password = hashedPassword;
-      partner
+      user.password = hashedPassword;
+      user
         .save()
         .then((res) =>
           console.log("Successfully Updated the Partner's Password")

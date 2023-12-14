@@ -136,7 +136,7 @@ export default function Profile() {
             error
           )
         );
-      // window.location.reload(true);
+      window.location.reload(true);
     } else {
       setEditMode(true);
     }

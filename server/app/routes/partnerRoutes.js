@@ -28,16 +28,16 @@ partnerRouter.use(function (req, res, next) {
 partnerRouter.get("/getLogInPartner", partnerProfile.getLogInPartner);
 
 //Partner_Settings
-partnerRouter.get("/img", partnerSetttings.fetchPartnerProfileImage);
-partnerRouter.get("/settings", partnerSetttings.fetchPartnerSettings);
-partnerRouter.get("/settingsProfile", partnerSetttings.fetchPartnerProfileSettings);
-partnerRouter.get("/fields", partnerSetttings.fetchPartnerKnownFields);
-partnerRouter.put("/settings", partnerSetttings.updatePartnerSettings);
-partnerRouter.put("/settingsProfile", partnerSetttings.updatePartnerProfileSettings);
-partnerRouter.put("/bank-settings", partnerSetttings.updatePartnerBankDetails);
-partnerRouter.put("/pref-settings", partnerSetttings.updatePartnerPrefSettings);
-partnerRouter.put("/service-settings", partnerSetttings.editPartnerServices);
-partnerRouter.put("/password", partnerSetttings.updatePartnerPassword);
+partnerRouter.get("/img", partnerProfile.fetchPartnerProfileImage);
+partnerRouter.get("/settings", partnerProfile.fetchPartnerSettings);
+partnerRouter.get("/settingsProfile", partnerProfile.fetchPartnerProfileSettings);
+partnerRouter.get("/fields", partnerProfile.fetchPartnerKnownFields);
+partnerRouter.put("/settings", partnerProfile.updatePartnerSettings);
+partnerRouter.put("/settingsProfile", partnerProfile.updatePartnerProfileSettings);
+partnerRouter.put("/bank-settings", partnerProfile.updatePartnerBankDetails);
+partnerRouter.put("/pref-settings", partnerProfile.updatePartnerPrefSettings);
+partnerRouter.put("/service-settings", partnerProfile.editPartnerServices);
+partnerRouter.put("/password", partnerProfile.updatePartnerPassword);
 
 //Partner_engine
 

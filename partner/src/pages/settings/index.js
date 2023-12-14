@@ -9,15 +9,7 @@ import BasicTabs from './Tabs'
 import styles from '@/styles/PageTitle.module.css'
 import Link from 'next/link'
 
-function Settings() {
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get('email'),
-      password: data.get('password')
-    })
-  }
+function Settings({props}) {
 
   return (
     <>
@@ -27,7 +19,7 @@ function Settings() {
             <li>
               <Link href='/'>Dashboard</Link>
             </li>
-            <li>Settings</li>
+            <li>Profile</li>
           </ul>
         </div>
         <Card
