@@ -10,16 +10,11 @@ const schema = new mongoose.Schema({
     ref: "Country",
     index: true,
   },
-  referenceMasterIds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ReferenceValues",
-      required: true,
-      index: true,
-    },
-  ],
+  imageBlob: {
+    type: Blob,
+  },
 });
 
 schema.plugin(auditFieldsPlugin);
-const ReferenceMaster = mongoose.model("ReferenceMaster", schema);
-module.exports = ReferenceMaster;
+const State = mongoose.model("PatentService", schema);
+module.exports = State;

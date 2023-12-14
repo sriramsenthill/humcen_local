@@ -8,5 +8,5 @@ const schema = new mongoose.Schema({
 });
 
 schema.plugin(auditFieldsPlugin);
-const ReferenceValues = mongoose.model("ReferenceValues", schema);
-module.exports = ReferenceValues;
+const ReferenceValue = mongoose.model("ReferenceValue", schema);
+module.exports = ReferenceValue;

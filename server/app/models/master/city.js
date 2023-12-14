@@ -4,22 +4,20 @@ const auditFieldsPlugin = require("../auditFieldsPlugin");
 const schema = new mongoose.Schema({
   code: { type: String, required: true, index: true },
   name: { type: String, required: true, index: true },
-  description: { type: String },
+  stateId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "State",
+    required: true,
+    index: true,
+  },
   countryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Country",
+    required: true,
     index: true,
   },
-  referenceMasterIds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ReferenceValues",
-      required: true,
-      index: true,
-    },
-  ],
 });
 
 schema.plugin(auditFieldsPlugin);
-const ReferenceMaster = mongoose.model("ReferenceMaster", schema);
-module.exports = ReferenceMaster;
+const State = mongoose.model("State", schema);
+module.exports = State;

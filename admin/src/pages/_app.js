@@ -27,7 +27,6 @@ const inter = Inter({
 })
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  console.log(Component)
   return (
     <main className={inter.className}>
       <ThemeProvider theme={theme}>
