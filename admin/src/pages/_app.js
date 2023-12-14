@@ -19,20 +19,24 @@ import theme from '../styles/theme'
 
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import Layout from '@/components/_App/Layout'
+import { SessionProvider } from 'next-auth/react'
 
 const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '700']
 })
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  console.log(Component)
   return (
     <main className={inter.className}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <SessionProvider session={session}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SessionProvider>
       </ThemeProvider>
     </main>
   )

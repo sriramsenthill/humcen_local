@@ -6,8 +6,10 @@ import TopNavbar from '@/components/_App/TopNavbar'
 import Footer from '@/components/_App/Footer'
 import ScrollToTop from './ScrollToTop'
 import ControlPanelModal from './ControlPanelModal'
+import { useSession } from 'next-auth/react'
 
 const Layout = ({ children }) => {
+  const { data: session, status } = useSession()
   const router = useRouter()
 
   const [active, setActive] = useState(false)
@@ -16,15 +18,16 @@ const Layout = ({ children }) => {
     setActive(!active)
   }
 
-  const showPanel = !(
-    router.pathname === '/authentication/sign-in' ||
-    router.pathname === '/authentication/sign-up' ||
-    router.pathname === '/authentication/forgot-password' ||
-    router.pathname === '/authentication/lock-screen' ||
-    router.pathname === '/authentication/confirm-mail' ||
-    router.pathname === '/authentication/session-expired' ||
-    router.pathname === '/authentication/logout'
-  )
+  const showPanel =
+    status === 'authenticated' &&
+    !(
+      router.pathname === '/authentication/sign-in' ||
+      router.pathname === '/authentication/forgot-password' ||
+      router.pathname === '/authentication/lock-screen' ||
+      router.pathname === '/authentication/confirm-mail' ||
+      router.pathname === '/authentication/session-expired' ||
+      router.pathname === '/authentication/logout'
+    )
 
   return (
     <>
