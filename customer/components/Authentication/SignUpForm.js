@@ -1,86 +1,141 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import Link from "next/link";
 import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
+import { Typography, Card, CircularProgress } from "@mui/material";
 import { Box } from "@mui/system";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import styles from "@/components/Authentication/Authentication.module.css";
 import { useRouter } from "next/router";
-import { Card } from "@mui/material";
-
 
 const SignUpForm = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
+  const [signupError, setSignupError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
-    first_name: "",
-    last_name: "",
-    password: ""
+    firstName: "",
+    lastName: "",
+    password: "",
+    confirmPassword: "",
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // Redirect to the dashboard if the user is already logged in
-      router.push("/");
-    }
-  }, []);
+  const [firstNameValid, setFirstNameValid] = useState(true);
+  const [lastNameValid, setLastNameValid] = useState(true);
+  const [emailValid, setEmailValid] = useState(true);
+  const [passwordValid, setPasswordValid] = useState(true);
+  const [confirmPasswordValid, setConfirmPasswordValid] = useState(true);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const response = await fetch("/api/customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        console.log("User data saved successfully");
-        router.push("/authentication/sign-in/");
-        // Reset the form data
-        setFormData({
-          email: "",
-          first_name: "",
-          last_name: "",
-          password: ""
-        });
-      } else {
-        console.error("Failed to save user data");
-      }
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          setError("status code 401");
-        } else if (error.response.status === 404) {
-          setError("status code 404");
-        }
-      } else {
-        console.error("Error:", error);
-      }
-    }
-  };
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    });
+    const { name, value } = event.target;
+
+    // Update form data
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    validateFormField(name, value);
   };
 
+  const validateFormField = (name, value) => {
+    switch (name) {
+      case "firstName":
+        setFirstNameValid(value.trim() !== "");
+        setFirstNameError(value.trim() === "" ? "First name is required" : "");
+        break;
+      case "lastName":
+        setLastNameValid(value.trim() !== "");
+        setLastNameError(value.trim() === "" ? "Last name is required" : "");
+        break;
+      case "email":
+        setEmailValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
+        setEmailError(
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+            ? ""
+            : "Invalid email address"
+        );
+        break;
+      case "password":
+        setPasswordValid(value.length >= 8);
+        setPasswordError(
+          value.length < 8 ? "Password must be at least 8 characters" : ""
+        );
+        break;
+      case "confirmPassword":
+        setConfirmPasswordValid(value !== "" && value === formData.password);
+        setConfirmPasswordError(
+          value !== "" && value === formData.password
+            ? ""
+            : "Passwords do not match"
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const isFormValid =
+    firstNameValid &&
+    lastNameValid &&
+    emailValid &&
+    passwordValid &&
+    confirmPasswordValid;
+
+  const handleSignup = async (event) => {
+    event.preventDefault();
+
+    const formValid =
+      isFormValid &&
+      formData.email &&
+      formData.firstName &&
+      formData.lastName &&
+      formData.password &&
+      formData.confirmPassword;
+
+    if (formValid) {
+      try {
+        setLoading(true);
+        // const res = await axios.post('/api/noauth/partner/signup', {
+        //   ...formData
+        // })
+
+        // if (res?.data?.id) {
+        //   router.push('/authentication/sign-in/')
+        // } else {
+        //   setSignupError('Server Error')
+        //   console.log('res-->', res)
+        // }
+        console.log(formData);
+      } catch (error) {
+        setSignupError(
+          error.response?.data?.error || error.response?.statusText
+        );
+        console.error("Error saving user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      validateFormField("firstName", formData.firstName);
+      validateFormField("lastName", formData.lastName);
+      validateFormField("email", formData.email);
+      validateFormField("password", formData.password);
+      validateFormField("confirmPassword", formData.confirmPassword);
+    }
+  };
 
   return (
     <>
       <div className="authenticationBox">
-        <div className={styles.container}>
+        <div className={styles.container} style={{ height: "100%" }}>
           <div className={styles.leftContainer}>
             <div className={styles.topContainer}>
               <div className={styles.cardContainer}>
@@ -89,9 +144,11 @@ const SignUpForm = () => {
                   alt="favicon"
                   className={styles.sign}
                 />
-                <Card className={styles.floatingCard} >
+                <Card className={styles.floatingCard}>
                   <h2>Applied patent</h2>
-                  <p>200<strong>+ </strong> </p>
+                  <p>
+                    200<strong>+ </strong>
+                  </p>
                 </Card>
               </div>
             </div>
@@ -109,13 +166,13 @@ const SignUpForm = () => {
                   <strong> border patent</strong> seamlessly
                 </Typography>
                 <Typography className={styles.text2}>
-                  Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally.
+                  Blockchain Driven One Stop IP platform to protect your <br />
+                  Inventions Globally.
                 </Typography>
               </Typography>
             </div>
           </div>
-          <div className={styles.rightContainer}>
-
+          <div className={styles.rightContainer} style={{ height: "1200px" }}>
             <Box
               component="main"
               sx={{
@@ -125,177 +182,190 @@ const SignUpForm = () => {
                 padding: "50px 0 100px",
               }}
             >
-              <Box component="form" noValidate onSubmit={handleSubmit}>
-                <Box
-                  sx={{
-                    background: "#fff",
-                    padding: "30px 20px",
-                    borderRadius: "10px",
-                    mb: "20px",
-                  }}
-                  className="bg-black"
-                >
-                  <Grid container alignItems="center" spacing={2}>
-                    <h1>Sign Up</h1>
-                    <Grid item xs={12}>
-                      <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
-                      >
-                        First Name
-                      </Typography>
-
-                      <TextField
-                        autoComplete="given-name"
-                        name="first_name"
-                        required
-                        fullWidth
-                        id="firstName"
-                        label="First Name"
-                        autoFocus
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                        value={formData.first_name}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
-                      >
-                        Last Name
-                      </Typography>
-
-                      <TextField
-                        required
-                        fullWidth
-                        id="lastName"
-                        label="Last Name"
-                        name="last_name"
-                        autoComplete="family-name"
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                        value={formData.last_name}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
-                      >
-                        Email
-                      </Typography>
-
-                      <TextField
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                        value={formData.email}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography
-                        component="label"
-                        sx={{
-                          fontWeight: "500",
-                          fontSize: "14px",
-                          mb: "10px",
-                          display: "block",
-                        }}
-                      >
-                        Password
-                      </Typography>
-
-                      <TextField
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
-                        InputProps={{
-                          style: { borderRadius: 8 },
-                        }}
-                        value={formData.password}
-                        onChange={handleChange}
-                      />
-                    </Grid>
+              <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                sx={{
+                  background: "#fff",
+                  padding: "30px 20px",
+                  borderRadius: "10px",
+                  mb: "20px",
+                }}
+                className="bg-black"
+              >
+                <Grid container alignItems="center" spacing={2}>
+                  <h1>Sign Up</h1>
+                  <Grid item xs={12}>
+                    <TextField
+                      autoComplete="given-name"
+                      name="firstName"
+                      required
+                      fullWidth
+                      id="firstName"
+                      label="First Name"
+                      autoFocus
+                      InputProps={{
+                        style: { borderRadius: 8 },
+                      }}
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      error={!firstNameValid}
+                      helperText={firstNameError}
+                    />
                   </Grid>
-                </Box>
 
-                {error && (
-                  <Typography
-                    variant="body2"
-                    color="error"
-                    align="center"
-                    sx={{ mb: 2 }}
-                  >
-                    {error}
-                  </Typography>
-                )}
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="lastName"
+                      label="Last Name"
+                      name="lastName"
+                      autoComplete="family-name"
+                      InputProps={{
+                        style: { borderRadius: 8 },
+                      }}
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      error={!lastNameValid}
+                      helperText={lastNameError}
+                    />
+                  </Grid>
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: "20px",
-                    textTransform: "capitalize",
-                    borderRadius: "100px", /* Changed to 100px for circular button */
-                    fontWeight: "500",
-                    fontSize: "16px",
-                    marginLeft: "20px", padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
-                    color: "#fff !important",
-                    width: "450px", /* Set the width to 483px */
-                    height: "48px", /* Set the height to 48px */
-                    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-                  }}
-                >
-                  Sign up
-                </Button>
-                <Typography fontSize="15px" mb="30px" mt="15px" ml="30px">
-                  Already have an account?{" "}
-                  <Link
-                    href="/authentication/sign-in/"
-                    className="primaryColor text-decoration-none"
-                  >
-                    Log In
-                  </Link>
-                </Typography>
-                <Typography fontSize="12px" mt="20%" textAlign="center" color="#676B5F">
-                  2023 Copyrights. All Rights Reserved
-                </Typography>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      type="email"
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      InputProps={{
+                        style: { borderRadius: 8 },
+                      }}
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={!emailValid}
+                      helperText={emailError}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      InputProps={{
+                        style: { borderRadius: 8 },
+                      }}
+                      value={formData.password}
+                      onChange={handleChange}
+                      error={!passwordValid}
+                      helperText={passwordError}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Typography
+                      component="label"
+                      sx={{
+                        fontWeight: "500",
+                        fontSize: "14px",
+                        mb: "10px",
+                        display: "block",
+                      }}
+                    ></Typography>
+                    <TextField
+                      required
+                      fullWidth
+                      name="confirmPassword"
+                      label="Confirm Password"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      InputProps={{
+                        style: { borderRadius: 8 },
+                      }}
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      error={!confirmPasswordValid}
+                      helperText={confirmPasswordError}
+                    />
+                  </Grid>
+                </Grid>
               </Box>
+
+              {signupError && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  align="center"
+                  sx={{ mb: 2 }}
+                >
+                  {signupError}
+                </Typography>
+              )}
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={!isFormValid || loading}
+                onClick={handleSignup}
+                sx={{
+                  mt: "20px",
+                  textTransform: "capitalize",
+                  borderRadius: "100px",
+                  fontWeight: "500",
+                  fontSize: "16px",
+                  marginLeft: "20px",
+                  padding: "14px 0px 14px 0px",
+                  color: "#fff !important",
+                  width: "450px",
+                  height: "48px",
+                  background:
+                    "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+                }}
+              >
+                {loading ? (
+                  <CircularProgress color="inherit" size={24} />
+                ) : (
+                  "Sign up"
+                )}
+              </Button>
+
+              <Typography
+                style={{
+                  fontSize: "15px",
+                  marginBottom: "30px",
+                  marginTop: "15px",
+                  marginLeft: "20px",
+                  textAlign: "center",
+                }}
+              >
+                Already have an account?{" "}
+                <Link
+                  href="/authentication/sign-in/"
+                  className="primaryColor text-decoration-none"
+                >
+                  Log In
+                </Link>
+              </Typography>
+
+              <Typography
+                fontSize="12px"
+                mt="20%"
+                textAlign="center"
+                color="#676B5F"
+              >
+                2023 Copyrights. All Rights Reserved
+              </Typography>
             </Box>
           </div>
         </div>

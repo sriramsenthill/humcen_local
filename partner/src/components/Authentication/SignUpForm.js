@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import Grid from '@mui/material/Grid'
-import { Typography, Card } from '@mui/material'
+import { Typography, Card, CircularProgress } from '@mui/material'
 import { Box } from '@mui/system'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 const SignUpForm = () => {
   const router = useRouter()
   const [signupError, setSignupError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -102,6 +103,7 @@ const SignUpForm = () => {
 
     if (formValid) {
       try {
+        setLoading(true)
         const res = await axios.post('/api/noauth/partner/signup', {
           ...formData
         })
@@ -117,6 +119,8 @@ const SignUpForm = () => {
           error.response?.data?.error || error.response?.statusText
         )
         console.error('Error saving user data:', error)
+      } finally {
+        setLoading(false)
       }
     } else {
       validateFormField('firstName', formData.firstName)
@@ -311,7 +315,7 @@ const SignUpForm = () => {
                 type='submit'
                 fullWidth
                 variant='contained'
-                disabled={!isFormValid}
+                disabled={!isFormValid || loading}
                 onClick={handleSignup}
                 sx={{
                   mt: '20px',
@@ -328,7 +332,11 @@ const SignUpForm = () => {
                     'linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)'
                 }}
               >
-                Sign up
+                {loading ? (
+                  <CircularProgress color='inherit' size={24} />
+                ) : (
+                  'Sign up'
+                )}
               </Button>
 
               <Typography
