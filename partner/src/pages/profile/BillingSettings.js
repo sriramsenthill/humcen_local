@@ -50,25 +50,25 @@ export default function Profile() {
     axios
       .get('/settings')
       .then((response) => {
-        const UsID = response.data.userID
+        const UsID = response.data.partner.userID
         setUserID(UsID)
-        const bankName = response.data.bank.bankName
+        const bankName = response.data.partner.bank.bankName
         setBankName(bankName)
-        const accountNum = response.data.bank.accountNum
+        const accountNum = response.data.partner.bank.accountNum
         setAccountNum(accountNum)
-        const accountName = response.data.bank.accountName
+        const accountName = response.data.partner.bank.accountName
         setAccountName(accountName)
-        const branch = response.data.bank.branch
+        const branch = response.data.partner.bank.branch
         setBranch(branch)
-        const ifscCode = response.data.bank.ifscCode
+        const ifscCode = response.data.partner.bank.ifscCode
         setIfscCode(ifscCode)
-        const address = response.data.bank.address
+        const address = response.data.partner.bank.address
         setAddress(address)
-        const town = response.data.bank.town
+        const town = response.data.partner.bank.town
         setTown(town)
-        const postCode = response.data.bank.postCode
+        const postCode = response.data.partner.bank.postCode
         setPostCode(postCode)
-        const country = response.data.bank.country
+        const country = response.data.partner.bank.country
         setCountry(country)
       })
       .catch((error) => {

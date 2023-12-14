@@ -52,27 +52,27 @@ export default function Profile() {
 
   useEffect(() => {
     axios
-      .get("/settingsProfile")
+      .get("/settings")
       .then((response) => {
-        const UsID = response.data.userID;
+        const UsID = response.data.partner.userID;
         setUserID(UsID);
-        const firstName = response.data.firstName;
+        const firstName = response.data.user.firstName;
         setFirstName(firstName);
-        const email = response.data.email;
+        const email = response.data.user.email;
         setEmail(email);
-        const lastName = response.data.lastName;
+        const lastName = response.data.user.lastName;
         setLastName(lastName);
-        const applicantType = response.data.applicantType;
+        const applicantType = response.data.partner.applicantType;
         setApplicantType(applicantType);
-        const businessName = response.data.businessName;
+        const businessName = response.data.partner.businessName;
         setBusinessName(businessName);
-        const companyID = response.data.companyId;
+        const companyID = response.data.partner.companyId;
         setCompanyID(companyID);
-        const vatPayer = response.data.vatPayer;
+        const vatPayer = response.data.partner.vatPayer;
         setVatPayer(vatPayer);
-        const phone = response.data.phno;
+        const phone = response.data.user.phno;
         setPhone(phone);
-        const position = response.data.position;
+        const position = response.data.partner.position;
         setPosition(position);
         const street = response.data.street;
         setStreet(street);

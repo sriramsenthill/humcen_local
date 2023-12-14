@@ -41,7 +41,7 @@ export default function Profile() {
     axios
       .get("/settings")
       .then((response) => {
-        const UID = response.data.userID;
+        const UID = response.data.partner.userID;
         setUserID(UID);
       })
       .catch((error) => {
