@@ -17,18 +17,21 @@ const SignUpForm = () => {
     email: '',
     firstName: '',
     lastName: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   })
 
   const [firstNameValid, setFirstNameValid] = useState(true)
   const [lastNameValid, setLastNameValid] = useState(true)
   const [emailValid, setEmailValid] = useState(true)
   const [passwordValid, setPasswordValid] = useState(true)
+  const [confirmPasswordValid, setConfirmPasswordValid] = useState(true)
 
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [confirmPasswordError, setConfirmPasswordError] = useState('')
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -66,13 +69,25 @@ const SignUpForm = () => {
           value.length < 8 ? 'Password must be at least 8 characters' : ''
         )
         break
+      case 'confirmPassword':
+        setConfirmPasswordValid(value !== '' && value === formData.password)
+        setConfirmPasswordError(
+          value !== '' && value === formData.password
+            ? ''
+            : 'Passwords do not match'
+        )
+        break
       default:
         break
     }
   }
 
   const isFormValid =
-    firstNameValid && lastNameValid && emailValid && passwordValid
+    firstNameValid &&
+    lastNameValid &&
+    emailValid &&
+    passwordValid &&
+    confirmPasswordValid
 
   const handleSignup = async (event) => {
     event.preventDefault()
@@ -82,7 +97,8 @@ const SignUpForm = () => {
       formData.email &&
       formData.firstName &&
       formData.lastName &&
-      formData.password
+      formData.password &&
+      formData.confirmPassword
 
     if (formValid) {
       try {
@@ -107,6 +123,7 @@ const SignUpForm = () => {
       validateFormField('lastName', formData.lastName)
       validateFormField('email', formData.email)
       validateFormField('password', formData.password)
+      validateFormField('confirmPassword', formData.confirmPassword)
     }
   }
 
@@ -248,6 +265,34 @@ const SignUpForm = () => {
                       helperText={passwordError}
                     />
                   </Grid>
+
+                  <Grid item xs={12}>
+                    <Typography
+                      component='label'
+                      sx={{
+                        fontWeight: '500',
+                        fontSize: '14px',
+                        mb: '10px',
+                        display: 'block'
+                      }}
+                    ></Typography>
+                    <TextField
+                      required
+                      fullWidth
+                      name='confirmPassword'
+                      label='Confirm Password'
+                      type='password'
+                      id='password'
+                      autoComplete='new-password'
+                      InputProps={{
+                        style: { borderRadius: 8 }
+                      }}
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      error={!confirmPasswordValid}
+                      helperText={confirmPasswordError}
+                    />
+                  </Grid>
                 </Grid>
               </Box>
 
@@ -286,7 +331,15 @@ const SignUpForm = () => {
                 Sign up
               </Button>
 
-              <Typography style={{ fontSize: '15px', marginBottom: '30px', marginTop: '15px', marginLeft: '20px', textAlign: 'center' }}>
+              <Typography
+                style={{
+                  fontSize: '15px',
+                  marginBottom: '30px',
+                  marginTop: '15px',
+                  marginLeft: '20px',
+                  textAlign: 'center'
+                }}
+              >
                 Already have an account?{' '}
                 <Link
                   href='/authentication/sign-in/'
