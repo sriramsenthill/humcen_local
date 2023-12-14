@@ -22,5 +22,5 @@ const schema = new mongoose.Schema({
 });
 
 schema.plugin(auditFieldsPlugin);
-const State = mongoose.model("ReferenceMaster", schema);
-module.exports = State;
+const ReferenceMaster = mongoose.model("ReferenceMaster", schema);
+module.exports = ReferenceMaster;

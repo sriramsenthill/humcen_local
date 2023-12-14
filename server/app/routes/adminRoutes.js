@@ -35,6 +35,12 @@ adminRouter.post("/state/create", state.create);
 adminRouter.post("/state/update", state.update);
 adminRouter.post("/state/search", state.search);
 
+const referenceMaster = require("../master/referenceMaster");
+adminRouter.post("/referenceMaster/create", referenceMaster.create);
+adminRouter.post("/referenceMaster/update", referenceMaster.update);
+adminRouter.post("/referenceMaster/search", referenceMaster.search);
+
+
 //ADMIN DATA
 adminRouter.get("/user", data.getUsers);
 

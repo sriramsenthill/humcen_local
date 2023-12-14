@@ -6,6 +6,8 @@ import {
     Button,
     Grid,
     Box,
+    Select,
+    MenuItem,
     TextField,
     Dialog,
     DialogTitle,
@@ -44,20 +46,27 @@ export default function ReferenceMaster() {
     const [searchError, setSearchError] = useState('')
     const [saveError, setSaveError] = useState('')
     const [formData, setFormData] = useState({
-        _id: null,
         code: '',
         name: '',
-        countryId: null
+        countryId: null,
+        descriptionReferenceMaster: "",
+        nameReferenceValue: "",
+        descriptionReferenceValue: "",
+        isActive: false
     })
     const [searchData, setSearchData] = useState({
         code: '',
         name: '',
-        countryId: null
+        countryId: null,
     })
     const [errorField, setErrorField] = useState({
         code: false,
         name: false,
-        countryId: false
+        countryId: false,
+        descriptionReferenceMaster: "",
+        nameReferenceValue: "",
+        descriptionReferenceValue: "",
+        isActive: false
     })
 
     useEffect(() => {
@@ -87,10 +96,13 @@ export default function ReferenceMaster() {
 
     const newRecord = () => {
         setFormData({
-            _id: null,
             code: '',
             name: '',
-            countryId: null
+            countryId: null,
+            descriptionReferenceMaster: "",
+            nameReferenceValue: "",
+            descriptionReferenceValue: "",
+            isActive: false
         })
         setDataSaving(false)
         setOpen(true)
@@ -98,10 +110,13 @@ export default function ReferenceMaster() {
 
     const editRecord = (row) => {
         setFormData({
-            _id: row._id,
             code: row.code,
             name: row.name,
-            countryId: row.countryId
+            countryId: row.countryId,
+            descriptionReferenceMaster: row.descriptionReferenceMaster,
+            nameReferenceValue: row.nameReferenceValue,
+            descriptionReferenceValue: row.descriptionReferenceValue,
+            isActive: false
         })
         setDataSaving(false)
         setOpen(true)
@@ -116,7 +131,7 @@ export default function ReferenceMaster() {
                 setStates([])
             }
 
-            const res = await axios.post('/state/search', {
+            const res = await axios.post('/referenceMaster/search', {
                 ...searchData,
                 getCount,
                 pageNo: pageNo + 1,
@@ -141,12 +156,16 @@ export default function ReferenceMaster() {
         setErrorField({
             code: !formData.code,
             name: !formData.name,
-            countryId: !formData.countryId
+            countryId: !formData.countryId,
+            descriptionReferenceMaster: !formData.descriptionReferenceMaster,
+            nameReferenceValue: !formData.nameReferenceValue,
+            descriptionReferenceValue: !formData.descriptionReferenceValue,
+            isActive: !formData.isActive
         })
         if (!formData.code || !formData.name || !formData.countryId) return
         setDataSaving(true)
         setSaveError('')
-        const url = `/state/${formData._id ? 'update' : 'create'}`
+        const url = `/referenceMaster/${formData._id ? 'update' : 'create'}`
 
         try {
             await axios.post(url, { ...formData })
@@ -337,7 +356,7 @@ export default function ReferenceMaster() {
                         <TextField
                             autoFocus
                             required
-                            label='Code'
+                            label='code'
                             fullWidth
                             name='code'
                             disabled={formData._id}
@@ -347,7 +366,7 @@ export default function ReferenceMaster() {
                         />
                         <TextField
                             required
-                            label='Name'
+                            label='name'
                             fullWidth
                             name='name'
                             value={formData.name}
@@ -370,6 +389,44 @@ export default function ReferenceMaster() {
                                 }
                             }}
                         />
+                        <TextField
+                            required
+                            label='ReferenceMaster Description'
+                            fullWidth
+                            name='descriptionReferenceMaster'
+                            value={formData.descriptionReferenceMaster}
+                            error={errorField.descriptionReferenceMaster}
+                            onChange={handleChange}
+                        />
+                        <TextField
+                            required
+                            label='ReferenceValue Name'
+                            fullWidth
+                            name='nameReferenceValue'
+                            value={formData.nameReferenceValue}
+                            error={errorField.nameReferenceValue}
+                            onChange={handleChange}
+                        />
+                        <TextField
+                            required
+                            label='ReferenceValue Description'
+                            fullWidth
+                            name='descriptionReferenceValue'
+                            value={formData.descriptionReferenceValue}
+                            error={errorField.descriptionReferenceValue}
+                            onChange={handleChange}
+                        />
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            label="isActive"
+                            name="isActive"
+                            value={formData.isActive}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value={true}>true</MenuItem>
+                            <MenuItem value={false}>false</MenuItem>
+                        </Select>
                     </Box>
                 </DialogContent>
                 <DialogActions>
