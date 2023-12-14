@@ -1,67 +1,40 @@
-import * as React from 'react'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Country from './country'
-import State from './state'
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import Country from './Country'; // Import the Country component
+import State from './State'; // Import the State component
+import ReferenceMaster from './referenceMaster';
 
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  )
-}
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`
-  }
-}
-
-export default function BasicTabs() {
-  const [value, setValue] = React.useState(0)
+export default function LabTabs() {
+  const [value, setValue] = React.useState('1');
 
   const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+    setValue(newValue);
+  };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label='basic tabs example'
-        >
-          <Tab label='Country' {...a11yProps(0)} />
-          <Tab label='State' {...a11yProps(1)} />
-          <Tab label='Reference Master' {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <CustomTabPanel value={value} index={0}>
-        <Country />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <State />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
-      </CustomTabPanel>
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Country" value="1" />
+            <Tab label="State" value="2" />
+            <Tab label="Reference Master" value="3" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+          <Country />
+        </TabPanel>
+        <TabPanel value="2">
+          <State />
+        </TabPanel>
+        <TabPanel value="3">
+          <ReferenceMaster />
+        </TabPanel>
+      </TabContext>
     </Box>
-  )
+  );
 }
