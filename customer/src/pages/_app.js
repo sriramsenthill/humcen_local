@@ -1,9 +1,8 @@
-import React from 'react';
+import React from 'react'
+import '../_axios'
 import '../styles/remixicon.css'
-import 'react-tabs/style/react-tabs.css';
-import "swiper/css";
-import "swiper/css/bundle";
-import {Inter} from '@next/font/google'
+import 'react-tabs/style/react-tabs.css'
+import { Inter } from 'next/font/google'
 
 // Chat Styles
 import '../styles/chat.css'
@@ -15,31 +14,31 @@ import '../styles/rtl.css'
 import '../styles/dark.css'
 // Left Sidebar Dark Mode Styles
 import '../styles/leftSidebarDark.css'
-// SVG Override Color
-import "../styles/FileUploadWrapper.module.css"
 // Theme Styles
 import theme from '../styles/theme'
 
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import Layout from "@/components/_App/Layout";
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import Layout from '@/components/_App/Layout'
+import { SessionProvider } from 'next-auth/react'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight:['400', '700'],
+  weight: ['400', '700']
 })
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <main className={inter.className}>
-
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <SessionProvider session={session}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SessionProvider>
       </ThemeProvider>
     </main>
-  );
+  )
 }
 
 export default MyApp

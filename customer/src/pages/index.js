@@ -1,90 +1,90 @@
-import React from "react";
-import Grid from "@mui/material/Grid";
-import BasicTabs from "@/components/UIElements/Tabs/BasicTabs";
-import withAuth from "@/components/withAuth";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import New_cus from "@/components/newCustomer";
-import { Carousel } from "react-responsive-carousel";
-import { Card } from "@mui/material";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import React from 'react'
+import Grid from '@mui/material/Grid'
+import BasicTabs from '@/components/UIElements/Tabs/BasicTabs'
+import withAuth from '@/components/withAuth'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
+import New_cus from '@/components/newCustomer'
+// import { Carousel } from "react-responsive-carousel";
+import { Card } from '@mui/material'
+// import 'react-responsive-carousel/lib/styles/carousel.min.css'
 
 const eCommerce = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [name, setName] = useState("");
-  const open = Boolean(anchorEl);
-  const [checkJobs, setCheckJobs] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [name, setName] = useState('')
+  const open = Boolean(anchorEl)
+  const [checkJobs, setCheckJobs] = useState(null)
 
   const customerDataResponse = async () => {
     try {
-      const response = await axios.get("/");
-      const customerData = response.data;
-      setCheckJobs(customerData.length);
-      console.log(checkJobs);
+      const response = await axios.get('/')
+      const customerData = response.data
+      setCheckJobs(customerData.length)
+      console.log(checkJobs)
       // Process the customer data as needed
     } catch (error) {
-      console.error("Error fetching customer data:", error);
+      console.error('Error fetching customer data:', error)
     }
-  };
+  }
 
-  customerDataResponse();
+  customerDataResponse()
   useEffect(() => {
     axios
-      .get("/api/user/name")
+      .get('/api/user/name')
       .then((response) => {
-        const nameData = response.data;
-        setName(nameData);
+        const nameData = response.data
+        setName(nameData)
       })
       .catch((error) => {
-        console.error("Error fetching profile name:", error);
-      });
-  }, []);
+        console.error('Error fetching profile name:', error)
+      })
+  }, [])
 
   const carouselImages = [
     {
-      src: "/images/User 1.jpg",
-      alt: "image1",
-      link: "https://www.youtube.com/watch?v=49HTIoCccDY",
+      src: '/images/User 1.jpg',
+      alt: 'image1',
+      link: 'https://www.youtube.com/watch?v=49HTIoCccDY'
     },
     {
-      src: "/images/User 2.jpg",
-      alt: "image2",
-      link: "https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB",
+      src: '/images/User 2.jpg',
+      alt: 'image2',
+      link: 'https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB'
     },
     {
-      src: "/images/User 3.jpg",
-      alt: "image3",
-      link: "https://www.amazon.in/amazonprime",
-    },
-  ];
+      src: '/images/User 3.jpg',
+      alt: 'image3',
+      link: 'https://www.amazon.in/amazonprime'
+    }
+  ]
 
   const handleClick = (link) => {
-    window.open(link, "_blank");
-  };
+    window.open(link, '_blank')
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
   return (
     <>
       <Grid item xs={12} md={12} lg={12} xl={8}>
         {checkJobs === 0 ? (
-          <div className={"card"}>
+          <div className={'card'}>
             <New_cus />
           </div>
         ) : (
           <>
-            <div className={"card"}>
+            <div className={'card'}>
               <h1>Welcome, {name}!</h1>
               <Card
                 sx={{
-                  boxShadow: "0px 4px 13px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "20px",
-                  marginBottom: "20px",
+                  boxShadow: '0px 4px 13px rgba(0, 0, 0, 0.1)',
+                  borderRadius: '20px',
+                  marginBottom: '20px'
                 }}
               >
-                <Carousel
+                {/* <Carousel
                   autoPlay={true}
                   infiniteLoop={true}
                   interval={3000}
@@ -120,7 +120,7 @@ const eCommerce = () => {
                       />
                     </div>
                   ))}
-                </Carousel>
+                </Carousel> */}
               </Card>
               <BasicTabs />
             </div>
@@ -128,7 +128,7 @@ const eCommerce = () => {
         )}
       </Grid>
     </>
-  );
-};
+  )
+}
 
-export default withAuth(eCommerce);
+export default withAuth(eCommerce)
