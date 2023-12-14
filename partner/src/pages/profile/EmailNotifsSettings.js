@@ -359,7 +359,7 @@ export default function Profile() {
               <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
           ) : (
-            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%', marginTop:'400px'}} onClick={handleSubmit}>
+            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%', marginTop:'130px'}} onClick={handleSubmit}>
               <button className={cardStyle.button}>Submit</button>
             </div>
           )}
