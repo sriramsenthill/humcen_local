@@ -36,7 +36,9 @@ const signInPartner = async (req, res) => {
     const token = users.generateJwt(user, type);
     if (!token) return res.status(500).json({});
 
-    res.status(200).json({ token });
+    setTimeout(() => {
+      res.status(200).json({ token });
+    }, 5000);
   } catch (error) {
     logger.error(req, "Failed to sign in:", error);
     res.status(500).json({ error: error.message });

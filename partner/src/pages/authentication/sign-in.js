@@ -1,18 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import Grid from '@mui/material/Grid'
-import { Card, Typography } from '@mui/material'
-import { Box } from '@mui/system'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import { useSearchParams, useRouter } from 'next/navigation'
-import styles from '@/components/Authentication/Authentication.module.css'
+import { getServerSession } from 'next-auth/next'
 import { getSession, signIn } from 'next-auth/react'
 import { authOptions } from '../api/auth/[...nextauth]'
-import { getServerSession } from 'next-auth/next'
+import { useSearchParams, useRouter } from 'next/navigation'
+import styles from '@/components/Authentication/Authentication.module.css'
+import { Box, FormControlLabel, Button, Checkbox, Grid, TextField, Card, Typography, CircularProgress } from '@mui/material'
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -37,6 +31,43 @@ export default function SignIn() {
   const router = useRouter()
   const [error, setError] = useState('')
   const searchParams = useSearchParams()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [loginError, setLoginError] = useState('')
+
+  // validate email or not 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
+  }
+  //  validate password is there or not  
+  const validatePassword = (password) => {
+    return password.length >= 1
+  }
+
+  // email event => 
+  const handleEmailChange = (event) => {
+    const inputEmail = event.target.value.trim()
+    setEmail(inputEmail)
+    if (!validateEmail(inputEmail)) {
+      setEmailError('Please enter a valid email address.')
+    } else {
+      setEmailError('')
+    }
+  }
+  //  password event => 
+  const handlePasswordChange = (event) => {
+    const inputPassword = event.target.value
+    setPassword(inputPassword)
+    if (!validatePassword(inputPassword)) {
+      setPasswordError('Please enter the password')
+    } else {
+      setPasswordError('')
+    }
+  }
 
   let callbackUrl = searchParams.get('callbackUrl')
   if (callbackUrl) {
@@ -45,7 +76,7 @@ export default function SignIn() {
       if (url.origin != globalThis.location?.origin) {
         callbackUrl = ''
       }
-    } catch (e) {}
+    } catch (e) { }
     if (callbackUrl.indexOf('logout') > -1) {
       callbackUrl = ''
     }
@@ -57,6 +88,27 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget)
     const username = data.get('email')
     const password = data.get('password')
+
+
+    // loader settimeout 
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+
+
+    if (email === '') {
+      setEmailError(true)
+    } else {
+      setEmailError(false)
+    }
+
+    if (password === '') {
+      setPasswordError(true)
+    } else {
+      setPasswordError(false)
+    }
+
 
     const result = await signIn('credentials', {
       username,
@@ -77,40 +129,6 @@ export default function SignIn() {
     <>
       <div className='authenticationBox'>
         <div className={styles.container}>
-          {/* edited by achappan login page responsive code edit authentication component  */}
-          {/* <div className={styles.leftContainer}>
-            <div className={styles.topContainer}>
-              <div className={styles.cardContainer}>
-                <img
-                  src="/images/sign.png"
-                  alt="favicon"
-                  className={styles.sign}
-                />
-                <Card className={styles.floatingCard} >
-                  <h2>Applied patent</h2>
-                  <p>200<strong>+ </strong> </p>
-                </Card>
-              </div>
-            </div>
-            <div className={styles.bottomContainer}>
-              <Typography as="h1" mb="5px">
-                <img
-                  src="/images/logo-white.png"
-                  alt="favicon"
-                  className={styles.favicon}
-                />
-                <Typography className={styles.textt}>
-                  Let's Empower your <strong>cross </strong>
-                </Typography>
-                <Typography className={styles.text}>
-                  <strong> border patent</strong> seamlessly
-                </Typography>
-                <Typography className={styles.text2}>
-                  Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally.
-                </Typography>
-              </Typography>
-            </div>
-          </div> */}
           <div className={styles.leftContainer}>
             <img
               src='/images/loginPageImage.png'
@@ -146,6 +164,13 @@ export default function SignIn() {
                           InputProps={{
                             style: { borderRadius: 8 }
                           }}
+                          onChange={handleEmailChange}
+                          error={emailError || loginError}
+                          helperText={
+                            emailError
+                              ? 'Enter the correct email address'
+                              : loginError
+                          }
                         />
                       </Grid>
                       <Grid item xs={12}>
@@ -160,20 +185,25 @@ export default function SignIn() {
                           InputProps={{
                             style: { borderRadius: 8 }
                           }}
+
+                          onChange={handlePasswordChange}
+                          error={passwordError || loginError}
+                          helperText={passwordError ? 'Please enter the password' : loginError
+                          }
                         />
                       </Grid>
                     </Grid>
-
-                    {error && (
-                      <Typography
-                        variant='body2'
-                        color='error'
-                        align='center'
-                        sx={{ mb: 3 }}
-                      >
-                        {error}
-                      </Typography>
-                    )}
+                    <span>
+                      {error && (
+                        <Typography
+                          variant='body2'
+                          color='error'
+                          align='center'
+                          sx={{ mb: 3 }}
+                        >
+                          {error}
+                        </Typography>
+                      )}</span>
                     <br />
                     <br />
                     <Grid container alignItems='center' spacing={2}>
@@ -188,17 +218,19 @@ export default function SignIn() {
                           label='Remember me.'
                         />
                       </Grid>
-
                       <Grid item xs={5} sm={5} textAlign='end' ml='20px'>
                         <Link
                           href='/authentication/forgot-password'
-                          className='primaryColor text-decoration-none'
+                          className='primaryColor text-decoration-underline'
+                          style={{}}
                         >
-                          Forgot your password?
+                          Forgot password?
                         </Link>
                       </Grid>
                     </Grid>
-                    <br />
+                    <span>
+                      {/* empty space*/}
+                    </span>
                     <Button
                       type='submit'
                       fullWidth
@@ -216,14 +248,22 @@ export default function SignIn() {
                         background:
                           'linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)'
                       }}
+                      disabled={
+                        loading && email == '' && password == ''
+                      }
                     >
-                      Log In
+                      {loading ? (
+                        <CircularProgress size={26} color='inherit' />
+                      ) : (
+                        'Login'
+                      )}
                     </Button>
+
                     <Typography fontSize='15px' mb='30px' mt='15px' ml='30px'>
                       Don't have an account?{' '}
                       <Link
                         href='/authentication/sign-up'
-                        className='primaryColor text-decoration-none'
+                        className='primaryColor text-decoration-underline'
                       >
                         Sign up
                       </Link>
