@@ -27,7 +27,7 @@ const inter = Inter({
   weight: ['400', '700']
 })
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <main className={inter.className}>
       <ThemeProvider theme={theme}>

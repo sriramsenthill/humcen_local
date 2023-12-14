@@ -6,7 +6,17 @@ import { getSession, signIn } from 'next-auth/react'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { useSearchParams, useRouter } from 'next/navigation'
 import styles from '@/components/Authentication/Authentication.module.css'
-import { Box, FormControlLabel, Button, Checkbox, Grid, TextField, Card, Typography, CircularProgress } from '@mui/material'
+import {
+  Box,
+  FormControlLabel,
+  Button,
+  Checkbox,
+  Grid,
+  TextField,
+  Card,
+  Typography,
+  CircularProgress
+} from '@mui/material'
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -38,17 +48,17 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
 
-  // validate email or not 
+  // validate email or not
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return re.test(email)
   }
-  //  validate password is there or not  
+  //  validate password is there or not
   const validatePassword = (password) => {
     return password.length >= 1
   }
 
-  // email event => 
+  // email event =>
   const handleEmailChange = (event) => {
     const inputEmail = event.target.value.trim()
     setEmail(inputEmail)
@@ -58,7 +68,7 @@ export default function SignIn() {
       setEmailError('')
     }
   }
-  //  password event => 
+  //  password event =>
   const handlePasswordChange = (event) => {
     const inputPassword = event.target.value
     setPassword(inputPassword)
@@ -76,7 +86,7 @@ export default function SignIn() {
       if (url.origin != globalThis.location?.origin) {
         callbackUrl = ''
       }
-    } catch (e) { }
+    } catch (e) {}
     if (callbackUrl.indexOf('logout') > -1) {
       callbackUrl = ''
     }
@@ -88,40 +98,30 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget)
     const username = data.get('email')
     const password = data.get('password')
+    setEmailError(!email)
+    setPasswordError(!password)
+    if (!password || !username) return
 
+    try {
+      setLoading(true)
+      const result = await signIn('credentials', {
+        username,
+        password,
+        callbackUrl,
+        redirect: false
+      })
 
-    // loader settimeout 
-    setLoading(true)
-    setTimeout(() => {
+      const clientSession = await getSession()
+      if (result && result.status == 200 && clientSession?.user?.token) {
+        router.push(callbackUrl)
+      } else {
+        setError('Invalid email or password')
+      }
+    } catch (error) {
+      setError(error.response?.data?.error || error.response?.statusText)
+      console.error('Error saving user data:', error)
+    } finally {
       setLoading(false)
-    }, 2000)
-
-
-    if (email === '') {
-      setEmailError(true)
-    } else {
-      setEmailError(false)
-    }
-
-    if (password === '') {
-      setPasswordError(true)
-    } else {
-      setPasswordError(false)
-    }
-
-
-    const result = await signIn('credentials', {
-      username,
-      password,
-      callbackUrl,
-      redirect: false
-    })
-
-    const clientSession = await getSession()
-    if (result && result.status == 200 && clientSession?.user?.token) {
-      router.push(callbackUrl)
-    } else {
-      setError('Invalid email or password')
     }
   }
 
@@ -185,10 +185,12 @@ export default function SignIn() {
                           InputProps={{
                             style: { borderRadius: 8 }
                           }}
-
                           onChange={handlePasswordChange}
                           error={passwordError || loginError}
-                          helperText={passwordError ? 'Please enter the password' : loginError
+                          helperText={
+                            passwordError
+                              ? 'Please enter the password'
+                              : loginError
                           }
                         />
                       </Grid>
@@ -203,7 +205,8 @@ export default function SignIn() {
                         >
                           {error}
                         </Typography>
-                      )}</span>
+                      )}
+                    </span>
                     <br />
                     <br />
                     <Grid container alignItems='center' spacing={2}>
@@ -228,9 +231,7 @@ export default function SignIn() {
                         </Link>
                       </Grid>
                     </Grid>
-                    <span>
-                      {/* empty space*/}
-                    </span>
+                    <span>{/* empty space*/}</span>
                     <Button
                       type='submit'
                       fullWidth
@@ -248,9 +249,7 @@ export default function SignIn() {
                         background:
                           'linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)'
                       }}
-                      disabled={
-                        loading && email == '' && password == ''
-                      }
+                      disabled={loading && email == '' && password == ''}
                     >
                       {loading ? (
                         <CircularProgress size={26} color='inherit' />
