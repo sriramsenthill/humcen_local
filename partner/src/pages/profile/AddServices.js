@@ -209,7 +209,6 @@ export default function Profile() {
                         error
                       )
                     );
-                  window.location.href = "/settings";
                 } else {
                   setEditMode(true);
                 }

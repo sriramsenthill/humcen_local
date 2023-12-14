@@ -100,7 +100,7 @@ const Profile = () => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         className='for-dark-top-navList'
       >
-        <Link href='/settings' style={{ textDecoration: 'none' }}>
+        <Link href='/profile' style={{ textDecoration: 'none' }}>
           <MenuItem>
             <Avatar src='images/Default_pfp.jpg' className='mr-1' />
             <Box>
@@ -121,7 +121,7 @@ const Profile = () => {
         </Link>
         <Divider />
 
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon sx={{ mr: '-8px', mt: '-3px' }}>
             <PersonIcon fontSize='small' />
           </ListItemIcon>
@@ -133,9 +133,9 @@ const Profile = () => {
           >
             Profile
           </Link>
-        </MenuItem>
+        </MenuItem> */}
 
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon sx={{ mr: '-8px', mt: '-3px' }}>
             <Settings fontSize='small' />
           </ListItemIcon>
@@ -147,9 +147,9 @@ const Profile = () => {
           >
             Settings
           </Link>
-        </MenuItem>
+        </MenuItem> */}
 
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon sx={{ mr: '-8px', mt: '-3px' }}>
             <AttachMoneyIcon fontSize='small' />
           </ListItemIcon>
@@ -163,7 +163,7 @@ const Profile = () => {
           </Link>
         </MenuItem>
 
-        <Divider />
+        <Divider /> */}
 
         <MenuItem onClick={logOut}>
           <ListItemIcon sx={{ mr: '-8px', mt: '-3px' }}>

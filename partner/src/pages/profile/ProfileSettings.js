@@ -40,7 +40,7 @@ export default function Profile() {
   const [applicantType, setApplicantType] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [companyID, setCompanyID] = useState("");
-  const [vatPayer, setVatPayer] = useState(false);
+  const [vatPayer, setVatPayer] = useState();
   const [phone, setPhone] = useState("");
   const [position, setPosition] = useState("");
   const [street, setStreet] = useState("");
@@ -322,7 +322,7 @@ export default function Profile() {
                         select
                         label="VAT Payer"
                         onChange={(e) => setVatPayer(e.target.value)}
-                        // helperText="Please select your currency"
+                        defaultValue = {vatPayer}
                         fullWidth
                       >
                         {boolArray.map((option) => (
@@ -332,7 +332,7 @@ export default function Profile() {
                         ))}
                       </TextField>
                       ) : (
-                        <Typography>{vatPayer ? "Yes" : "No"}</Typography>
+                        <Typography>{vatPayer === undefined ? "" : vatPayer ? "Yes" : "No"}</Typography>
                       )}
                     </TableCell>
                   </TableRow>

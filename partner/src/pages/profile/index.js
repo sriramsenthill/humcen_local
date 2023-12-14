@@ -9,7 +9,7 @@ import BasicTabs from './Tabs'
 import styles from '@/styles/PageTitle.module.css'
 import Link from 'next/link'
 
-function Settings({props}) {
+function Profile({props}) {
 
   return (
     <>
@@ -40,7 +40,7 @@ function Settings({props}) {
               marginLeft: '16px'
             }}
           >
-            Settings
+            Profile
           </h1>
 
           <BasicTabs />
@@ -50,4 +50,4 @@ function Settings({props}) {
   )
 }
 
-export default Settings
+export default Profile

@@ -60,8 +60,8 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "Settings",
-    path: "/settings/",
+    title: "Profile",
+    path: "/profile/",
     icon: <SettingsIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,

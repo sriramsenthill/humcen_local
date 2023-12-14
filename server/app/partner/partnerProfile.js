@@ -9,7 +9,8 @@ const User = require("../models/user");
 const partnerProfile = {};
 partnerProfile.getLogInPartner = async function (req, res) {
   try {
-    const query = Partner.findOne({
+    const user = await User.findOne({ _id: req.userId });
+    const query = await Partner.findOne({
       userId: req.userId,
     });
     query.populate("address.countryId", "code name");
