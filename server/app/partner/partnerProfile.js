@@ -10,12 +10,16 @@ const partnerProfile = {};
 partnerProfile.getLogInPartner = async function (req, res) {
   try {
     const user = await User.findOne({ _id: req.userId });
-    const query = await Partner.findOne({
+    const partner = await Partner.findOne({
       userId: req.userId,
     });
-    query.populate("address.countryId", "code name");
-    const partner = await query.lean().exec();
-    res.status(200).json({ partner });
+    partner.firstName = user.firstName;
+    partner.email = user.email;
+    partner.lastName = user.lastName;
+    partner.phno = user.phno;
+    // query.populate("address.countryId", "code name");
+    // const partner = await query.lean().exec();
+    res.status(200).json( {partner, user} );
   } catch (e) {
     logger.error(req, e);
     res.status(500).json({ error: e.message });
@@ -27,44 +31,7 @@ partnerProfile.fetchPartnerProfileImage = async (req, res) => {
   try {
     // Find the partner with the given userID
     const partner = await Partner.findOne({ userId: userID  });
-    res.json(partner.profile_img);
-  } catch (error) {
-    // Handle any errors that occurred during the process
-    logger.error(req, error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-partnerProfile.fetchPartnerProfileSettings = async (req, res) => {
-  const userID = req.userId;
-  try {
-    // Find the partner with the given userID
-    const user = await User.findOne({ _id: userID });
-    const partner = await Partner.findOne({ userId: userID  });
-    const data ={
-      userID: userID,
-      firstName: user.firstName,
-      email: user.email,
-      lastName: user.lastName,
-      applicantType: partner.applicantType,
-      businessName: partner.businessName,
-      companyId: partner.companyId,
-      vatPayer: partner.vatPayer,
-      phno: user.phno,
-      position: partner.position
-    }
-    res.json(data);
-  } catch (error) {
-    // Handle any errors that occurred during the process
-    logger.error(req, error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-partnerProfile.fetchPartnerSettings = async (req, res) => {
-  const userID = req.userId;
-  try {
-    const partner = await Partner.findOne({ userId: userID  });
-    res.json(partner);
+    res.json(partner.profileImg);
   } catch (error) {
     // Handle any errors that occurred during the process
     logger.error(req, error);
@@ -141,7 +108,6 @@ partnerProfile.updatePartnerPrefSettings = async (req, res) => {
     newsletter: req.body.data.newsletter,
   });
   partner.emailPreference = newEmailPref;
-  console.log(partner);
   partner
     .save()
     .then((res) => logger.info("Partner's Preferentials Successfully Updated"))
@@ -163,7 +129,7 @@ partnerProfile.editPartnerServices = async (req, res) => {
   });
   partner
     .save()
-    .then((res) => console.log("Partner's Service Settings Successfully Updated"))
+    .then((res) => logger.info("Partner's Service Settings Successfully Updated"))
     .catch((error) =>
       logger.error(req, error)
     );
@@ -175,13 +141,13 @@ partnerProfile.updatePartnerPassword = async (req, res) => {
   const saltRounds = 10;
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
-      console.error(err);
+      logger.error(req, err);
       return res.status(500).send("Error creating/updating Partner");
     }
 
     bcrypt.hash(req.body.data.password, salt, async (err, hashedPassword) => {
       if (err) {
-        console.error(err);
+        logger.error(req, err);
         return res.status(500).send("Error creating/updating Partner");
       }
 

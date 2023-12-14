@@ -99,15 +99,15 @@ export default function Profile() {
     axios
       .get("/settings")
       .then((response) => {
-        const userId = response.data.userID;
+        const userId = response.data.partner.userID;
         setUserID(UID);
-        const essentialEmails = response.data.emailPreference.mails;
+        const essentialEmails = response.data.partner.emailPreference.mails;
         setEssentialEmails(essentialEmails);
-        const orderUpdates = response.data.emailPreference.orderUpdates;
+        const orderUpdates = response.data.partner.emailPreference.orderUpdates;
         setOrderUpdates(orderUpdates);
-        const marketingMails = response.data.emailPreference.marketingEmails;
+        const marketingMails = response.data.partner.emailPreference.marketingEmails;
         setMarketingMails(marketingMails);
-        const newsletter = response.data.emailPreference.newsletter;
+        const newsletter = response.data.partner.emailPreference.newsletter;
         setNewsLetter(newsletter);
       })
       .catch((error) => {
@@ -136,7 +136,6 @@ export default function Profile() {
             error
           )
         );
-      window.location.reload(true);
     } else {
       setEditMode(true);
     }
@@ -360,7 +359,7 @@ export default function Profile() {
               <EditIcon style={{ color: "#79E0F3" }} />
             </IconButton>
           ) : (
-            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%'}} onClick={handleSubmit}>
+            <div className={cardStyle.buttonContainer} style={{marginLeft:'60%', marginTop:'130px'}} onClick={handleSubmit}>
               <button className={cardStyle.button}>Submit</button>
             </div>
           )}

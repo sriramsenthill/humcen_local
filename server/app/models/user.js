@@ -22,7 +22,7 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
   },
-  profile_img: {
+  profileImg: {
     type: String,
   },
 });

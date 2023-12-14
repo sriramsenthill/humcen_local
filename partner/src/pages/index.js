@@ -25,7 +25,7 @@ export async function getServerSideProps(context) {
       if (res?.data?.partner && !res.data.partner.profileStage) {
         return {
           redirect: {
-            destination: '/settings', // the URL to redirect to
+            destination: '/profile', // the URL to redirect to
             permanent: false // set to true for permanent redirection (HTTP 301)
           }
         }

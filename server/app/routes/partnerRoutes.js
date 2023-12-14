@@ -29,8 +29,7 @@ partnerRouter.get("/getLogInPartner", partnerProfile.getLogInPartner);
 
 //Partner_Settings
 partnerRouter.get("/img", partnerProfile.fetchPartnerProfileImage);
-partnerRouter.get("/settings", partnerProfile.fetchPartnerSettings);
-partnerRouter.get("/settingsProfile", partnerProfile.fetchPartnerProfileSettings);
+partnerRouter.get("/settings", partnerProfile.getLogInPartner);
 partnerRouter.get("/fields", partnerProfile.fetchPartnerKnownFields);
 partnerRouter.put("/settings", partnerProfile.updatePartnerSettings);
 partnerRouter.put("/settingsProfile", partnerProfile.updatePartnerProfileSettings);
